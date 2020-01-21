@@ -58,15 +58,15 @@ namespace WDHAN
         static void cleanSite(string[] args){
             try
             {
-                Console.WriteLine("Cleaning project directory ... ");
-                System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + "./_site");
+                Console.WriteLine("Cleaning project directory, " + args[1] + "/_site" + " ... ");
+                System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + "/_site");
                 String fileName = "";
                 var options = new ProgressBarOptions
                 {
                     ProgressCharacter = '─',
                     ProgressBarOnBottom = true
                 };
-                using (var progressBar = new ProgressBar(Directory.GetFiles(args[1] + "./_site", "*.*", SearchOption.AllDirectories).Length, "Deleting " + fileName, options))
+                using (var progressBar = new ProgressBar(Directory.GetFiles(args[1] + "/_site", "*.*", SearchOption.AllDirectories).Length, "Deleting " + fileName, options))
                 {
                     foreach (FileInfo file in di.EnumerateFiles("*.*", SearchOption.AllDirectories))
                     {
@@ -85,7 +85,7 @@ namespace WDHAN
             }
             catch(IndexOutOfRangeException)
             {
-                Console.WriteLine("Cleaning project directory ... ");
+                Console.WriteLine("Cleaning project directory, " + "./_site" + " ... ");
                 System.IO.DirectoryInfo di = new DirectoryInfo("./_site");
                 String fileName = "";
                 var options = new ProgressBarOptions
@@ -204,6 +204,9 @@ namespace WDHAN
             catch (IndexOutOfRangeException)
             {
                 // Create site with default theme
+            }
+            catch(Exception){
+                Console.WriteLine("ERROR: Cannot create project files. Please ensure the directory you're trying to create is supported in your file system.");
             }
         }
         static void getSiteVars(string[] args)
