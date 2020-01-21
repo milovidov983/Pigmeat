@@ -60,7 +60,8 @@ namespace WDHAN
             {
                 Console.WriteLine("Cleaning project directory, " + args[1] + "/_site" + " ... ");
                 System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + "/_site");
-                String fileName = "";
+                //String fileName = "";
+                /*
                 var options = new ProgressBarOptions
                 {
                     ProgressCharacter = '─',
@@ -68,26 +69,31 @@ namespace WDHAN
                 };
                 using (var progressBar = new ProgressBar(Directory.GetFiles(args[1] + "/_site", "*.*", SearchOption.AllDirectories).Length, "Deleting " + fileName, options))
                 {
-                    foreach (FileInfo file in di.EnumerateFiles("*.*", SearchOption.AllDirectories))
+                    */
+                    foreach (var file in Directory.GetFiles(args[1] + "/_site", "*.*", SearchOption.AllDirectories))
                     {
-                        fileName = file.Name;
-                        file.Delete(); 
-                        progressBar.Tick();
+                        //fileName = file.Remove(args[1].Length + "/_site".Length);
+                        Console.WriteLine("Deleting " + file.Substring(args[1].Length + "/_site".Length + 1));
+                        File.Delete(file); 
+                        //progressBar.Tick();
                     }
-                }
+                //}
+                
                 
                 foreach (DirectoryInfo dir in di.EnumerateDirectories())
                 {
                     Console.WriteLine("Deleting " + dir.Name);
                     dir.Delete(true); 
                 }
+                
 
             }
             catch(IndexOutOfRangeException)
             {
                 Console.WriteLine("Cleaning project directory, " + "./_site" + " ... ");
                 System.IO.DirectoryInfo di = new DirectoryInfo("./_site");
-                String fileName = "";
+                //String fileName = "";
+                /*
                 var options = new ProgressBarOptions
                 {
                     ProgressCharacter = '─',
@@ -95,23 +101,52 @@ namespace WDHAN
                 };
                 using (var progressBar = new ProgressBar(Directory.GetFiles("./_site", "*.*", SearchOption.AllDirectories).Length, "Deleting " + fileName, options))
                 {
-                    foreach (FileInfo file in di.EnumerateFiles("*.*", SearchOption.AllDirectories))
+                    */
+                    foreach (var file in Directory.GetFiles("./_site", "*.*", SearchOption.AllDirectories))
                     {
-                        fileName = file.Name;
-                        file.Delete(); 
-                        progressBar.Tick();
+                        //fileName = file.Remove("/_site".Length);
+                        Console.WriteLine("Deleting " + file.Substring("/_site".Length + 1));
+                        File.Delete(file); 
+                        //progressBar.Tick();
                     }
-                }
+                //}
                 
                 foreach (DirectoryInfo dir in di.EnumerateDirectories())
                 {
                     Console.WriteLine("Deleting " + dir.Name);
                     dir.Delete(true); 
                 }
+                
+            }
+            catch(DirectoryNotFoundException)
+            {
+                Console.WriteLine("ERROR: The project directory you're trying to clean cannot be found.");
+                Environment.Exit(1);
+            }
+            catch(System.Security.SecurityException)
+            {
+                Console.WriteLine("ERROR: You do not have write access to the project directory you're trying to clean.");
+                Environment.Exit(1);
+            }
+            catch(ArgumentException)
+            {
+                Console.WriteLine("ERROR: The project directory you're trying to clean cannot be found.");
+                Environment.Exit(1);
+            }
+            catch(UnauthorizedAccessException)
+            {
+                Console.WriteLine("ERROR: You do not have write access to the project directory you're trying to clean.");
+                Environment.Exit(1);
+            }
+            catch(IOException)
+            {
+                Console.WriteLine("ERROR: An I/O error has occured. Ensure the project directory is not read-only, and no other programs are using files in the directory.");
+                Environment.Exit(1);
             }
             catch(Exception)
             {
                 Console.WriteLine("ERROR: Cannot clean project files. Please ensure the directory you're trying to clean exists and can be accessed.");
+                Environment.Exit(1);
             }
         }
         static void createSite(string[] args)
@@ -207,6 +242,7 @@ namespace WDHAN
             }
             catch(Exception){
                 Console.WriteLine("ERROR: Cannot create project files. Please ensure the directory you're trying to create is supported in your file system.");
+                Environment.Exit(1);
             }
         }
         static void getSiteVars(string[] args)
