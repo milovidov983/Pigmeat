@@ -22,4 +22,4 @@ jobs:
         # Artifact name
         name: wdhan.ubuntu
         # Directory containing files to upload
-        path: ./bin/Release/
+        path: ./bin/Release/netcoreapp3.1
