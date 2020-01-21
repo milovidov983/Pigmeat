@@ -2,50 +2,54 @@
 using Fluid;
 using System;
 using System.IO;
+using SharpScss;
 using SharpYaml;
 using SharpYaml.Serialization;
 using System.Text;
+using System.Collections.Generic;
 
 namespace WDHAN
 {
     class Program
     {
-        public string source, destination, collections_dir, plugins_dir, layouts_dir, data_dir, includes_dir, sass_dir, encoding, markdown_ext, excerpt_separator, host, baseurl, permalink, paginate_path, error_mode;
-        public static Collection[] siteCollections;
-        public static Boolean safe, strict_front_matter, show_drafts, future, unpublished, lsi, incremental, detach, show_dir_listing, quiet, verbose, strict_filters, strict_variables;
-        public static string[] include, exclude, keep_files, whitelist, plugins, defaults;
-        public static int limit_posts, port;
         static void Main(string[] args)
         {
-            if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
+            try
             {
+                if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
+                {
+                    createSite(args);
+                }
+                else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
+                {
+                    buildSite(args);
+                }
+                else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
+                {
+                    buildSite(args);
+                }
+                else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
+                {
 
-            }
-            else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
-            {
-                buildSite(args);
-            }
-            else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
-            {
-                buildSite(args);
-            }
-            else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
-            {
+                }
+                else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
+                {
 
-            }
-            else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
-            {
+                }
+                else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
+                {
 
+                }
+                else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
+                {
+                    printHelpMsg(args);
+                }
+                else
+                {
+                    printHelpMsg(args);
+                }
             }
-            else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
-            {
-
-            }
-            else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
-            {
-                printHelpMsg(args);
-            }
-            else
+            catch (IndexOutOfRangeException)
             {
                 printHelpMsg(args);
             }
@@ -59,24 +63,54 @@ namespace WDHAN
                 {
                     try
                     {
-                        Console.WriteLine("Creating /_includes");
-                        Directory.CreateDirectory("./_includes");
-                        Console.WriteLine("Creating /_layouts");
-                        Directory.CreateDirectory("./_layouts");
-                        Console.WriteLine("Creating /_sass");
-                        Directory.CreateDirectory("./_sass");
-                        Console.WriteLine("Creating _/sass");
-                        Directory.CreateDirectory("./_posts");
-                        Console.WriteLine("Creating /_drafts");
-                        Directory.CreateDirectory("./_drafts");
-                        Console.WriteLine("Creating /_data");
-                        Directory.CreateDirectory("./_data");
-                        Console.WriteLine("Creating _config.yml");
-                        var yamlSerializer = new Serializer();
-                        var defaultConfig = yamlSerializer.Serialize(new { source = ".", destination = "./_site", collections_dir = ".", plugins_dir = "_plugins", layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections = new Collection[] { new Collection("posts", true), new Collection("drafts", false) }, safe = false, include = new string[] { ".htaccess" }, exclude = new string[] { "" }, keep_files = new string[] { ".git", ".svn" }, encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = "\"\"", show_dir_listing = false, permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
-                        using (FileStream fs = File.Create("./_config.yml"))
+                        try
                         {
-                            fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
+                            Console.WriteLine("Creating /_plugins");
+                            Directory.CreateDirectory(args[2] + "./_plugins");
+                            Console.WriteLine("Creating /_includes");
+                            Directory.CreateDirectory(args[2] + "./_includes");
+                            Console.WriteLine("Creating /_layouts");
+                            Directory.CreateDirectory(args[2] + "./_layouts");
+                            Console.WriteLine("Creating /_sass");
+                            Directory.CreateDirectory(args[2] + "./_sass");
+                            Console.WriteLine("Creating _/posts");
+                            Directory.CreateDirectory(args[2] + "./_posts");
+                            Console.WriteLine("Creating /_drafts");
+                            Directory.CreateDirectory(args[2] + "./_drafts");
+                            Console.WriteLine("Creating /_data");
+                            Directory.CreateDirectory(args[2] + "./_data");
+                            Console.WriteLine("Creating _config.yml");
+                            var yamlSerializer = new Serializer();
+                            var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections = new List<Collection>() { new Collection("posts", true), new Collection("drafts", false) }, safe = false, include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
+                            using (FileStream fs = File.Create(args[2] + "./_config.yml"))
+                            {
+                                fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
+                            }
+
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            Console.WriteLine("Creating /_plugins");
+                            Directory.CreateDirectory("./_plugins");
+                            Console.WriteLine("Creating /_includes");
+                            Directory.CreateDirectory("./_includes");
+                            Console.WriteLine("Creating /_layouts");
+                            Directory.CreateDirectory("./_layouts");
+                            Console.WriteLine("Creating /_sass");
+                            Directory.CreateDirectory("./_sass");
+                            Console.WriteLine("Creating _/posts");
+                            Directory.CreateDirectory("./_posts");
+                            Console.WriteLine("Creating /_drafts");
+                            Directory.CreateDirectory("./_drafts");
+                            Console.WriteLine("Creating /_data");
+                            Directory.CreateDirectory("./_data");
+                            Console.WriteLine("Creating _config.yml");
+                            var yamlSerializer = new Serializer();
+                            var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections = new List<Collection>() { new Collection("posts", true), new Collection("drafts", false) }, safe = false, include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
+                            using (FileStream fs = File.Create("./_config.yml"))
+                            {
+                                fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
+                            }
                         }
                     }
                     catch (UnauthorizedAccessException)
@@ -193,7 +227,6 @@ namespace WDHAN
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine(
-                    args[0] + " is not a recognized argument.\n" +
                     "WDHAN supports the following commands:\n" +
                     "   wdhan new - Creates an empty WDHAN project in the current directory.\n" +
                     "   wdhan new <string> - Creates an empty WDHAN project at the specified directory.\n" +

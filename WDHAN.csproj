@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Fluid.Core" Version="1.0.0-beta-9634" />
     <PackageReference Include="Markdig" Version="0.18.0" />
+    <PackageReference Include="SharpScss" Version="1.4.0" />
     <PackageReference Include="SharpYaml" Version="1.6.5" />
   </ItemGroup>
 
