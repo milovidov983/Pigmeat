@@ -10,6 +10,7 @@
     <PackageReference Include="Markdig" Version="0.18.0" />
     <PackageReference Include="SharpScss" Version="1.4.0" />
     <PackageReference Include="SharpYaml" Version="1.6.5" />
+    <PackageReference Include="ShellProgressBar" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

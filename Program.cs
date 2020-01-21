@@ -5,6 +5,7 @@ using System.IO;
 using SharpScss;
 using SharpYaml;
 using SharpYaml.Serialization;
+using ShellProgressBar;
 using System.Text;
 using System.Collections.Generic;
 
@@ -38,7 +39,7 @@ namespace WDHAN
                 }
                 else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
                 {
-
+                    cleanSite(args);
                 }
                 else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
                 {
@@ -52,6 +53,65 @@ namespace WDHAN
             catch (IndexOutOfRangeException)
             {
                 printHelpMsg(args);
+            }
+        }
+        static void cleanSite(string[] args){
+            try
+            {
+                Console.WriteLine("Cleaning project directory ... ");
+                System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + "./_site");
+                String fileName = "";
+                var options = new ProgressBarOptions
+                {
+                    ProgressCharacter = '─',
+                    ProgressBarOnBottom = true
+                };
+                using (var progressBar = new ProgressBar(Directory.GetFiles(args[1] + "./_site", "*.*", SearchOption.AllDirectories).Length, "Deleting " + fileName, options))
+                {
+                    foreach (FileInfo file in di.EnumerateFiles("*.*", SearchOption.AllDirectories))
+                    {
+                        fileName = file.Name;
+                        file.Delete(); 
+                        progressBar.Tick();
+                    }
+                }
+                
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    Console.WriteLine("Deleting " + dir.Name);
+                    dir.Delete(true); 
+                }
+
+            }
+            catch(IndexOutOfRangeException)
+            {
+                Console.WriteLine("Cleaning project directory ... ");
+                System.IO.DirectoryInfo di = new DirectoryInfo("./_site");
+                String fileName = "";
+                var options = new ProgressBarOptions
+                {
+                    ProgressCharacter = '─',
+                    ProgressBarOnBottom = true
+                };
+                using (var progressBar = new ProgressBar(Directory.GetFiles("./_site", "*.*", SearchOption.AllDirectories).Length, "Deleting " + fileName, options))
+                {
+                    foreach (FileInfo file in di.EnumerateFiles("*.*", SearchOption.AllDirectories))
+                    {
+                        fileName = file.Name;
+                        file.Delete(); 
+                        progressBar.Tick();
+                    }
+                }
+                
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    Console.WriteLine("Deleting " + dir.Name);
+                    dir.Delete(true); 
+                }
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("ERROR: Cannot clean project files. Please ensure the directory you're trying to clean exists and can be accessed.");
             }
         }
         static void createSite(string[] args)
