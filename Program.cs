@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace WDHAN
 {
@@ -46,14 +47,63 @@ namespace WDHAN
             }
             else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
             {
+                buildSite(args);
+            }
+            else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
+            {
+                buildSite(args);
+            }
+            else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
+            {
+
+            }
+            else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
+            {
+
+            }
+            else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
+            {
 
             }
             else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
             {
+                printHelpMsg(args);
             }
             else
             {
                 printHelpMsg(args);
+            }
+        }
+        static void buildSite(string[] args)
+        {
+            try
+            {
+                Directory.CreateDirectory("./_site");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine("ERROR: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
+                Environment.Exit(1);
+            }
+            catch (PathTooLongException)
+            {
+                Console.WriteLine("ERROR: The path to your WDHAN project is too long for your file system to handle.");
+                Environment.Exit(1);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine("ERROR: The path to your WDHAN project is inaccessible. Verify it still exists.");
+                Environment.Exit(1);
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("ERROR: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
+                Environment.Exit(1);
+            }
+            catch (NotSupportedException)
+            {
+                Console.WriteLine("ERROR: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
+                Environment.Exit(1);
             }
         }
         static void printHelpMsg(string[] args)
