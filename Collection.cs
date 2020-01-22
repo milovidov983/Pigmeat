@@ -6,16 +6,14 @@ namespace WDHAN
 {
     public class Collection
     {
-        public string name { get; set; }
-        public Boolean output { get; set; }
-        public Collection(string name, Boolean output)
+        //public string name { get; set; }
+        public List<string> variableNames { get; set; }
+        public List<Object> variableValues { get; set; }
+        public Collection(List<string> variableNames, List<Object> variableValues)
         {
-            this.name = name;
-            this.output = output;
-        }
-        public override string ToString()
-        {
-            return name + ": \n" + "output: " + output;
+            //this.name = name;
+            this.variableNames = variableNames;
+            this.variableValues = variableValues;
         }
     }
 }
