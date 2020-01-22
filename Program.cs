@@ -5,7 +5,7 @@ using System.IO;
 using SharpScss;
 using SharpYaml;
 using SharpYaml.Serialization;
-using ShellProgressBar;
+//using ShellProgressBar;
 using System.Text;
 using System.Collections.Generic;
 
@@ -249,6 +249,35 @@ namespace WDHAN
         {
 
         }
+
+        /*
+        OK, how are we going to tackle this? We have a Liquid parser, but it's on us to find those variables to pass to the parser.
+        Hmm ... what variables do we actually have to work with?
+        Well, posts can have post.variable, site.variable, site.data.variable
+        Includes can have site.variable, site.data.variable, and include.variable
+        We don't know what include.variable is, UNTIL we get that value from the post, so ... there's an order to the parsing:
+        1. site
+        2. site.data
+        3. post (from collections, find path, parse)
+        4. include (get references include from /_includes/<string>.html)
+        5. layout (since this can reference post data not yet generated)
+        6. misc. leftovers (rss.xml for example, readme, etc.)
+
+        How do we get the variables into the parser (Fluid)?
+        var model = new { ParamOne = "Hello", ParamTwo = "world." };
+        var source = "{{ p.ParamOne }} {{ p.ParamTwo }}";
+        if (FluidTemplate.TryParse(source, out var template))
+        {   
+            var context = new TemplateContext();
+            context.MemberAccessStrategy.Register(model.GetType());
+            context.SetValue("p", model);
+
+            Console.WriteLine(template.Render(context));
+        }
+        So what does this mean? It means we have to get our variables and store them in classes or variable sets (models), before
+        passing them to template.Render(context), which we can then pass to Markdig to generate HTML (in cunjunction with SharpScss).
+        Site variables, including site.data variables, come from YAML data, which we can use SharpYaml to get (though reading back data will be hard).
+        */
         static void buildSite(string[] args)
         {
             try
