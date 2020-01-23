@@ -7,13 +7,15 @@ namespace WDHAN
     public class Collection
     {
         //public string name { get; set; }
-        public List<string> variableNames { get; set; }
-        public List<Object> variableValues { get; set; }
-        public Collection(List<string> variableNames, List<Object> variableValues)
+        //public string[] variableNames { get; set; }
+        //public object[] variableValues { get; set; }
+        public List<Dictionary<string, object>> variables;
+        public Collection(List<Dictionary<string, object>> variables)
         {
             //this.name = name;
-            this.variableNames = variableNames;
-            this.variableValues = variableValues;
+            //this.variableNames = variableNames;
+            //this.variableValues = variableValues;
+            this.variables = variables;
         }
     }
 }
