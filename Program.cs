@@ -161,13 +161,15 @@ namespace WDHAN
                         try
                         {
                             var collections = new Dictionary<string, List<Dictionary<string, object>>>();
+
                             var postsVariables = new Dictionary<string, object>();
                             postsVariables.Add("output", true);
+
                             var draftsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", false);
+                            draftsVariables.Add("output", false);
+
                             collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
                             collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
-
 
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory(args[2] + "./_plugins");
@@ -193,16 +195,27 @@ namespace WDHAN
                             }
 
                         }
+                        catch(ArgumentNullException)
+                        {
+                            Console.WriteLine("ERROR [ArgumentNullException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
+                        }
+                        catch(ArgumentException)
+                        {
+                            Console.WriteLine("ERROR [ArgumentException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
+                        }
                         catch (IndexOutOfRangeException)
                         {
                             var collections = new Dictionary<string, List<Dictionary<string, object>>>();
+
                             var postsVariables = new Dictionary<string, object>();
                             postsVariables.Add("output", true);
+
                             var draftsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", false);
+                            draftsVariables.Add("output", false);
+                            
                             collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
                             collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
-
+                            
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory("./_plugins");
                             Console.WriteLine("Creating /_includes");
