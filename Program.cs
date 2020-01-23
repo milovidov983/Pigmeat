@@ -171,6 +171,22 @@ namespace WDHAN
                             collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
                             collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
 
+                            /* 
+                            // Prints every collection and parameter (w/ value)
+                            foreach(var entry in collections)
+                            {
+                                Console.WriteLine(entry.Key);
+                                foreach(var param in entry.Value)
+                                {
+                                    foreach(var entry2 in param)
+                                    {
+                                        Console.WriteLine(entry2.Key + " "+ entry2.Value);
+                                    }
+                                    Console.WriteLine();
+                                }
+                            }
+                            */
+
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory(args[2] + "./_plugins");
                             Console.WriteLine("Creating /_includes");
@@ -212,7 +228,7 @@ namespace WDHAN
 
                             var draftsVariables = new Dictionary<string, object>();
                             draftsVariables.Add("output", false);
-                            
+
                             collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
                             collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
                             
