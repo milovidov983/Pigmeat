@@ -160,6 +160,15 @@ namespace WDHAN
                     {
                         try
                         {
+                            var collections = new Dictionary<string, List<Dictionary<string, object>>>();
+                            var postsVariables = new Dictionary<string, object>();
+                            postsVariables.Add("output", true);
+                            var draftsVariables = new Dictionary<string, object>();
+                            postsVariables.Add("output", false);
+                            collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
+                            collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
+
+
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory(args[2] + "./_plugins");
                             Console.WriteLine("Creating /_includes");
@@ -175,14 +184,8 @@ namespace WDHAN
                             Console.WriteLine("Creating /_data");
                             Directory.CreateDirectory(args[2] + "./_data");
                             Console.WriteLine("Creating _config.yml");
+
                             var yamlSerializer = new Serializer();
-                            var collections = new Dictionary<string, List<Dictionary<string, object>>>();
-                            var postsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", true);
-                            var draftsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", false);
-                            collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
-                            collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
                             var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections, safe = false, include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
                             using (FileStream fs = File.Create(args[2] + "./_config.yml"))
                             {
@@ -192,6 +195,14 @@ namespace WDHAN
                         }
                         catch (IndexOutOfRangeException)
                         {
+                            var collections = new Dictionary<string, List<Dictionary<string, object>>>();
+                            var postsVariables = new Dictionary<string, object>();
+                            postsVariables.Add("output", true);
+                            var draftsVariables = new Dictionary<string, object>();
+                            postsVariables.Add("output", false);
+                            collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
+                            collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
+
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory("./_plugins");
                             Console.WriteLine("Creating /_includes");
@@ -207,14 +218,8 @@ namespace WDHAN
                             Console.WriteLine("Creating /_data");
                             Directory.CreateDirectory("./_data");
                             Console.WriteLine("Creating _config.yml");
+
                             var yamlSerializer = new Serializer();
-                            var collections = new Dictionary<string, List<Dictionary<string, object>>>();
-                            var postsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", true);
-                            var draftsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", false);
-                            collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
-                            collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
                             var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections, safe = false, include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
                             using (FileStream fs = File.Create("./_config.yml"))
                             {
@@ -258,7 +263,8 @@ namespace WDHAN
             {
                 // Create site with default theme
             }
-            catch(Exception){
+            catch(Exception)
+            {
                 Console.WriteLine("ERROR: Cannot create project files. Please ensure the directory you're trying to create is supported in your file system.");
                 Environment.Exit(1);
             }
