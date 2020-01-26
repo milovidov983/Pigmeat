@@ -203,8 +203,18 @@ namespace WDHAN
                             Directory.CreateDirectory(args[2] + "./_data");
                             Console.WriteLine("Creating _config.yml");
 
-                            var yamlSerializer = new Serializer();
-                            var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections, safe = false, include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
+                            var yamlSettings = new SerializerSettings {EmitAlias = false};
+                            var yamlSerializer = new Serializer(yamlSettings);
+                            
+                            var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", 
+                            layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections, safe = false, 
+                            include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, 
+                            encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, 
+                            limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, 
+                            excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, 
+                            permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
+                            Console.WriteLine();
+                            Console.WriteLine(defaultConfig);
                             using (FileStream fs = File.Create(args[2] + "./_config.yml"))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
@@ -248,8 +258,19 @@ namespace WDHAN
                             Directory.CreateDirectory("./_data");
                             Console.WriteLine("Creating _config.yml");
 
-                            var yamlSerializer = new Serializer();
-                            var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections, safe = false, include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
+                            var yamlSettings = new SerializerSettings {EmitAlias = false};
+                            var yamlSerializer = new Serializer(yamlSettings);
+
+                            var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", 
+                            layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections, safe = false, 
+                            include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, 
+                            encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, 
+                            limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, 
+                            excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, 
+                            permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
+                            Console.WriteLine();
+                            Console.WriteLine(defaultConfig);
+
                             using (FileStream fs = File.Create("./_config.yml"))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
@@ -339,7 +360,21 @@ namespace WDHAN
                 // Run through every file in generated directories, export to proper directory
                 // If file is in root, export to root. If in a collection, export according to rules in config file.
 
-                var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Setup Markdig
+                var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Setup Markdig (all extensions, add options later; TODO)
+
+                var siteConfig = new { source = "", destination = "", collections_dir = "", 
+                plugins_dir = "", layouts_dir = "", data_dir = "", 
+                includes_dir = "", sass_dir = "", safe = "", 
+                include = "", exclude = "", keep_files = "", encoding = "", 
+                markdown_ext = "", strict_front_matter = "", 
+                show_drafts = "", limit_posts = "", future = "", 
+                unpublished = "",  whitelist = "", plugins = "",
+                lsi = "", excerpt_separator = "", incremental = "",
+                detach = "", port = "", host = "", baseurl = "",
+                show_dir_listing = "", permalink = "",
+                paginate_path = "", timezone = "", quiet = "",
+                verbose = "", defaults = ""};
+                
 
             }
             catch (UnauthorizedAccessException)
