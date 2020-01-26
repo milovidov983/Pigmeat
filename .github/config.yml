@@ -1,7 +1,0 @@
-todo:
-  keyword: "@makeAnIssue"
-- name: Secret Scan
-  uses: max/secret-scan@1.0.0
-revert:
-- name: Automatic Revert
-  uses: srt32/revert@v0.0.1
