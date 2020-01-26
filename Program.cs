@@ -4,9 +4,6 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using SharpScss;
-//using SharpYaml;
-//using SharpYaml.Serialization;
-//using ShellProgressBar;
 using System.Text;
 using System.Collections.Generic;
 using Fluid.Values;
@@ -65,25 +62,12 @@ namespace WDHAN
             {
                 Console.WriteLine("Cleaning project directory, " + args[1] + "/_site" + " ... ");
                 System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + "/_site");
-                //String fileName = "";
-                /*
-                var options = new ProgressBarOptions
+
+                foreach (var file in Directory.GetFiles(args[1] + "/_site", "*.*", SearchOption.AllDirectories))
                 {
-                    ProgressCharacter = '─',
-                    ProgressBarOnBottom = true
-                };
-                using (var progressBar = new ProgressBar(Directory.GetFiles(args[1] + "/_site", "*.*", SearchOption.AllDirectories).Length, "Deleting " + fileName, options))
-                {
-                    */
-                    foreach (var file in Directory.GetFiles(args[1] + "/_site", "*.*", SearchOption.AllDirectories))
-                    {
-                        //fileName = file.Remove(args[1].Length + "/_site".Length);
-                        Console.WriteLine("Deleting " + file.Substring(args[1].Length + "/_site".Length + 1));
-                        File.Delete(file); 
-                        //progressBar.Tick();
-                    }
-                //}
-                
+                    Console.WriteLine("Deleting " + file.Substring(args[1].Length + "/_site".Length + 1));
+                    File.Delete(file); 
+                }
                 
                 foreach (DirectoryInfo dir in di.EnumerateDirectories())
                 {
@@ -97,24 +81,12 @@ namespace WDHAN
             {
                 Console.WriteLine("Cleaning project directory, " + "./_site" + " ... ");
                 System.IO.DirectoryInfo di = new DirectoryInfo("./_site");
-                //String fileName = "";
-                /*
-                var options = new ProgressBarOptions
+
+                foreach (var file in Directory.GetFiles("./_site", "*.*", SearchOption.AllDirectories))
                 {
-                    ProgressCharacter = '─',
-                    ProgressBarOnBottom = true
-                };
-                using (var progressBar = new ProgressBar(Directory.GetFiles("./_site", "*.*", SearchOption.AllDirectories).Length, "Deleting " + fileName, options))
-                {
-                    */
-                    foreach (var file in Directory.GetFiles("./_site", "*.*", SearchOption.AllDirectories))
-                    {
-                        //fileName = file.Remove("/_site".Length);
-                        Console.WriteLine("Deleting " + file.Substring("/_site".Length + 1));
-                        File.Delete(file); 
-                        //progressBar.Tick();
-                    }
-                //}
+                    Console.WriteLine("Deleting " + file.Substring("/_site".Length + 1));
+                    File.Delete(file); 
+                }
                 
                 foreach (DirectoryInfo dir in di.EnumerateDirectories())
                 {
@@ -188,24 +160,6 @@ namespace WDHAN
                             Directory.CreateDirectory(args[2] + "./_data");
                             Console.WriteLine("Creating _config.json");
 
-                            /*
-                            var yamlSettings = new SerializerSettings {EmitAlias = false};
-                            var yamlSerializer = new Serializer(yamlSettings);
-                            
-                            var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", 
-                            layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections, safe = false, 
-                            include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, 
-                            encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, 
-                            limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, 
-                            excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, 
-                            permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
-                            Console.WriteLine();
-                            Console.WriteLine(defaultConfig);
-                            using (FileStream fs = File.Create(args[2] + "./_config.yml"))
-                            {
-                                fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
-                            }
-                            */
                             Config defaultConfig = new Config 
                             {
                                 source = ".",
@@ -282,26 +236,6 @@ namespace WDHAN
                             Console.WriteLine("Creating /_data");
                             Directory.CreateDirectory("./_data");
                             Console.WriteLine("Creating _config.json");
-
-                            /*
-                            var yamlSettings = new SerializerSettings {EmitAlias = false};
-                            var yamlSerializer = new Serializer(yamlSettings);
-
-                            var defaultConfig = yamlSerializer.Serialize(new { source = '.', destination = "./_site", collections_dir = '.', plugins_dir = "_plugins", 
-                            layouts_dir = "_layouts", data_dir = "_data", includes_dir = "_includes", collections, safe = false, 
-                            include = new string[] { ".htaccess" }, exclude = new string[] { }, keep_files = new string[] { ".git", ".svn" }, 
-                            encoding = "utf-8", markdown_ext = "markdown,mkdown,mkdn,mkd,md", strict_front_matter = false, show_drafts = false, 
-                            limit_posts = 0, future = false, unpublished = false, whitelist = new string[] { }, plugins = new string[] { }, lsi = false, 
-                            excerpt_seperator = @"\n\n", incremental = false, detach = false, port = 4000, host = "127.0.0.1", baseurl = ' ', show_dir_listing = false, 
-                            permalink = "date", paginate_path = "/page:num", timezone = "null", quiet = false, verbose = false, defaults = new string[] { } });
-                            Console.WriteLine();
-                            Console.WriteLine(defaultConfig);
-
-                            using (FileStream fs = File.Create("./_config.yml"))
-                            {
-                                fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
-                            }
-                            */
 
                             Config defaultConfig = new Config 
                             {
@@ -399,15 +333,15 @@ namespace WDHAN
         /*
         OK, how are we going to tackle this? We have a Liquid parser, but it's on us to find those variables to pass to the parser.
         Hmm ... what variables do we actually have to work with?
-        Well, posts can have post.variable, site.variable, site.data.variable
+        Well, pages can have page.variable, site.variable, site.data.variable
         Includes can have site.variable, site.data.variable, and include.variable
-        We don't know what include.variable is, UNTIL we get that value from the post, so ... there's an order to the parsing:
+        We don't know what include.variable is, UNTIL we get that value from the page, so ... there's an order to the parsing:
         1. site
         2. site.data
-        3. post (from collections, find path, parse)
+        3. page (from file header AND/OR from collections in 'site,' find path, parse)
         4. include (get references include from /_includes/<string>.html)
-        5. layout (since this can reference post data not yet generated)
-        6. misc. leftovers (rss.xml for example, readme, etc.)
+        5. layout (since this can reference page data not yet generated)
+        6. misc. leftovers (rss.xml for example)
 
         How do we get the variables into the parser (Fluid)?
         var model = new { ParamOne = "Hello", ParamTwo = "world." };
@@ -422,33 +356,12 @@ namespace WDHAN
         }
         So what does this mean? It means we have to get our variables and store them in classes or variable sets (models), before
         passing them to template.Render(context), which we can then pass to Markdig to generate HTML (in cunjunction with SharpScss).
-        Site variables, including site.data variables, come from YAML data, which we can use SharpYaml to get (though reading back data will be hard).
+        Site variables, including site.data variables, come from JSON data.
         */
         static string parseLiquid(string[] args, string collectionName, string filePath)
         {
             try
             {
-                //Directory.CreateDirectory("./_site");
-                // Run through every file in generated directories, export to proper directory
-                // If file is in root, export to root. If in a collection, export according to rules in config file.
-
-                /*
-                var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Setup Markdig (all extensions, add options later; TODO)
-
-                var siteConfig = new { source = "", destination = "", collections_dir = "", 
-                plugins_dir = "", layouts_dir = "", data_dir = "", 
-                includes_dir = "", sass_dir = "", safe = "", 
-                include = "", exclude = "", keep_files = "", encoding = "", 
-                markdown_ext = "", strict_front_matter = "", 
-                show_drafts = "", limit_posts = "", future = "", 
-                unpublished = "",  whitelist = "", plugins = "",
-                lsi = "", excerpt_separator = "", incremental = "",
-                detach = "", port = "", host = "", baseurl = "",
-                show_dir_listing = "", permalink = "",
-                paginate_path = "", timezone = "", quiet = "",
-                verbose = "", defaults = ""};
-                */
-
                 // When a property of a JObject value is accessed, try to look into its properties
                 TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
 
