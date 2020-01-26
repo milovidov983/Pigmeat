@@ -9,11 +9,15 @@ using SharpScss;
 //using ShellProgressBar;
 using System.Text;
 using System.Collections.Generic;
+using Fluid.Values;
+using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace WDHAN
 {
     class Program
     {
+        public string environment;
         static void Main(string[] args)
         {
             try
@@ -121,32 +125,32 @@ namespace WDHAN
             }
             catch(DirectoryNotFoundException)
             {
-                Console.WriteLine("ERROR: The project directory you're trying to clean cannot be found.");
+                Console.WriteLine("ERROR [DirectoryNotFoundException]: The project directory you're trying to clean cannot be found.");
                 Environment.Exit(1);
             }
             catch(System.Security.SecurityException)
             {
-                Console.WriteLine("ERROR: You do not have write access to the project directory you're trying to clean.");
+                Console.WriteLine("ERROR [System.Security.SecurityException]: You do not have write access to the project directory you're trying to clean.");
                 Environment.Exit(1);
             }
             catch(ArgumentException)
             {
-                Console.WriteLine("ERROR: The project directory you're trying to clean cannot be found.");
+                Console.WriteLine("ERROR [ArgumentException]: The project directory you're trying to clean cannot be found.");
                 Environment.Exit(1);
             }
             catch(UnauthorizedAccessException)
             {
-                Console.WriteLine("ERROR: You do not have write access to the project directory you're trying to clean.");
+                Console.WriteLine("ERROR [UnauthorizedAccessException]: You do not have write access to the project directory you're trying to clean.");
                 Environment.Exit(1);
             }
             catch(IOException)
             {
-                Console.WriteLine("ERROR: An I/O error has occured. Ensure the project directory is not read-only, and no other programs are using files in the directory.");
+                Console.WriteLine("ERROR [IOException]: An I/O error has occured. Ensure the project directory is not read-only, and no other programs are using files in the directory.");
                 Environment.Exit(1);
             }
             catch(Exception)
             {
-                Console.WriteLine("ERROR: Cannot clean project files. Please ensure the directory you're trying to clean exists and can be accessed.");
+                Console.WriteLine("ERROR [Exception]: Cannot clean project files. Please ensure the directory you're trying to clean exists and can be accessed.");
                 Environment.Exit(1);
             }
         }
@@ -161,32 +165,12 @@ namespace WDHAN
                     {
                         try
                         {
-                            var collections = new Dictionary<string, List<Dictionary<string, object>>>();
-
+                            var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
+                            var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
                             var postsVariables = new Dictionary<string, object>();
                             postsVariables.Add("output", true);
-
-                            var draftsVariables = new Dictionary<string, object>();
-                            draftsVariables.Add("output", false);
-
-                            collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
-                            collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
-
-                            /* 
-                            // Prints every collection and parameter (w/ value)
-                            foreach(var entry in collections)
-                            {
-                                Console.WriteLine(entry.Key);
-                                foreach(var param in entry.Value)
-                                {
-                                    foreach(var entry2 in param)
-                                    {
-                                        Console.WriteLine(entry2.Key + " "+ entry2.Value);
-                                    }
-                                    Console.WriteLine();
-                                }
-                            }
-                            */
+                            postCollection.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
+                            defaultCollections.Add(postCollection);
 
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory(args[2] + "./_plugins");
@@ -202,8 +186,9 @@ namespace WDHAN
                             Directory.CreateDirectory(args[2] + "./_drafts");
                             Console.WriteLine("Creating /_data");
                             Directory.CreateDirectory(args[2] + "./_data");
-                            Console.WriteLine("Creating _config.yml");
+                            Console.WriteLine("Creating _config.json");
 
+                            /*
                             var yamlSettings = new SerializerSettings {EmitAlias = false};
                             var yamlSerializer = new Serializer(yamlSettings);
                             
@@ -220,7 +205,50 @@ namespace WDHAN
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
                             }
-
+                            */
+                            Config defaultConfig = new Config 
+                            {
+                                source = ".",
+                                destination = @"./_site",
+                                collections_dir = ".",
+                                plugins_dir = "_plugins",
+                                layouts_dir = "_layouts",
+                                data_dir = "_data",
+                                includes_dir = "_includes",
+                                sass_dir = "_sass",
+                                collections = defaultCollections,
+                                safe = false,
+                                include = new string[] { ".htaccess" },
+                                exclude = new string[] {  },
+                                keep_files = new string[] { ".git", ".svn" },
+                                encoding = "utf-8",
+                                culture = "en-US",
+                                markdown_ext = "markdown,mkdown,mkdn,mkd,md",
+                                strict_front_matter = false,
+                                //show_drafts = false, //Intentionally blank, generates null field on output
+                                limit_posts = 0,
+                                future = false,
+                                unpublished = false,
+                                whitelist = new string[] {  },
+                                plugins = new string[] {  },
+                                excerpt_separator = @"\n\n",
+                                detach = false,
+                                port = 4000,
+                                host = "127.0.0.1",
+                                baseurl = "",
+                                show_dir_listing = false,
+                                permalink = "date",
+                                paginate_path = "/page:num",
+                                //timezone = "null", //Intentionally blank, generates true null field on output
+                                quiet = false,
+                                verbose = false
+                            };
+                            string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
+                            Console.WriteLine(defaultConfigSerialized);
+                            using (FileStream fs = File.Create(args[2] + "./_config.yml"))
+                            {
+                                fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
+                            }
                         }
                         catch(ArgumentNullException)
                         {
@@ -232,16 +260,12 @@ namespace WDHAN
                         }
                         catch (IndexOutOfRangeException)
                         {
-                            var collections = new Dictionary<string, List<Dictionary<string, object>>>();
-
+                            var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
+                            var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
                             var postsVariables = new Dictionary<string, object>();
                             postsVariables.Add("output", true);
-
-                            var draftsVariables = new Dictionary<string, object>();
-                            draftsVariables.Add("output", false);
-
-                            collections.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
-                            collections.Add("drafts", new List<Dictionary<string, object>>() { draftsVariables });
+                            postCollection.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
+                            defaultCollections.Add(postCollection);
                             
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory("./_plugins");
@@ -257,8 +281,9 @@ namespace WDHAN
                             Directory.CreateDirectory("./_drafts");
                             Console.WriteLine("Creating /_data");
                             Directory.CreateDirectory("./_data");
-                            Console.WriteLine("Creating _config.yml");
+                            Console.WriteLine("Creating _config.json");
 
+                            /*
                             var yamlSettings = new SerializerSettings {EmitAlias = false};
                             var yamlSerializer = new Serializer(yamlSettings);
 
@@ -276,35 +301,81 @@ namespace WDHAN
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(defaultConfig), 0, Encoding.UTF8.GetBytes(defaultConfig).Length);
                             }
+                            */
+
+                            Config defaultConfig = new Config 
+                            {
+                                source = ".",
+                                destination = @"./_site",
+                                collections_dir = ".",
+                                plugins_dir = "_plugins",
+                                layouts_dir = "_layouts",
+                                data_dir = "_data",
+                                includes_dir = "_includes",
+                                sass_dir = "_sass",
+                                collections = defaultCollections,
+                                safe = false,
+                                include = new string[] { ".htaccess" },
+                                exclude = new string[] {  },
+                                keep_files = new string[] { ".git", ".svn" },
+                                encoding = "utf-8",
+                                culture = "en-US",
+                                markdown_ext = "markdown,mkdown,mkdn,mkd,md",
+                                strict_front_matter = false,
+                                //show_drafts = false, //Intentionally blank, generates null field on output
+                                limit_posts = 0,
+                                future = false,
+                                unpublished = false,
+                                whitelist = new string[] {  },
+                                plugins = new string[] {  },
+                                excerpt_separator = @"\n\n",
+                                detach = false,
+                                port = 4000,
+                                host = "127.0.0.1",
+                                baseurl = "",
+                                show_dir_listing = false,
+                                permalink = "date",
+                                paginate_path = "/page:num",
+                                //timezone = "null", //Intentionally blank, generates true null field on output
+                                quiet = false,
+                                verbose = false
+                            };
+                            string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
+                            Console.WriteLine(defaultConfigSerialized);
+                            using (FileStream fs = File.Create("./_config.yml"))
+                            {
+                                fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
+                            }
+
                         }
                         catch(DirectoryNotFoundException)
                         {
-                            Console.WriteLine("ERROR: The specified directory is either inaccessible or not found.");
+                            Console.WriteLine("ERROR [DirectoryNotFoundException]: The specified directory is either inaccessible or not found.");
                         }
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        Console.WriteLine("ERROR: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
+                        Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
                         Environment.Exit(1);
                     }
                     catch (PathTooLongException)
                     {
-                        Console.WriteLine("ERROR: The path to your WDHAN project is too long for your file system to handle.");
+                        Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
                         Environment.Exit(1);
                     }
                     catch (DirectoryNotFoundException)
                     {
-                        Console.WriteLine("ERROR: The path to your WDHAN project is inaccessible. Verify it still exists.");
+                        Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
                         Environment.Exit(1);
                     }
                     catch (IOException)
                     {
-                        Console.WriteLine("ERROR: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
+                        Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
                         Environment.Exit(1);
                     }
                     catch (NotSupportedException)
                     {
-                        Console.WriteLine("ERROR: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
+                        Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
                         Environment.Exit(1);
                     }
 
@@ -316,11 +387,11 @@ namespace WDHAN
             }
             catch(Exception)
             {
-                Console.WriteLine("ERROR: Cannot create project files. Please ensure the directory you're trying to create is supported in your file system.");
+                Console.WriteLine("ERROR [Exception]: Cannot create project files. Please ensure the directory you're trying to create is supported in your file system.");
                 Environment.Exit(1);
             }
         }
-        static void getSiteVars(string[] args)
+        static void buildSite(string[] args)
         {
 
         }
@@ -353,14 +424,15 @@ namespace WDHAN
         passing them to template.Render(context), which we can then pass to Markdig to generate HTML (in cunjunction with SharpScss).
         Site variables, including site.data variables, come from YAML data, which we can use SharpYaml to get (though reading back data will be hard).
         */
-        static void buildSite(string[] args)
+        static string parseLiquid(string[] args, string collectionName, string filePath)
         {
             try
             {
-                Directory.CreateDirectory("./_site");
+                //Directory.CreateDirectory("./_site");
                 // Run through every file in generated directories, export to proper directory
                 // If file is in root, export to root. If in a collection, export according to rules in config file.
 
+                /*
                 var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Setup Markdig (all extensions, add options later; TODO)
 
                 var siteConfig = new { source = "", destination = "", collections_dir = "", 
@@ -375,33 +447,76 @@ namespace WDHAN
                 show_dir_listing = "", permalink = "",
                 paginate_path = "", timezone = "", quiet = "",
                 verbose = "", defaults = ""};
-                
+                */
+
+                // When a property of a JObject value is accessed, try to look into its properties
+                TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
+
+                // Convert JToken to FluidValue
+                FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
+                FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
+
+                //TODO: Get values from content
+                //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
+                //all these values PLUS the page's values, before the page itself is rendered
+
+                //var pageContent = "{{ Model.Name }}"; // String containing page's contents
+                var pageContent = File.ReadAllText(filePath);
+
+                //var siteModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's values
+                var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
+
+                //var siteDataModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's data values
+                string dataContents = "";
+                foreach(var file in Directory.GetFiles("./_data"))
+                {
+                    dataContents += File.ReadAllText(file);
+                }
+                var siteDataModel = JObject.Parse(dataContents);
+
+                //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
+                //NOTE: Not needed. Collection data is in _config.json
+
+                if (FluidTemplate.TryParse(pageContent, out var template))
+                {
+                    var context = new TemplateContext();
+                    context.CultureInfo = new CultureInfo("en-US"); //TODO: Make this configurable from _config.json
+                    context.SetValue("site", siteModel);
+                    context.SetValue("site.data", siteDataModel);
+
+                    //Console.WriteLine(template.Render(context));
+                    return template.Render(context);
+                }
+                else
+                {
+                    return null;
+                }
 
             }
             catch (UnauthorizedAccessException)
             {
-                Console.WriteLine("ERROR: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
-                Environment.Exit(1);
+                Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
+                return null;
             }
             catch (PathTooLongException)
             {
-                Console.WriteLine("ERROR: The path to your WDHAN project is too long for your file system to handle.");
-                Environment.Exit(1);
+                Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
+                return null;
             }
             catch (DirectoryNotFoundException)
             {
-                Console.WriteLine("ERROR: The path to your WDHAN project is inaccessible. Verify it still exists.");
-                Environment.Exit(1);
+                Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
+                return null;
             }
             catch (IOException)
             {
-                Console.WriteLine("ERROR: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
-                Environment.Exit(1);
+                Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
+                return null;
             }
             catch (NotSupportedException)
             {
-                Console.WriteLine("ERROR: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
-                Environment.Exit(1);
+                Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
+                return null;
             }
         }
         static void printHelpMsg(string[] args)
