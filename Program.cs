@@ -360,6 +360,7 @@ namespace WDHAN
                         }
 
                         // Configure the pipeline with all advanced extensions active
+                        Console.WriteLine("Outputting " + file);
                         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
                         var result = Markdown.ToHtml(parsePage(args, key, file, fileContents), pipeline);
 
@@ -466,6 +467,86 @@ namespace WDHAN
                     context.SetValue("site", siteModel);
                     context.SetValue("site.data", siteDataModel);
                     context.SetValue("page", pageModel);
+
+                    Console.WriteLine(template.Render(context));
+                    Console.WriteLine();
+                    return template.Render(context);
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
+                return null;
+            }
+            catch (PathTooLongException)
+            {
+                Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
+                return null;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
+                return null;
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
+                return null;
+            }
+            catch (NotSupportedException)
+            {
+                Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
+                return null;
+            }
+        }
+        static string parseLayout(string[] args, string filePath, string fileContents, string pageContents)
+        {
+            try
+            {
+                Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+
+                // When a property of a JObject value is accessed, try to look into its properties
+                TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
+
+                // Convert JToken to FluidValue
+                FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
+                FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
+
+                //TODO: Get values from content
+                //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
+                //all these values PLUS the page's values, before the page itself is rendered
+
+                //var pageContent = "{{ Model.Name }}"; // String containing page's contents
+
+                //var siteModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's values
+                var siteModel = JObject.Parse(File.ReadAllText("./" + "_config.json"));
+
+                //var siteDataModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's data values
+                string dataContents = "{\"data\": true}";
+                foreach(var file in Directory.GetFiles(siteConfig.source + "/" + siteConfig.data_dir))
+                {
+                    dataContents += File.ReadAllText(file);
+                }
+                var siteDataModel = JObject.Parse(dataContents);
+
+                //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
+                //NOTE: Not needed. Collection data is in _config.json
+
+                JObject pageModel = parseFrontMatter(filePath);
+
+                if (FluidTemplate.TryParse(fileContents, out var template))
+                {
+                    var context = new TemplateContext();
+                    context.CultureInfo = new CultureInfo(siteConfig.culture);
+                    context.SetValue("site", siteModel);
+                    context.SetValue("site.data", siteDataModel);
+                    context.SetValue("page", pageModel);
+                    context.SetValue("content", pageContents);
 
                     Console.WriteLine(template.Render(context));
                     Console.WriteLine();
