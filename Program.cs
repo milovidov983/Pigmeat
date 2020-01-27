@@ -60,12 +60,13 @@ namespace WDHAN
         static void cleanSite(string[] args){
             try
             {
-                Console.WriteLine("Cleaning project directory, " + args[1] + "/_site" + " ... ");
-                System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + "/_site");
+                Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+                Console.WriteLine("Cleaning project directory, " + args[1] + siteConfig.destination + " ... ");
+                System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + siteConfig.destination);
 
-                foreach (var file in Directory.GetFiles(args[1] + "/_site", "*.*", SearchOption.AllDirectories))
+                foreach (var file in Directory.GetFiles(args[1] + siteConfig.destination, "*.*", SearchOption.AllDirectories))
                 {
-                    Console.WriteLine("Deleting " + file.Substring(args[1].Length + "/_site".Length + 1));
+                    Console.WriteLine("Deleting " + file.Substring(args[1].Length + siteConfig.destination.Length + 1));
                     File.Delete(file); 
                 }
                 
@@ -79,12 +80,13 @@ namespace WDHAN
             }
             catch(IndexOutOfRangeException)
             {
-                Console.WriteLine("Cleaning project directory, " + "./_site" + " ... ");
-                System.IO.DirectoryInfo di = new DirectoryInfo("./_site");
+                Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+                Console.WriteLine("Cleaning project directory, " + siteConfig.destination + " ... ");
+                System.IO.DirectoryInfo di = new DirectoryInfo(siteConfig.destination);
 
-                foreach (var file in Directory.GetFiles("./_site", "*.*", SearchOption.AllDirectories))
+                foreach (var file in Directory.GetFiles(siteConfig.destination, "*.*", SearchOption.AllDirectories))
                 {
-                    Console.WriteLine("Deleting " + file.Substring("/_site".Length + 1));
+                    Console.WriteLine("Deleting " + file.Substring(siteConfig.destination.Length + 1));
                     File.Delete(file); 
                 }
                 
@@ -199,7 +201,7 @@ namespace WDHAN
                             };
                             string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
                             Console.WriteLine(defaultConfigSerialized);
-                            using (FileStream fs = File.Create(args[2] + "./_config.yml"))
+                            using (FileStream fs = File.Create(args[2] + "./_config.json"))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
                             }
@@ -276,7 +278,7 @@ namespace WDHAN
                             };
                             string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
                             Console.WriteLine(defaultConfigSerialized);
-                            using (FileStream fs = File.Create("./_config.yml"))
+                            using (FileStream fs = File.Create("./_config.json"))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
                             }
@@ -327,7 +329,49 @@ namespace WDHAN
         }
         static void buildSite(string[] args)
         {
+            Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+            Directory.CreateDirectory(siteConfig.destination);
+            foreach(var collection in siteConfig.collections)
+            {
+                foreach(var key in collection.Keys){
+                    foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + key))
+                    {
+                        string fileContents = "";
+                        Boolean first = true;
+                        Boolean second = false;
+                        if(File.ReadAllLines(file)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
+                        {
+                            foreach(var line in File.ReadAllLines(file)){
+                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
+                                {
+                                    first = false;
+                                    continue;
+                                }
+                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
+                                {
+                                    second = true;
+                                    continue;
+                                }
+                                if(!line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first && second)
+                                {
+                                    fileContents += line;
+                                }
+                            }
+                        }
 
+                        // Configure the pipeline with all advanced extensions active
+                        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+                        var result = Markdown.ToHtml(parsePage(args, key, file, fileContents), pipeline);
+
+                        //TODO: Implement permalinks in accordance with _config.json settings
+                        Directory.CreateDirectory(siteConfig.destination + "/" + key); // No longer needed when permalink support is added
+                        using (FileStream fs = File.Create(siteConfig.destination + "/" + key + "/" + Path.GetFileNameWithoutExtension(file) + ".html"))
+                        {
+                            fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
+                        }
+                    }
+                }
+            }
         }
 
         /*
@@ -358,10 +402,34 @@ namespace WDHAN
         passing them to template.Render(context), which we can then pass to Markdig to generate HTML (in cunjunction with SharpScss).
         Site variables, including site.data variables, come from JSON data.
         */
-        static string parseLiquid(string[] args, string collectionName, string filePath)
+        static JObject parseFrontMatter(string filePath)
+        {
+            string pageFrontMatter = "{\"page\": true}";
+            if(File.ReadAllLines(filePath)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach(var line in File.ReadAllLines(filePath)){
+                    if(!line.Equals("---", StringComparison.OrdinalIgnoreCase))
+                        {
+                            pageFrontMatter += line;
+                        }
+                    else
+                        {
+                            break;
+                        }
+                }
+                return JObject.Parse(pageFrontMatter);
+            }
+            else
+            {
+                return JObject.Parse("");
+            }
+        }
+        static string parsePage(string[] args, string collectionName, string filePath, string fileContents)
         {
             try
             {
+                Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+
                 // When a property of a JObject value is accessed, try to look into its properties
                 TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
 
@@ -374,14 +442,13 @@ namespace WDHAN
                 //all these values PLUS the page's values, before the page itself is rendered
 
                 //var pageContent = "{{ Model.Name }}"; // String containing page's contents
-                var pageContent = File.ReadAllText(filePath);
 
                 //var siteModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's values
-                var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
+                var siteModel = JObject.Parse(File.ReadAllText("./" + "_config.json"));
 
                 //var siteDataModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's data values
-                string dataContents = "";
-                foreach(var file in Directory.GetFiles("./_data"))
+                string dataContents = "{\"data\": true}";
+                foreach(var file in Directory.GetFiles(siteConfig.source + "/" + siteConfig.data_dir))
                 {
                     dataContents += File.ReadAllText(file);
                 }
@@ -390,14 +457,18 @@ namespace WDHAN
                 //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
                 //NOTE: Not needed. Collection data is in _config.json
 
-                if (FluidTemplate.TryParse(pageContent, out var template))
+                JObject pageModel = parseFrontMatter(filePath);
+
+                if (FluidTemplate.TryParse(fileContents, out var template))
                 {
                     var context = new TemplateContext();
-                    context.CultureInfo = new CultureInfo("en-US"); //TODO: Make this configurable from _config.json
+                    context.CultureInfo = new CultureInfo(siteConfig.culture);
                     context.SetValue("site", siteModel);
                     context.SetValue("site.data", siteDataModel);
+                    context.SetValue("page", pageModel);
 
-                    //Console.WriteLine(template.Render(context));
+                    Console.WriteLine(template.Render(context));
+                    Console.WriteLine();
                     return template.Render(context);
                 }
                 else
@@ -442,11 +513,11 @@ namespace WDHAN
                 }
                 else if (args[1].Equals("build", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Outputs a publishable WDHAN project to the /_site directory.");
+                    Console.WriteLine("Outputs a publishable WDHAN project.");
                 }
                 else if (args[1].Equals("b", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Outputs a publishable WDHAN project to the /_site directory.");
+                    Console.WriteLine("Outputs a publishable WDHAN project.");
                 }
                 else if (args[1].Equals("serve", StringComparison.OrdinalIgnoreCase))
                 {
@@ -475,7 +546,7 @@ namespace WDHAN
                     "WDHAN supports the following commands:\n" +
                     "   wdhan new - Creates an empty WDHAN project in the current directory.\n" +
                     "   wdhan new <string> - Creates an empty WDHAN project at the specified directory.\n" +
-                    "   wdhan build - Outputs a publishable WDHAN project to the /_site directory.\n" +
+                    "   wdhan build - Outputs a publishable WDHAN project.\n" +
                     "   wdhan b - Same as above.\n" +
                     "   wdhan serve - Rebuilds the site anytime a change is detected.\n" +
                     "   wdhan s - Same as above.\n" +
