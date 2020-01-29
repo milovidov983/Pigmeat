@@ -483,9 +483,9 @@ namespace WDHAN
                 }
                 else
                 {
+                    Console.WriteLine("ERROR: Could not parse Liquid context.");
                     return null;
                 }
-
             }
             catch (UnauthorizedAccessException)
             {
