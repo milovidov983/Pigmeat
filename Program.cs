@@ -337,30 +337,31 @@ namespace WDHAN
                     foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + key))
                     {
                         string fileContents = "";
-                        Boolean first = true;
+                        Boolean first = false;
                         Boolean second = false;
                         if(File.ReadAllLines(file)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
                         {
                             foreach(var line in File.ReadAllLines(file)){
-                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
+                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
                                 {
-                                    first = false;
+                                    first = true;
                                     continue;
                                 }
-                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
+                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
                                 {
                                     second = true;
                                     continue;
                                 }
-                                if(!line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first && second)
+                                if(first && second)
                                 {
-                                    fileContents += line;
+                                    fileContents += (line + "\n");
                                 }
                             }
                         }
 
                         // Configure the pipeline with all advanced extensions active
-                        Console.WriteLine("Outputting " + file);
+                        Console.WriteLine("Outputting " + file + " to " + siteConfig.destination + "/" + key + "/" + Path.GetFileNameWithoutExtension(file) + ".html");
+                        Console.WriteLine(fileContents + "\nis the content being parsed.\n");
                         var result = "";
                         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
                         try
@@ -477,7 +478,7 @@ namespace WDHAN
                     context.SetValue("site.data", siteDataModel);
                     context.SetValue("page", pageModel);
 
-                    Console.WriteLine(template.Render(context));
+                    Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
                     return template.Render(context);
                 }
