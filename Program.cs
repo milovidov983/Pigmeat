@@ -415,18 +415,25 @@ namespace WDHAN
         */
         static JObject parseFrontMatter(string filePath)
         {
-            string pageFrontMatter = "{\"page\": true}";
+            Boolean first = false, second = false;
+            string pageFrontMatter = "";
             if(File.ReadAllLines(filePath)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
             {
                 foreach(var line in File.ReadAllLines(filePath)){
-                    if(!line.Equals("---", StringComparison.OrdinalIgnoreCase))
-                        {
-                            pageFrontMatter += line;
-                        }
-                    else
-                        {
-                            break;
-                        }
+                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
+                    {
+                        first = true;
+                        continue;
+                    }
+                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
+                    {
+                        second = true;
+                        continue;
+                    }
+                    if(first && !second)
+                    {
+                        pageFrontMatter += (line + "\n");
+                    }
                 }
                 return JObject.Parse(pageFrontMatter);
             }
