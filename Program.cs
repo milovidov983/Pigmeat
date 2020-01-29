@@ -361,8 +361,17 @@ namespace WDHAN
 
                         // Configure the pipeline with all advanced extensions active
                         Console.WriteLine("Outputting " + file);
+                        var result = "";
                         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-                        var result = Markdown.ToHtml(parsePage(args, key, file, fileContents), pipeline);
+                        try
+                        {
+                            result = Markdown.ToHtml(parsePage(args, key, file, fileContents), pipeline);
+                        }
+                        catch(ArgumentNullException)
+                        {
+                            result = "ERROR [ArgumentNullException]: Pagewrite failed. Page contents are either corrupted or blank.";
+                            Environment.Exit(1);
+                        }
 
                         //TODO: Implement permalinks in accordance with _config.json settings
                         Directory.CreateDirectory(siteConfig.destination + "/" + key); // No longer needed when permalink support is added
