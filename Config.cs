@@ -42,7 +42,7 @@ namespace WDHAN
         public Boolean verbose { get; set; }
         public Config()
         {
-
+            
         }
     }
 }
