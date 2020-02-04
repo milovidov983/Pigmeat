@@ -334,6 +334,7 @@ namespace WDHAN
             foreach(var collection in siteConfig.collections)
             {
                 foreach(var key in collection.Keys){
+                    JObject collectionPosts = Post.getPosts(key, siteConfig);
                     foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + key))
                     {
                         string fileContents = "";
@@ -366,7 +367,7 @@ namespace WDHAN
                         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
                         try
                         {
-                            result = Markdown.ToHtml(parsePage(args, key, file, fileContents), pipeline);
+                            result = Markdown.ToHtml(parsePage(args, key, file, fileContents, collectionPosts), pipeline);
                         }
                         catch(ArgumentNullException)
                         {
@@ -442,7 +443,7 @@ namespace WDHAN
                 return JObject.Parse("");
             }
         }
-        static string parsePage(string[] args, string collectionName, string filePath, string fileContents)
+        static string parsePage(string[] args, string collectionName, string filePath, string fileContents, JObject collectionPosts)
         {
             try
             {
@@ -484,6 +485,7 @@ namespace WDHAN
                     context.SetValue("site", siteModel);
                     context.SetValue("site.data", siteDataModel);
                     context.SetValue("page", pageModel);
+                    context.SetValue("site.collections." + collectionName, collectionPosts);
 
                     Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
