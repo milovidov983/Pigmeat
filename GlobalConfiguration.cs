@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WDHAN
 {
-    public class Config
+    public class GlobalConfiguration
     {
         public string source { get; set; }
         public string destination { get; set; }
@@ -14,7 +14,7 @@ namespace WDHAN
         public string data_dir { get; set; }
         public string includes_dir { get; set; }
         public string sass_dir { get; set; }
-        public List<Dictionary<string, List<Dictionary<string, object>>>> collections { get; set; }
+        public List<string> collections { get; set; }
         public Boolean safe { get; set; }
         public string[] include { get; set; }
         public string[] exclude { get; set; }
@@ -40,7 +40,7 @@ namespace WDHAN
         public string timezone { get; set; }
         public Boolean quiet { get; set; }
         public Boolean verbose { get; set; }
-        public Config()
+        public GlobalConfiguration()
         {
             
         }

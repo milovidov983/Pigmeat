@@ -60,7 +60,7 @@ namespace WDHAN
         static void cleanSite(string[] args){
             try
             {
-                Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+                GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
                 Console.WriteLine("Cleaning project directory, " + args[1] + siteConfig.destination + " ... ");
                 System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + siteConfig.destination);
 
@@ -80,7 +80,7 @@ namespace WDHAN
             }
             catch(IndexOutOfRangeException)
             {
-                Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+                GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
                 Console.WriteLine("Cleaning project directory, " + siteConfig.destination + " ... ");
                 System.IO.DirectoryInfo di = new DirectoryInfo(siteConfig.destination);
 
@@ -139,12 +139,15 @@ namespace WDHAN
                     {
                         try
                         {
+                            /*
                             var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
                             var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
                             var postsVariables = new Dictionary<string, object>();
                             postsVariables.Add("output", true);
                             postCollection.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
                             defaultCollections.Add(postCollection);
+                            */
+                            var defaultCollections = new List<string>() { "posts" };
 
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory(args[2] + "./_plugins");
@@ -162,7 +165,7 @@ namespace WDHAN
                             Directory.CreateDirectory(args[2] + "./_data");
                             Console.WriteLine("Creating _config.json");
 
-                            Config defaultConfig = new Config 
+                            GlobalConfiguration defaultConfig = new GlobalConfiguration 
                             {
                                 source = ".",
                                 destination = @"./_site",
@@ -205,6 +208,17 @@ namespace WDHAN
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
                             }
+
+                            Console.WriteLine("Creating _posts/_config.json");
+                            CollectionConfiguration postsConfig = new CollectionConfiguration();
+                            var postsVariables = new Dictionary<string, object>();
+                            postsVariables.Add("output", true);
+                            postsConfig.variables = postsVariables;
+                            string postsConfigSerialized = JsonConvert.SerializeObject(postsConfig, Formatting.Indented);
+                            using (FileStream fs = File.Create(args[2] + "_posts" + "/_config.json"))
+                            {
+                                fs.Write(Encoding.UTF8.GetBytes(postsConfigSerialized), 0, Encoding.UTF8.GetBytes(postsConfigSerialized).Length);
+                            }
                         }
                         catch(ArgumentNullException)
                         {
@@ -216,12 +230,15 @@ namespace WDHAN
                         }
                         catch (IndexOutOfRangeException)
                         {
+                            /*
                             var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
                             var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
                             var postsVariables = new Dictionary<string, object>();
                             postsVariables.Add("output", true);
                             postCollection.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
                             defaultCollections.Add(postCollection);
+                            */
+                            var defaultCollections = new List<string>() { "posts" };
                             
                             Console.WriteLine("Creating /_plugins");
                             Directory.CreateDirectory("./_plugins");
@@ -239,7 +256,7 @@ namespace WDHAN
                             Directory.CreateDirectory("./_data");
                             Console.WriteLine("Creating _config.json");
 
-                            Config defaultConfig = new Config 
+                            GlobalConfiguration defaultConfig = new GlobalConfiguration 
                             {
                                 source = ".",
                                 destination = @"./_site",
@@ -283,6 +300,16 @@ namespace WDHAN
                                 fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
                             }
 
+                            Console.WriteLine("Creating _posts/_config.json");
+                            CollectionConfiguration postsConfig = new CollectionConfiguration();
+                            var postsVariables = new Dictionary<string, object>();
+                            postsVariables.Add("output", true);
+                            postsConfig.variables = postsVariables;
+                            string postsConfigSerialized = JsonConvert.SerializeObject(postsConfig, Formatting.Indented);
+                            using (FileStream fs = File.Create("./_posts" + "/_config.json"))
+                            {
+                                fs.Write(Encoding.UTF8.GetBytes(postsConfigSerialized), 0, Encoding.UTF8.GetBytes(postsConfigSerialized).Length);
+                            }
                         }
                         catch(DirectoryNotFoundException)
                         {
@@ -329,13 +356,13 @@ namespace WDHAN
         }
         static void buildSite(string[] args)
         {
-            Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+            GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
             Directory.CreateDirectory(siteConfig.destination);
             foreach(var collection in siteConfig.collections)
             {
-                foreach(var key in collection.Keys){
-                    JObject collectionPosts = Post.getPosts(key, siteConfig);
-                    foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + key))
+                //foreach(var key in collection.Keys){
+                    var collectionPosts = Post.getPosts(collection, siteConfig);
+                    foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
                         string fileContents = "";
                         Boolean first = false;
@@ -361,13 +388,13 @@ namespace WDHAN
                         }
 
                         // Configure the pipeline with all advanced extensions active
-                        Console.WriteLine("Outputting " + file + " to " + siteConfig.destination + "/" + key + "/" + Path.GetFileNameWithoutExtension(file) + ".html");
+                        Console.WriteLine("Outputting " + file + " to " + siteConfig.destination + "/" + collection + "/" + Path.GetFileNameWithoutExtension(file) + ".html");
                         Console.WriteLine(fileContents + "\nis the content being parsed.\n");
                         var result = "";
                         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
                         try
                         {
-                            result = Markdown.ToHtml(parsePage(args, key, file, fileContents, collectionPosts), pipeline);
+                            result = Markdown.ToHtml(parsePage(args, collection, file, fileContents, collectionPosts), pipeline);
                         }
                         catch(ArgumentNullException)
                         {
@@ -376,13 +403,13 @@ namespace WDHAN
                         }
 
                         //TODO: Implement permalinks in accordance with _config.json settings
-                        Directory.CreateDirectory(siteConfig.destination + "/" + key); // No longer needed when permalink support is added
-                        using (FileStream fs = File.Create(siteConfig.destination + "/" + key + "/" + Path.GetFileNameWithoutExtension(file) + ".html"))
+                        Directory.CreateDirectory(siteConfig.destination + "/" + collection); // No longer needed when permalink support is added
+                        using (FileStream fs = File.Create(siteConfig.destination + "/" + collection + "/" + Path.GetFileNameWithoutExtension(file) + ".html"))
                         {
                             fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
                         }
                     }
-                }
+                //}
             }
         }
 
@@ -414,40 +441,11 @@ namespace WDHAN
         passing them to template.Render(context), which we can then pass to Markdig to generate HTML (in cunjunction with SharpScss).
         Site variables, including site.data variables, come from JSON data.
         */
-        static JObject parseFrontMatter(string filePath)
-        {
-            Boolean first = false, second = false;
-            string pageFrontMatter = "";
-            if(File.ReadAllLines(filePath)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
-            {
-                foreach(var line in File.ReadAllLines(filePath)){
-                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
-                    {
-                        first = true;
-                        continue;
-                    }
-                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
-                    {
-                        second = true;
-                        continue;
-                    }
-                    if(first && !second)
-                    {
-                        pageFrontMatter += (line + "\n");
-                    }
-                }
-                return JObject.Parse(pageFrontMatter);
-            }
-            else
-            {
-                return JObject.Parse("");
-            }
-        }
-        static string parsePage(string[] args, string collectionName, string filePath, string fileContents, JObject collectionPosts)
+        static string parsePage(string[] args, string collectionName, string filePath, string fileContents, string collectionPosts)
         {
             try
             {
-                Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+                GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
 
                 // When a property of a JObject value is accessed, try to look into its properties
                 TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
@@ -474,9 +472,10 @@ namespace WDHAN
                 var siteDataModel = JObject.Parse(dataContents);
 
                 //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
-                //NOTE: Not needed. Collection data is in _config.json
+                //NOTE: Not needed. Collection data is in _config.json. Actually, nevermind (see #8)
+                var collectionModel = JObject.Parse(File.ReadAllText("./_" + collectionName + "/_config.json"));
 
-                JObject pageModel = parseFrontMatter(filePath);
+                JObject pageModel = Post.parseFrontMatter(filePath);
 
                 if (FluidTemplate.TryParse(fileContents, out var template))
                 {
@@ -485,7 +484,8 @@ namespace WDHAN
                     context.SetValue("site", siteModel);
                     context.SetValue("site.data", siteDataModel);
                     context.SetValue("page", pageModel);
-                    context.SetValue("site.collections." + collectionName, collectionPosts);
+                    context.SetValue(collectionName, JObject.Parse(collectionPosts));
+                    context.SetValue(collectionName + ".variables", collectionModel);
 
                     Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
@@ -527,7 +527,7 @@ namespace WDHAN
         {
             try
             {
-                Config siteConfig = JsonConvert.DeserializeObject<Config>(File.ReadAllText("./_config.json"));
+                GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
 
                 // When a property of a JObject value is accessed, try to look into its properties
                 TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
@@ -556,7 +556,7 @@ namespace WDHAN
                 //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
                 //NOTE: Not needed. Collection data is in _config.json
 
-                JObject pageModel = parseFrontMatter(filePath);
+                JObject pageModel = Post.parseFrontMatter(filePath);
 
                 if (FluidTemplate.TryParse(fileContents, out var template))
                 {
