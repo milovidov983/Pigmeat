@@ -15,8 +15,9 @@ namespace WDHAN
         {
             
         }
-        public static string getPosts(string collectionName, GlobalConfiguration siteConfig) 
+        public static string getPosts(string collectionName) 
         {
+            var siteConfig = GlobalConfiguration.getConfiguration();
             List<Post> postList = new List<Post>();
             foreach(var collection in siteConfig.collections)
             {

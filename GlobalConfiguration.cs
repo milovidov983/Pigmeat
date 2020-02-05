@@ -1,5 +1,7 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace WDHAN
@@ -43,6 +45,10 @@ namespace WDHAN
         public GlobalConfiguration()
         {
             
+        }
+        public static GlobalConfiguration getConfiguration()
+        {
+            return JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
         }
     }
 }

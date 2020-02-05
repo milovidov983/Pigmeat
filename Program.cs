@@ -57,28 +57,9 @@ namespace WDHAN
                 printHelpMsg(args);
             }
         }
-        static void cleanSite(string[] args){
+        static void cleanSite(string[] args)
+        {
             try
-            {
-                GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
-                Console.WriteLine("Cleaning project directory, " + args[1] + siteConfig.destination + " ... ");
-                System.IO.DirectoryInfo di = new DirectoryInfo(args[1] + siteConfig.destination);
-
-                foreach (var file in Directory.GetFiles(args[1] + siteConfig.destination, "*.*", SearchOption.AllDirectories))
-                {
-                    Console.WriteLine("Deleting " + file.Substring(args[1].Length + siteConfig.destination.Length + 1));
-                    File.Delete(file); 
-                }
-                
-                foreach (DirectoryInfo dir in di.EnumerateDirectories())
-                {
-                    Console.WriteLine("Deleting " + dir.Name);
-                    dir.Delete(true); 
-                }
-                
-
-            }
-            catch(IndexOutOfRangeException)
             {
                 GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
                 Console.WriteLine("Cleaning project directory, " + siteConfig.destination + " ... ");
@@ -89,14 +70,13 @@ namespace WDHAN
                     Console.WriteLine("Deleting " + file.Substring(siteConfig.destination.Length + 1));
                     File.Delete(file); 
                 }
-                
+                    
                 foreach (DirectoryInfo dir in di.EnumerateDirectories())
                 {
                     Console.WriteLine("Deleting " + dir.Name);
                     dir.Delete(true); 
                 }
-                
-            }
+            }   
             catch(DirectoryNotFoundException)
             {
                 Console.WriteLine("ERROR [DirectoryNotFoundException]: The project directory you're trying to clean cannot be found.");
@@ -137,184 +117,98 @@ namespace WDHAN
                 {
                     try
                     {
-                        try
-                        {
-                            /*
-                            var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
-                            var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
-                            var postsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", true);
-                            postCollection.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
-                            defaultCollections.Add(postCollection);
-                            */
-                            var defaultCollections = new List<string>() { "posts" };
+                        /*
+                        var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
+                        var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
+                        var postsVariables = new Dictionary<string, object>();
+                        postsVariables.Add("output", true);
+                        postCollection.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
+                        defaultCollections.Add(postCollection);
+                        */
+                        var defaultCollections = new List<string>() { "posts" };
 
-                            Console.WriteLine("Creating /_plugins");
-                            Directory.CreateDirectory(args[2] + "./_plugins");
-                            Console.WriteLine("Creating /_includes");
-                            Directory.CreateDirectory(args[2] + "./_includes");
-                            Console.WriteLine("Creating /_layouts");
-                            Directory.CreateDirectory(args[2] + "./_layouts");
-                            Console.WriteLine("Creating /_sass");
-                            Directory.CreateDirectory(args[2] + "./_sass");
-                            Console.WriteLine("Creating _/posts");
-                            Directory.CreateDirectory(args[2] + "./_posts");
-                            Console.WriteLine("Creating /_drafts");
-                            Directory.CreateDirectory(args[2] + "./_drafts");
-                            Console.WriteLine("Creating /_data");
-                            Directory.CreateDirectory(args[2] + "./_data");
-                            Console.WriteLine("Creating _config.json");
+                        Console.WriteLine("Creating /_plugins");
+                        Directory.CreateDirectory("./_plugins");
+                        Console.WriteLine("Creating /_includes");
+                        Directory.CreateDirectory("./_includes");
+                        Console.WriteLine("Creating /_layouts");
+                        Directory.CreateDirectory("./_layouts");
+                        Console.WriteLine("Creating /_sass");
+                        Directory.CreateDirectory("./_sass");
+                        Console.WriteLine("Creating _/posts");
+                        Directory.CreateDirectory("./_posts");
+                        Console.WriteLine("Creating /_drafts");
+                        Directory.CreateDirectory("./_drafts");
+                        Console.WriteLine("Creating /_data");
+                        Directory.CreateDirectory("./_data");
+                        Console.WriteLine("Creating _config.json");
 
-                            GlobalConfiguration defaultConfig = new GlobalConfiguration 
-                            {
-                                source = ".",
-                                destination = @"./_site",
-                                collections_dir = ".",
-                                plugins_dir = "_plugins",
-                                layouts_dir = "_layouts",
-                                data_dir = "_data",
-                                includes_dir = "_includes",
-                                sass_dir = "_sass",
-                                collections = defaultCollections,
-                                safe = false,
-                                include = new string[] { ".htaccess" },
-                                exclude = new string[] {  },
-                                keep_files = new string[] { ".git", ".svn" },
-                                encoding = "utf-8",
-                                culture = "en-US",
-                                markdown_ext = "markdown,mkdown,mkdn,mkd,md",
-                                strict_front_matter = false,
-                                //show_drafts = false, //Intentionally blank, generates null field on output
-                                limit_posts = 0,
-                                future = false,
-                                unpublished = false,
-                                whitelist = new string[] {  },
-                                plugins = new string[] {  },
-                                excerpt_separator = @"\n\n",
-                                detach = false,
-                                port = 4000,
-                                host = "127.0.0.1",
-                                baseurl = "",
-                                show_dir_listing = false,
-                                permalink = "date",
-                                paginate_path = "/page:num",
-                                //timezone = "null", //Intentionally blank, generates true null field on output
-                                quiet = false,
-                                verbose = false
-                            };
-                            string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
-                            Console.WriteLine(defaultConfigSerialized);
-                            using (FileStream fs = File.Create(args[2] + "./_config.json"))
-                            {
-                                fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
-                            }
+                        GlobalConfiguration defaultConfig = new GlobalConfiguration
+                        {
+                            source = ".",
+                            destination = @"./_site",
+                            collections_dir = ".",
+                            plugins_dir = "_plugins",
+                            layouts_dir = "_layouts",
+                            data_dir = "_data",
+                            includes_dir = "_includes",
+                            sass_dir = "_sass",
+                            collections = defaultCollections,
+                            safe = false,
+                            include = new string[] { ".htaccess" },
+                            exclude = new string[] { },
+                            keep_files = new string[] { ".git", ".svn" },
+                            encoding = "utf-8",
+                            culture = "en-US",
+                            markdown_ext = "markdown,mkdown,mkdn,mkd,md",
+                            strict_front_matter = false,
+                            //show_drafts = false, //Intentionally blank, generates null field on output
+                            limit_posts = 0,
+                            future = false,
+                            unpublished = false,
+                            whitelist = new string[] { },
+                            plugins = new string[] { },
+                            excerpt_separator = @"\n\n",
+                            detach = false,
+                            port = 4000,
+                            host = "127.0.0.1",
+                            baseurl = "",
+                            show_dir_listing = false,
+                            permalink = "date",
+                            paginate_path = "/page:num",
+                            //timezone = "null", //Intentionally blank, generates true null field on output
+                            quiet = false,
+                            verbose = false
+                        };
+                        string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
+                        Console.WriteLine(defaultConfigSerialized);
+                        using (FileStream fs = File.Create("./_config.json"))
+                        {
+                            fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
+                        }
 
-                            Console.WriteLine("Creating _posts/_config.json");
-                            CollectionConfiguration postsConfig = new CollectionConfiguration();
-                            var postsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", true);
-                            postsConfig.variables = postsVariables;
-                            string postsConfigSerialized = JsonConvert.SerializeObject(postsConfig, Formatting.Indented);
-                            using (FileStream fs = File.Create(args[2] + "_posts" + "/_config.json"))
-                            {
-                                fs.Write(Encoding.UTF8.GetBytes(postsConfigSerialized), 0, Encoding.UTF8.GetBytes(postsConfigSerialized).Length);
-                            }
-                        }
-                        catch(ArgumentNullException)
+                        Console.WriteLine("Creating _posts/_config.json");
+                        CollectionConfiguration postsConfig = new CollectionConfiguration();
+                        var postsVariables = new Dictionary<string, object>();
+                        postsVariables.Add("output", true);
+                        postsConfig.variables = postsVariables;
+                        string postsConfigSerialized = JsonConvert.SerializeObject(postsConfig, Formatting.Indented);
+                        using (FileStream fs = File.Create("./_posts" + "/_config.json"))
                         {
-                            Console.WriteLine("ERROR [ArgumentNullException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
+                            fs.Write(Encoding.UTF8.GetBytes(postsConfigSerialized), 0, Encoding.UTF8.GetBytes(postsConfigSerialized).Length);
                         }
-                        catch(ArgumentException)
-                        {
-                            Console.WriteLine("ERROR [ArgumentException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            /*
-                            var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
-                            var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
-                            var postsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", true);
-                            postCollection.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
-                            defaultCollections.Add(postCollection);
-                            */
-                            var defaultCollections = new List<string>() { "posts" };
-                            
-                            Console.WriteLine("Creating /_plugins");
-                            Directory.CreateDirectory("./_plugins");
-                            Console.WriteLine("Creating /_includes");
-                            Directory.CreateDirectory("./_includes");
-                            Console.WriteLine("Creating /_layouts");
-                            Directory.CreateDirectory("./_layouts");
-                            Console.WriteLine("Creating /_sass");
-                            Directory.CreateDirectory("./_sass");
-                            Console.WriteLine("Creating _/posts");
-                            Directory.CreateDirectory("./_posts");
-                            Console.WriteLine("Creating /_drafts");
-                            Directory.CreateDirectory("./_drafts");
-                            Console.WriteLine("Creating /_data");
-                            Directory.CreateDirectory("./_data");
-                            Console.WriteLine("Creating _config.json");
-
-                            GlobalConfiguration defaultConfig = new GlobalConfiguration 
-                            {
-                                source = ".",
-                                destination = @"./_site",
-                                collections_dir = ".",
-                                plugins_dir = "_plugins",
-                                layouts_dir = "_layouts",
-                                data_dir = "_data",
-                                includes_dir = "_includes",
-                                sass_dir = "_sass",
-                                collections = defaultCollections,
-                                safe = false,
-                                include = new string[] { ".htaccess" },
-                                exclude = new string[] {  },
-                                keep_files = new string[] { ".git", ".svn" },
-                                encoding = "utf-8",
-                                culture = "en-US",
-                                markdown_ext = "markdown,mkdown,mkdn,mkd,md",
-                                strict_front_matter = false,
-                                //show_drafts = false, //Intentionally blank, generates null field on output
-                                limit_posts = 0,
-                                future = false,
-                                unpublished = false,
-                                whitelist = new string[] {  },
-                                plugins = new string[] {  },
-                                excerpt_separator = @"\n\n",
-                                detach = false,
-                                port = 4000,
-                                host = "127.0.0.1",
-                                baseurl = "",
-                                show_dir_listing = false,
-                                permalink = "date",
-                                paginate_path = "/page:num",
-                                //timezone = "null", //Intentionally blank, generates true null field on output
-                                quiet = false,
-                                verbose = false
-                            };
-                            string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
-                            Console.WriteLine(defaultConfigSerialized);
-                            using (FileStream fs = File.Create("./_config.json"))
-                            {
-                                fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
-                            }
-
-                            Console.WriteLine("Creating _posts/_config.json");
-                            CollectionConfiguration postsConfig = new CollectionConfiguration();
-                            var postsVariables = new Dictionary<string, object>();
-                            postsVariables.Add("output", true);
-                            postsConfig.variables = postsVariables;
-                            string postsConfigSerialized = JsonConvert.SerializeObject(postsConfig, Formatting.Indented);
-                            using (FileStream fs = File.Create("./_posts" + "/_config.json"))
-                            {
-                                fs.Write(Encoding.UTF8.GetBytes(postsConfigSerialized), 0, Encoding.UTF8.GetBytes(postsConfigSerialized).Length);
-                            }
-                        }
-                        catch(DirectoryNotFoundException)
-                        {
-                            Console.WriteLine("ERROR [DirectoryNotFoundException]: The specified directory is either inaccessible or not found.");
-                        }
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        Console.WriteLine("ERROR [ArgumentNullException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine("ERROR [ArgumentException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
                     }
                     catch (UnauthorizedAccessException)
                     {
@@ -324,11 +218,6 @@ namespace WDHAN
                     catch (PathTooLongException)
                     {
                         Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
-                        Environment.Exit(1);
-                    }
-                    catch (DirectoryNotFoundException)
-                    {
-                        Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
                         Environment.Exit(1);
                     }
                     catch (IOException)
@@ -341,9 +230,8 @@ namespace WDHAN
                         Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
                         Environment.Exit(1);
                     }
-
                 }
-            }
+            }    
             catch (IndexOutOfRangeException)
             {
                 // Create site with default theme
@@ -361,7 +249,7 @@ namespace WDHAN
             foreach(var collection in siteConfig.collections)
             {
                 //foreach(var key in collection.Keys){
-                    var collectionPosts = Post.getPosts(collection, siteConfig);
+                    var collectionPosts = Post.getPosts(collection);
                     foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
                         string fileContents = "";
@@ -609,7 +497,7 @@ namespace WDHAN
             {
                 if (args[1].Equals("new", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Creates an empty WDHAN project in the current directory. A path can be specified after to create a project at a given directory (e.g. 'wdhan new \"C:/Path/to/website\"')");
+                    Console.WriteLine("Creates an empty WDHAN project in the current directory.");
                 }
                 else if (args[1].Equals("build", StringComparison.OrdinalIgnoreCase))
                 {
@@ -645,7 +533,6 @@ namespace WDHAN
                 Console.WriteLine(
                     "WDHAN supports the following commands:\n" +
                     "   wdhan new - Creates an empty WDHAN project in the current directory.\n" +
-                    "   wdhan new <string> - Creates an empty WDHAN project at the specified directory.\n" +
                     "   wdhan build - Outputs a publishable WDHAN project.\n" +
                     "   wdhan b - Same as above.\n" +
                     "   wdhan serve - Rebuilds the site anytime a change is detected.\n" +
