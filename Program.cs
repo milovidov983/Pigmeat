@@ -188,11 +188,9 @@ namespace WDHAN
                         }
 
                         Console.WriteLine("Creating _posts/_config.json");
-                        CollectionConfiguration postsConfig = new CollectionConfiguration();
                         var postsVariables = new Dictionary<string, object>();
                         postsVariables.Add("output", true);
-                        postsConfig.variables = postsVariables;
-                        string postsConfigSerialized = JsonConvert.SerializeObject(postsConfig, Formatting.Indented);
+                        string postsConfigSerialized = JsonConvert.SerializeObject(postsVariables, Formatting.Indented);
                         using (FileStream fs = File.Create("./_posts" + "/_config.json"))
                         {
                             fs.Write(Encoding.UTF8.GetBytes(postsConfigSerialized), 0, Encoding.UTF8.GetBytes(postsConfigSerialized).Length);
@@ -249,7 +247,8 @@ namespace WDHAN
             foreach(var collection in siteConfig.collections)
             {
                 //foreach(var key in collection.Keys){
-                    var collectionPosts = Post.getPosts(collection);
+                    Post.generateEntires(collection);
+
                     foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
                         string fileContents = "";
@@ -282,7 +281,7 @@ namespace WDHAN
                         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
                         try
                         {
-                            result = Markdown.ToHtml(parsePage(args, collection, file, fileContents, collectionPosts), pipeline);
+                            result = Markdown.ToHtml(parsePage(args, collection, file, fileContents), pipeline);
                         }
                         catch(ArgumentNullException)
                         {
@@ -329,7 +328,7 @@ namespace WDHAN
         passing them to template.Render(context), which we can then pass to Markdig to generate HTML (in cunjunction with SharpScss).
         Site variables, including site.data variables, come from JSON data.
         */
-        static string parsePage(string[] args, string collectionName, string filePath, string fileContents, string collectionPosts)
+        static string parsePage(string[] args, string collectionName, string filePath, string fileContents)
         {
             try
             {
@@ -361,7 +360,9 @@ namespace WDHAN
 
                 //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
                 //NOTE: Not needed. Collection data is in _config.json. Actually, nevermind (see #8)
+                Dictionary<string, object> collectionConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText("./_" + collectionName + "/_config.json"));
                 var collectionModel = JObject.Parse(File.ReadAllText("./_" + collectionName + "/_config.json"));
+                var collectionPosts = JObject.Parse(File.ReadAllText("./_" + collectionName + "/_entries.json"));
 
                 JObject pageModel = Post.parseFrontMatter(filePath);
 
@@ -372,8 +373,9 @@ namespace WDHAN
                     context.SetValue("site", siteModel);
                     context.SetValue("site.data", siteDataModel);
                     context.SetValue("page", pageModel);
-                    context.SetValue(collectionName, JObject.Parse(collectionPosts));
-                    context.SetValue(collectionName + ".variables", collectionModel);
+                    //context.SetValue(collectionName, JObject.Parse(collectionPosts));
+                    context.SetValue(collectionName, collectionModel);
+                    context.SetValue(collectionName, collectionPosts);
 
                     Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
