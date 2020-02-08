@@ -15,25 +15,44 @@ namespace WDHAN
         {
             
         }
-        public static string getPosts(string collectionName) 
+        public static List<string> getPosts(string collectionName) 
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
-            List<Post> postList = new List<Post>();
+            List<string> postList = new List<string>();
             foreach(var collection in siteConfig.collections)
             {
                 if(collection.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
                 {
                     foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
+<<<<<<< HEAD
                         if(GlobalConfiguration.getMarkdownExts().Contains(Path.GetExtension(post)))
                         {
                             postList.Add(new Post { frontmatter = parseFrontMatter(post), content = File.ReadAllText(post) });
                         }
+=======
+                        postList.Add(File.ReadAllText(post));
+>>>>>>> master
                     }
                 }
             }
-            Console.WriteLine(JsonConvert.SerializeObject(postList, Formatting.Indented));
-            return JsonConvert.SerializeObject(postList, Formatting.Indented);
+
+            foreach(var post in postList)
+            {
+                Console.WriteLine(post);
+            }
+
+            return postList;
+        }
+        public static void generateEntires(string collectionName)
+        {
+            Collection collectionPosts = new Collection();
+            collectionPosts.entries = getPosts(collectionName);
+            string collectionSerialized = JsonConvert.SerializeObject(collectionPosts, Formatting.Indented);
+            using (FileStream fs = File.Create("./_" + collectionName + "/entries.json"))
+            {
+                fs.Write(Encoding.UTF8.GetBytes(collectionSerialized), 0, Encoding.UTF8.GetBytes(collectionSerialized).Length);
+            }
         }
         public static JObject parseFrontMatter(string filePath)
         {
