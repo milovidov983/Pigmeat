@@ -4,6 +4,8 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using YamlDotNet.Serialization;
+using YamlDotNet;
 
 namespace WDHAN
 {
@@ -45,7 +47,7 @@ namespace WDHAN
             Collection collectionPosts = new Collection();
             collectionPosts.entries = getPosts(collectionName);
             string collectionSerialized = JsonConvert.SerializeObject(collectionPosts, Formatting.Indented);
-            using (FileStream fs = File.Create("./_" + collectionName + "/entries.json"))
+            using (FileStream fs = File.Create("./_" + collectionName + "/_entries.json"))
             {
                 fs.Write(Encoding.UTF8.GetBytes(collectionSerialized), 0, Encoding.UTF8.GetBytes(collectionSerialized).Length);
             }
@@ -79,12 +81,48 @@ namespace WDHAN
                 else
                 {
                     Console.WriteLine("Frontmatter:\n" + pageFrontMatter);
-                    return JObject.Parse(pageFrontMatter);
+                    if(isJSON(pageFrontMatter))
+                    {
+                        return JObject.Parse(pageFrontMatter);
+                    }
+                    else
+                    {
+                        var deserializer = new Deserializer();
+                        StringReader reader = new StringReader(pageFrontMatter);
+                        var yamlObject = deserializer.Deserialize(reader);
+                        return JObject.Parse(JsonConvert.SerializeObject(yamlObject, Formatting.Indented));
+                    }
                 }
             }
             else
             {
                 return JObject.Parse("{\"null\": true}");
+            }
+        }
+        private static bool isJSON(string input)
+        {
+            input = input.Trim();
+            if ((input.StartsWith("{") && input.EndsWith("}")) || (input.StartsWith("[") && input.EndsWith("]")))
+            {
+                try
+                {
+                    var obj = JToken.Parse(input);
+                    return true;
+                }
+                catch (JsonReaderException jex)
+                {
+                    Console.WriteLine(jex.Message);
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
             }
         }
     }

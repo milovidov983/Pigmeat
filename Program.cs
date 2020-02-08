@@ -381,7 +381,7 @@ namespace WDHAN
                     context.SetValue("page", pageModel);
                     //context.SetValue(collectionName, JObject.Parse(collectionPosts));
                     context.SetValue(collectionName, collectionModel);
-                    context.SetValue(collectionName, collectionPosts);
+                    //context.SetValue(collectionName, collectionPosts);
 
                     Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
