@@ -77,33 +77,39 @@ namespace WDHAN
                     dir.Delete(true); 
                 }
             }   
-            catch(DirectoryNotFoundException)
+            catch(DirectoryNotFoundException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [DirectoryNotFoundException]: The project directory you're trying to clean cannot be found.");
                 Environment.Exit(1);
             }
-            catch(System.Security.SecurityException)
+            catch(System.Security.SecurityException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [System.Security.SecurityException]: You do not have write access to the project directory you're trying to clean.");
                 Environment.Exit(1);
             }
-            catch(ArgumentException)
+            catch(ArgumentException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [ArgumentException]: The project directory you're trying to clean cannot be found.");
                 Environment.Exit(1);
             }
-            catch(UnauthorizedAccessException)
+            catch(UnauthorizedAccessException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [UnauthorizedAccessException]: You do not have write access to the project directory you're trying to clean.");
                 Environment.Exit(1);
             }
-            catch(IOException)
+            catch(IOException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [IOException]: An I/O error has occured. Ensure the project directory is not read-only, and no other programs are using files in the directory.");
                 Environment.Exit(1);
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [Exception]: Cannot clean project files. Please ensure the directory you're trying to clean exists and can be accessed.");
                 Environment.Exit(1);
             }
@@ -197,35 +203,42 @@ namespace WDHAN
                             fs.Write(Encoding.UTF8.GetBytes(postsConfigSerialized), 0, Encoding.UTF8.GetBytes(postsConfigSerialized).Length);
                         }
                     }
-                    catch (ArgumentNullException)
+                    catch (ArgumentNullException ex)
                     {
+                        Console.WriteLine("For developers: " + ex);
                         Console.WriteLine("ERROR [ArgumentNullException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
                     }
-                    catch (ArgumentException)
+                    catch (ArgumentException ex)
                     {
+                        Console.WriteLine("For developers: " + ex);
                         Console.WriteLine("ERROR [ArgumentException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
                     }
-                    catch (DirectoryNotFoundException)
+                    catch (DirectoryNotFoundException ex)
                     {
+                        Console.WriteLine("For developers: " + ex);
                         Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
                     }
-                    catch (UnauthorizedAccessException)
+                    catch (UnauthorizedAccessException ex)
                     {
+                        Console.WriteLine("For developers: " + ex);
                         Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
                         Environment.Exit(1);
                     }
-                    catch (PathTooLongException)
+                    catch (PathTooLongException ex)
                     {
+                        Console.WriteLine("For developers: " + ex);
                         Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
                         Environment.Exit(1);
                     }
-                    catch (IOException)
+                    catch (IOException ex)
                     {
+                        Console.WriteLine("For developers: " + ex);
                         Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
                         Environment.Exit(1);
                     }
-                    catch (NotSupportedException)
+                    catch (NotSupportedException ex)
                     {
+                        Console.WriteLine("For developers: " + ex);
                         Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
                         Environment.Exit(1);
                     }
@@ -235,8 +248,9 @@ namespace WDHAN
             {
                 // Create site with default theme
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [Exception]: Cannot create project files. Please ensure the directory you're trying to create is supported in your file system.");
                 Environment.Exit(1);
             }
@@ -289,8 +303,9 @@ namespace WDHAN
                         {
                             result = Markdown.ToHtml(parsePage(args, collection, file, fileContents), pipeline);
                         }
-                        catch(ArgumentNullException)
+                        catch(ArgumentNullException ex)
                         {
+                            Console.WriteLine("For developers: " + ex);
                             result = "ERROR [ArgumentNullException]: Pagewrite failed. Page contents are either corrupted or blank.";
                             Environment.Exit(1);
                         }
@@ -402,28 +417,33 @@ namespace WDHAN
                     return null;
                 }
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
                 return null;
             }
-            catch (PathTooLongException)
+            catch (PathTooLongException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
                 return null;
             }
-            catch (DirectoryNotFoundException)
+            catch (DirectoryNotFoundException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
                 return null;
             }
-            catch (IOException)
+            catch (IOException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
                 return null;
             }
-            catch (NotSupportedException)
+            catch (NotSupportedException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
                 return null;
             }
@@ -482,28 +502,33 @@ namespace WDHAN
                 }
 
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
                 return null;
             }
-            catch (PathTooLongException)
+            catch (PathTooLongException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
                 return null;
             }
-            catch (DirectoryNotFoundException)
+            catch (DirectoryNotFoundException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
                 return null;
             }
-            catch (IOException)
+            catch (IOException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
                 return null;
             }
-            catch (NotSupportedException)
+            catch (NotSupportedException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
                 return null;
             }
@@ -545,8 +570,9 @@ namespace WDHAN
                     Console.WriteLine("Please specify a parameter (e.g. 'wdhan help new,' 'wdhan help build,' 'wdhan help serve,' 'wdhan help clean')");
                 }
             }
-            catch (IndexOutOfRangeException)
+            catch (IndexOutOfRangeException ex)
             {
+                Console.WriteLine("For developers: " + ex);
                 Console.WriteLine(
                     "WDHAN supports the following commands:\n" +
                     "   wdhan new - Creates an empty WDHAN project in the current directory.\n" +
