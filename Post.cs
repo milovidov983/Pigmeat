@@ -25,14 +25,10 @@ namespace WDHAN
                 {
                     foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
-<<<<<<< HEAD
                         if(GlobalConfiguration.getMarkdownExts().Contains(Path.GetExtension(post)))
                         {
-                            postList.Add(new Post { frontmatter = parseFrontMatter(post), content = File.ReadAllText(post) });
+                            postList.Add(File.ReadAllText(post));
                         }
-=======
-                        postList.Add(File.ReadAllText(post));
->>>>>>> master
                     }
                 }
             }
