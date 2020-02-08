@@ -61,7 +61,7 @@ namespace WDHAN
         {
             try
             {
-                GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
+                GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
                 Console.WriteLine("Cleaning project directory, " + siteConfig.destination + " ... ");
                 System.IO.DirectoryInfo di = new DirectoryInfo(siteConfig.destination);
 
@@ -110,6 +110,7 @@ namespace WDHAN
         }
         static void createSite(string[] args)
         {
+            Console.WriteLine("Creating project files ... ");
             try 
             {
                 // Create blank site scaffolding
@@ -244,7 +245,8 @@ namespace WDHAN
         }
         static void buildSite(string[] args)
         {
-            GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
+            Console.WriteLine("Building project files ... ");
+            GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
             Directory.CreateDirectory(siteConfig.destination);
             foreach(var collection in siteConfig.collections)
             {
@@ -273,6 +275,10 @@ namespace WDHAN
                                     fileContents += (line + "\n");
                                 }
                             }
+                        }
+                        else
+                        {
+                            continue;
                         }
 
                         // Configure the pipeline with all advanced extensions active
@@ -333,7 +339,7 @@ namespace WDHAN
         {
             try
             {
-                GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
+                GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
 
                 // When a property of a JObject value is accessed, try to look into its properties
                 TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
@@ -415,7 +421,7 @@ namespace WDHAN
         {
             try
             {
-                GlobalConfiguration siteConfig = JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
+                GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
 
                 // When a property of a JObject value is accessed, try to look into its properties
                 TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);

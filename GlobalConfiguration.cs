@@ -50,5 +50,24 @@ namespace WDHAN
         {
             return JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
         }
+
+        public static List<string> getMarkdownExts()
+        {
+            List<string> exts = new List<string>();
+            string currentExt = "";
+            foreach(var character in getConfiguration().markdown_ext)
+            {
+                if(character.Equals(','))
+                {
+                    exts.Add(currentExt);
+                    currentExt = "";
+                }
+                else
+                {
+                    currentExt += character;
+                }
+            }
+            return exts;
+        }
     }
 }
