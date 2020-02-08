@@ -17,6 +17,33 @@ namespace WDHAN
         {
             
         }
+        public static string getPostContents(string filePath)
+        {
+            var siteConfig = GlobalConfiguration.getConfiguration();
+            string fileContents = "";
+            Boolean first = false;
+            Boolean second = false;
+            if(File.ReadAllLines(filePath)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach(var line in File.ReadAllLines(filePath)){
+                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
+                    {
+                        first = true;
+                        continue;
+                    }
+                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
+                    {
+                        second = true;
+                        continue;
+                    }
+                    if(first && second)
+                    {
+                        fileContents += (line + "\n");
+                    }
+                }
+            }
+            return fileContents;
+        }
         public static Boolean isMarkdown(string fileExt)
         {
             foreach(var ext in GlobalConfiguration.getMarkdownExts())
@@ -41,7 +68,7 @@ namespace WDHAN
                     {
                         if(isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            postList.Add(i, File.ReadAllText(post));
+                            postList.Add(i, getPostContents(post));
                             i++;
                         }
                     }

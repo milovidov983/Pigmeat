@@ -390,6 +390,8 @@ namespace WDHAN
                     context.SetValue(collectionName, collectionModel);
                     //context.SetValue(collectionName, collectionPosts);
 
+                    Console.WriteLine(collectionModel.ToString());
+
                     Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
                     return template.Render(context);
