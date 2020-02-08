@@ -9,7 +9,7 @@ namespace WDHAN
 {
     public class Collection
     {
-        public List<string> entries { get; set; }
+        public Dictionary<int, string> entries { get; set; }
         public Collection()
         {
             

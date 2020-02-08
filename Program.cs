@@ -380,6 +380,13 @@ namespace WDHAN
                     context.SetValue("site.data", siteDataModel);
                     context.SetValue("page", pageModel);
                     //context.SetValue(collectionName, JObject.Parse(collectionPosts));
+                    
+                    collectionModel.Merge(collectionPosts, new JsonMergeSettings
+                    {
+                        // union array values together to avoid duplicates
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+
                     context.SetValue(collectionName, collectionModel);
                     //context.SetValue(collectionName, collectionPosts);
 

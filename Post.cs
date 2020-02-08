@@ -17,19 +17,32 @@ namespace WDHAN
         {
             
         }
-        public static List<string> getPosts(string collectionName) 
+        public static Boolean isMarkdown(string fileExt)
+        {
+            foreach(var ext in GlobalConfiguration.getMarkdownExts())
+            {
+                if(ext.Equals(fileExt, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static Dictionary<int, string> getPosts(string collectionName) 
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
-            List<string> postList = new List<string>();
+            Dictionary<int, string> postList = new Dictionary<int, string>();
+            int i = 0;
             foreach(var collection in siteConfig.collections)
             {
                 if(collection.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
                 {
                     foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
-                        if(GlobalConfiguration.getMarkdownExts().Contains(Path.GetExtension(post)))
+                        if(isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            postList.Add(File.ReadAllText(post));
+                            postList.Add(i, File.ReadAllText(post));
+                            i++;
                         }
                     }
                 }

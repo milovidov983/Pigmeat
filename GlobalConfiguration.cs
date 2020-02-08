@@ -55,18 +55,22 @@ namespace WDHAN
         {
             List<string> exts = new List<string>();
             string currentExt = "";
-            foreach(var character in getConfiguration().markdown_ext)
+            int latestInd = 0;
+            for(int i = 0; i < getConfiguration().markdown_ext.Length; i++)
             {
-                if(character.Equals(','))
+                if(getConfiguration().markdown_ext[i].Equals(','))
                 {
                     exts.Add(currentExt);
                     currentExt = "";
+                    latestInd = i;
+                    continue;
                 }
                 else
                 {
-                    currentExt += character;
+                    currentExt += getConfiguration().markdown_ext[i];
                 }
             }
+            exts.Add(getConfiguration().markdown_ext.Substring(latestInd + 1));
             return exts;
         }
     }
