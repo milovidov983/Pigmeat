@@ -15,7 +15,6 @@ namespace WDHAN
 {
     class Program
     {
-        public string environment;
         static void Main(string[] args)
         {
             try
