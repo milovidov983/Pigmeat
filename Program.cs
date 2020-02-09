@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Fluid.Values;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
+using System.Reflection;
 
 namespace WDHAN
 {
@@ -276,6 +277,64 @@ namespace WDHAN
             GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
             Directory.CreateDirectory(siteConfig.destination);
             Directory.CreateDirectory(siteConfig.source + "/temp");
+            foreach(var file in Directory.GetFiles(siteConfig.source, "*.*", SearchOption.AllDirectories))
+            {
+                Console.WriteLine("1 " + Path.GetDirectoryName(file));
+                Console.WriteLine("2 " + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                Console.WriteLine("3 " + file);
+                if(!Path.GetDirectoryName(file).StartsWith("./_"))
+                {
+                    string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+                    Console.WriteLine(fileDest);
+                    Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
+
+                    Boolean first = false;
+                    Boolean second = false;
+                    string fileContents = "";
+
+                    if(File.ReadAllLines(file)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
+                    {
+                        foreach(var line in File.ReadAllLines(file))
+                        {
+                            if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
+                            {
+                                first = true;
+                                continue;
+                            }
+                            if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
+                            {
+                                second = true;
+                                continue;
+                            }
+                            if(first && second)
+                            {
+                                fileContents += line;
+                            }
+                        }
+                        if(first && second)
+                        {
+                            using (FileStream fs = File.Create(fileDest))
+                            {
+                                fs.Write(Encoding.UTF8.GetBytes(fileContents), 0, Encoding.UTF8.GetBytes(fileContents).Length);
+                            }
+                        }
+                        else
+                        {
+                            // Copy file over
+                            File.Copy(file, fileDest);
+                        }
+                    }
+                }
+            }
+            // Handle _layout, _include, _data, _collection
+            buildCollection(args);
+        }
+        static void buildCollection(string[] args)
+        {
+            Console.WriteLine("Building collection files ... ");
+            GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
+            Directory.CreateDirectory(siteConfig.destination);
+            Directory.CreateDirectory(siteConfig.source + "/temp");
             foreach(var collection in siteConfig.collections)
             {
                 //foreach(var key in collection.Keys){
@@ -466,6 +525,93 @@ namespace WDHAN
                 return null;
             }
         }
+        static string parseFile(string[] args, string filePath, string fileContents)
+        {
+            try
+            {
+                GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
+
+                // When a property of a JObject value is accessed, try to look into its properties
+                TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
+
+                // Convert JToken to FluidValue
+                FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
+                FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
+
+                //TODO: Get values from content
+                //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
+                //all these values PLUS the page's values, before the page itself is rendered
+
+                //var pageContent = "{{ Model.Name }}"; // String containing page's contents
+
+                //var siteModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's values
+                var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
+
+                //var siteDataModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's data values
+
+                //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
+                //NOTE: Not needed. Collection data is in _config.json. Actually, nevermind (see #8)
+                var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
+
+                JObject pageModel = Post.parseFrontMatter(filePath);
+
+                if (FluidTemplate.TryParse(fileContents, out var template))
+                {
+                    var context = new TemplateContext();
+                    context.CultureInfo = new CultureInfo(siteConfig.culture);
+
+                    siteModel.Merge(dataSet, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                    Console.WriteLine(siteModel.ToString());
+
+                    context.SetValue("site", siteModel);
+                    context.SetValue("page", pageModel);
+                    //context.SetValue(collectionName, JObject.Parse(collectionPosts));
+                    
+                    Console.WriteLine(template.Render(context) + "\nis the result.\n");
+                    Console.WriteLine();
+                    return template.Render(context);
+                }
+                else
+                {
+                    Console.WriteLine("ERROR: Could not parse Liquid context.");
+                    return null;
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine("For developers: " + ex);
+                Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
+                return null;
+            }
+            catch (PathTooLongException ex)
+            {
+                Console.WriteLine("For developers: " + ex);
+                Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
+                return null;
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Console.WriteLine("For developers: " + ex);
+                Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
+                return null;
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine("For developers: " + ex);
+                Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
+                return null;
+            }
+            catch (NotSupportedException ex)
+            {
+                Console.WriteLine("For developers: " + ex);
+                Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
+                return null;
+            }
+        }
+
         static void printHelpMsg(string[] args)
         {
             try
