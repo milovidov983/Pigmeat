@@ -63,7 +63,7 @@ namespace WDHAN
             {
                 GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
                 Console.WriteLine("Cleaning project directory, " + siteConfig.destination + " ... ");
-                System.IO.DirectoryInfo di = new DirectoryInfo(siteConfig.destination);
+                System.IO.DirectoryInfo outputDir = new DirectoryInfo(siteConfig.destination);
 
                 foreach (var file in Directory.GetFiles(siteConfig.destination, "*.*", SearchOption.AllDirectories))
                 {
@@ -71,7 +71,22 @@ namespace WDHAN
                     File.Delete(file); 
                 }
                     
-                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                foreach (DirectoryInfo dir in outputDir.EnumerateDirectories())
+                {
+                    Console.WriteLine("Deleting " + dir.Name);
+                    dir.Delete(true); 
+                }
+
+                Console.WriteLine("Cleaning temporary files, " + siteConfig.source + "/temp" + " ... ");
+                System.IO.DirectoryInfo tempDir = new DirectoryInfo(siteConfig.source + "/temp");
+
+                foreach (var file in Directory.GetFiles(siteConfig.destination, "*.*", SearchOption.AllDirectories))
+                {
+                    Console.WriteLine("Deleting " + file.Substring(siteConfig.source.Length + "/temp".Length + 1));
+                    File.Delete(file); 
+                }
+                    
+                foreach (DirectoryInfo dir in tempDir.EnumerateDirectories())
                 {
                     Console.WriteLine("Deleting " + dir.Name);
                     dir.Delete(true); 
@@ -260,10 +275,12 @@ namespace WDHAN
             Console.WriteLine("Building project files ... ");
             GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
             Directory.CreateDirectory(siteConfig.destination);
+            Directory.CreateDirectory(siteConfig.source + "/temp");
             foreach(var collection in siteConfig.collections)
             {
                 //foreach(var key in collection.Keys){
                     Post.generateEntires(collection);
+                    Data.generateDataIndex();
 
                     foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
@@ -369,21 +386,17 @@ namespace WDHAN
                 //var pageContent = "{{ Model.Name }}"; // String containing page's contents
 
                 //var siteModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's values
-                var siteModel = JObject.Parse(File.ReadAllText("./" + "_config.json"));
+                var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
 
                 //var siteDataModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's data values
-                string dataContents = "{\"data\": true}";
-                foreach(var file in Directory.GetFiles(siteConfig.source + "/" + siteConfig.data_dir))
-                {
-                    dataContents += File.ReadAllText(file);
-                }
-                var siteDataModel = JObject.Parse(dataContents);
 
                 //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
                 //NOTE: Not needed. Collection data is in _config.json. Actually, nevermind (see #8)
-                Dictionary<string, object> collectionConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText("./_" + collectionName + "/_config.json"));
-                var collectionModel = JObject.Parse(File.ReadAllText("./_" + collectionName + "/_config.json"));
-                var collectionPosts = JObject.Parse(File.ReadAllText("./_" + collectionName + "/_entries.json"));
+                Dictionary<string, object> collectionConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(siteConfig.source + "/_" + collectionName + "/_config.json"));
+                var collectionModel = JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collectionName + "/_config.json"));
+                var collectionPosts = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_" + collectionName + "/_entries.json"));
+
+                var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
 
                 JObject pageModel = Post.parseFrontMatter(filePath);
 
@@ -391,14 +404,19 @@ namespace WDHAN
                 {
                     var context = new TemplateContext();
                     context.CultureInfo = new CultureInfo(siteConfig.culture);
+
+                    siteModel.Merge(dataSet, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                    Console.WriteLine(siteModel.ToString());
+
                     context.SetValue("site", siteModel);
-                    context.SetValue("site.data", siteDataModel);
                     context.SetValue("page", pageModel);
                     //context.SetValue(collectionName, JObject.Parse(collectionPosts));
                     
                     collectionModel.Merge(collectionPosts, new JsonMergeSettings
                     {
-                        // union array values together to avoid duplicates
                         MergeArrayHandling = MergeArrayHandling.Union
                     });
 
@@ -416,91 +434,6 @@ namespace WDHAN
                     Console.WriteLine("ERROR: Could not parse Liquid context.");
                     return null;
                 }
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                Console.WriteLine("For developers: " + ex);
-                Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
-                return null;
-            }
-            catch (PathTooLongException ex)
-            {
-                Console.WriteLine("For developers: " + ex);
-                Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
-                return null;
-            }
-            catch (DirectoryNotFoundException ex)
-            {
-                Console.WriteLine("For developers: " + ex);
-                Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
-                return null;
-            }
-            catch (IOException ex)
-            {
-                Console.WriteLine("For developers: " + ex);
-                Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
-                return null;
-            }
-            catch (NotSupportedException ex)
-            {
-                Console.WriteLine("For developers: " + ex);
-                Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
-                return null;
-            }
-        }
-        static string parseLayout(string[] args, string filePath, string fileContents, string pageContents)
-        {
-            try
-            {
-                GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
-
-                // When a property of a JObject value is accessed, try to look into its properties
-                TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
-
-                // Convert JToken to FluidValue
-                FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
-                FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
-
-                //TODO: Get values from content
-                //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
-                //all these values PLUS the page's values, before the page itself is rendered
-
-                //var pageContent = "{{ Model.Name }}"; // String containing page's contents
-
-                //var siteModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's values
-                var siteModel = JObject.Parse(File.ReadAllText("./" + "_config.json"));
-
-                //var siteDataModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's data values
-                string dataContents = "{\"data\": true}";
-                foreach(var file in Directory.GetFiles(siteConfig.source + "/" + siteConfig.data_dir))
-                {
-                    dataContents += File.ReadAllText(file);
-                }
-                var siteDataModel = JObject.Parse(dataContents);
-
-                //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
-                //NOTE: Not needed. Collection data is in _config.json
-
-                JObject pageModel = Post.parseFrontMatter(filePath);
-
-                if (FluidTemplate.TryParse(fileContents, out var template))
-                {
-                    var context = new TemplateContext();
-                    context.CultureInfo = new CultureInfo(siteConfig.culture);
-                    context.SetValue("site", siteModel);
-                    context.SetValue("site.data", siteDataModel);
-                    context.SetValue("page", pageModel);
-                    context.SetValue("content", pageContents);
-
-                    Console.WriteLine(template.Render(context));
-                    Console.WriteLine();
-                    return template.Render(context);
-                }
-                else
-                {
-                    return null;
-                }
-
             }
             catch (UnauthorizedAccessException ex)
             {

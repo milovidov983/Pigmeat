@@ -1,8 +1,10 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using YamlDotNet.Serialization;
 
 namespace WDHAN
 {
@@ -50,7 +52,57 @@ namespace WDHAN
         {
             return JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
         }
-
+        private static bool isJSON(string input)
+        {
+            input = input.Trim();
+            if ((input.StartsWith("{") && input.EndsWith("}")) || (input.StartsWith("[") && input.EndsWith("]")))
+            {
+                try
+                {
+                    var obj = JToken.Parse(input);
+                    return true;
+                }
+                catch (JsonReaderException jex)
+                {
+                    Console.WriteLine(jex.Message);
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public static Boolean isMarkdown(string fileExt)
+        {
+            foreach(var ext in GlobalConfiguration.getMarkdownExts())
+            {
+                if(ext.Equals(fileExt, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static JObject yamlInterop(string input)
+        {
+            if(isJSON(input))
+            {
+                return JObject.Parse(input);
+            }
+            else
+            {
+                var deserializer = new Deserializer();
+                StringReader reader = new StringReader(input);
+                var yamlObject = deserializer.Deserialize(reader);
+                return JObject.Parse(JsonConvert.SerializeObject(yamlObject, Formatting.Indented));
+            }
+        }
         public static List<string> getMarkdownExts()
         {
             List<string> exts = new List<string>();

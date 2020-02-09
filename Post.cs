@@ -44,17 +44,6 @@ namespace WDHAN
             }
             return fileContents;
         }
-        public static Boolean isMarkdown(string fileExt)
-        {
-            foreach(var ext in GlobalConfiguration.getMarkdownExts())
-            {
-                if(ext.Equals(fileExt, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
         public static Dictionary<string, object> getPosts(string collectionName) 
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
@@ -66,7 +55,7 @@ namespace WDHAN
                 {
                     foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
-                        if(isMarkdown(Path.GetExtension(post).Substring(1)))
+                        if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
                             //postList.Add(i.ToString(), getPostContents(post));
                             postList.Add(parseFrontMatter(post)["title"].ToString(), getPostContents(post));
@@ -85,10 +74,12 @@ namespace WDHAN
         }
         public static void generateEntires(string collectionName)
         {
+            var siteConfig = GlobalConfiguration.getConfiguration();
             Collection collectionPosts = new Collection();
             collectionPosts.entries = getPosts(collectionName);
             string collectionSerialized = JsonConvert.SerializeObject(collectionPosts, Formatting.Indented);
-            using (FileStream fs = File.Create("./_" + collectionName + "/_entries.json"))
+            Directory.CreateDirectory(siteConfig.source + "/temp/_" + collectionName);
+            using (FileStream fs = File.Create(siteConfig.source + "/temp/_" + collectionName + "/_entries.json"))
             {
                 fs.Write(Encoding.UTF8.GetBytes(collectionSerialized), 0, Encoding.UTF8.GetBytes(collectionSerialized).Length);
             }
@@ -122,6 +113,8 @@ namespace WDHAN
                 else
                 {
                     Console.WriteLine("Frontmatter:\n" + pageFrontMatter);
+                    return GlobalConfiguration.yamlInterop(pageFrontMatter);
+                    /*
                     if(isJSON(pageFrontMatter))
                     {
                         return JObject.Parse(pageFrontMatter);
@@ -133,6 +126,7 @@ namespace WDHAN
                         var yamlObject = deserializer.Deserialize(reader);
                         return JObject.Parse(JsonConvert.SerializeObject(yamlObject, Formatting.Indented));
                     }
+                    */
                 }
             }
             else
@@ -140,31 +134,6 @@ namespace WDHAN
                 return JObject.Parse("{\"null\": true}");
             }
         }
-        private static bool isJSON(string input)
-        {
-            input = input.Trim();
-            if ((input.StartsWith("{") && input.EndsWith("}")) || (input.StartsWith("[") && input.EndsWith("]")))
-            {
-                try
-                {
-                    var obj = JToken.Parse(input);
-                    return true;
-                }
-                catch (JsonReaderException jex)
-                {
-                    Console.WriteLine(jex.Message);
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
+        
     }
 }
