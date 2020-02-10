@@ -94,8 +94,11 @@ namespace WDHAN
             }   
             catch(DirectoryNotFoundException ex)
             {
+                // This is expected if either _site or temp are not found.
+                /*
                 Console.WriteLine("For developers: " + ex);
                 Console.WriteLine("ERROR [DirectoryNotFoundException]: The project directory you're trying to clean cannot be found.");
+                */
                 Environment.Exit(1);
             }
             catch(System.Security.SecurityException ex)
@@ -437,6 +440,8 @@ namespace WDHAN
                 FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
                 FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
 
+                var postModel = new JObject();
+
                 //TODO: Get values from content
                 //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
                 //all these values PLUS the page's values, before the page itself is rendered
@@ -485,6 +490,29 @@ namespace WDHAN
 
                     Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
+
+                    // Generate a sum JObject of all these context values
+                    postModel.Merge(siteModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                    postModel.Merge(collectionModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                    postModel.Merge(pageModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+
+                    // Output page's sum JSON values
+                    Directory.CreateDirectory(siteConfig.source + "/temp/_" + collectionName);
+                    using (FileStream fs = File.Create(siteConfig.source + "/temp/_" + collectionName + "/" + Path.GetFileNameWithoutExtension(filePath) + ".json"))
+                    {
+                        fs.Write(Encoding.UTF8.GetBytes(postModel.ToString()), 0, Encoding.UTF8.GetBytes(postModel.ToString()).Length);
+                    }
+
+                    // Return the page's render context.
                     return template.Render(context);
                 }
                 else
@@ -537,6 +565,8 @@ namespace WDHAN
                 FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
                 FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
 
+                var postModel = new JObject();
+
                 //TODO: Get values from content
                 //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
                 //all these values PLUS the page's values, before the page itself is rendered
@@ -571,6 +601,25 @@ namespace WDHAN
                     
                     Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
+
+                    // Generate a sum JObject of all these context values
+                    postModel.Merge(siteModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                    postModel.Merge(pageModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+
+                    // Output page's sum JSON values
+                    Directory.CreateDirectory(siteConfig.source + "/temp/");
+                    using (FileStream fs = File.Create(siteConfig.source + "/temp/" + Path.GetFileNameWithoutExtension(filePath) + ".json"))
+                    {
+                        fs.Write(Encoding.UTF8.GetBytes(postModel.ToString()), 0, Encoding.UTF8.GetBytes(postModel.ToString()).Length);
+                    }
+
+                    // Return the page's render context.
                     return template.Render(context);
                 }
                 else
