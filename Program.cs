@@ -25,11 +25,11 @@ namespace WDHAN
                 }
                 else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
                 {
-                    buildSite(args);
+                    buildSite(args, true);
                 }
                 else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
                 {
-                    buildSite(args);
+                    buildSite(args, true);
                 }
                 else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
                 {
@@ -273,9 +273,10 @@ namespace WDHAN
                 Environment.Exit(1);
             }
         }
-        static void buildSite(string[] args)
+        static void buildSite(string[] args, Boolean firstTime)
         {
             Console.WriteLine("Building project files ... ");
+            GlobalConfiguration.includeTime();
             GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
             Directory.CreateDirectory(siteConfig.destination);
             Directory.CreateDirectory(siteConfig.source + "/temp");
@@ -328,8 +329,15 @@ namespace WDHAN
                     }
                 }
             }
+
             // Handle _layout, _include, _data, _collection
             buildCollection(args);
+
+            if(firstTime)
+            {
+                GlobalConfiguration.includeTags();
+                buildSite(args, false);
+            }
         }
         static void buildCollection(string[] args)
         {

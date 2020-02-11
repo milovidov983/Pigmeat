@@ -12,6 +12,7 @@ namespace WDHAN
         public JObject frontmatter { get; set; }
         public string content { get; set; }
         public string url { get; set; }
+        public string[] tags { get; set; }
         public Post()
         {
             
@@ -57,7 +58,7 @@ namespace WDHAN
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
                             //postList.Add(i.ToString(), getPostContents(post));
-                            postList.Add(Path.GetFileNameWithoutExtension(post), getPostContents(post));
+                            postList.Add(Path.GetFileNameWithoutExtension(post), new Post() { frontmatter = parseFrontMatter(post), content = getPostContents(post), url = siteConfig.url + siteConfig.baseurl });
                             i++;
                         }
                     }

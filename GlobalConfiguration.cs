@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using YamlDotNet.Serialization;
 
 namespace WDHAN
@@ -43,9 +44,65 @@ namespace WDHAN
         public string timezone { get; set; }
         public Boolean quiet { get; set; }
         public Boolean verbose { get; set; }
+        public string url { get; set; }
+        public Dictionary<string, object> tags { get; set; }
+        DateTime time { get; set; }
+        string[] static_files { get; set; }
+        string[] html_files { get; set; }
         public GlobalConfiguration()
         {
             
+        }
+        public static Dictionary<string, object> getTaggedPosts()
+        {
+            var siteConfig = getConfiguration();
+            Dictionary<string, object> taggedPosts = new Dictionary<string, object>();
+            List<string> tags = new List<string>();
+            foreach(var collection in siteConfig.collections)
+            {
+                foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
+                {
+                    if(isMarkdown(post))
+                    {
+                        var postJSON = JsonConvert.DeserializeObject<Post>(File.ReadAllText(siteConfig.source + "/temp/_" + collection + "/" + Path.GetFileNameWithoutExtension(post) + ".json"));
+                        foreach(var tag in postJSON.tags)
+                        {
+                            if(!tags.Contains(tag))
+                            {
+                                tags.Add(tag);
+                                taggedPosts.Add(tag, Path.GetDirectoryName(post) + Path.GetFileName(post));
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            return taggedPosts;
+        }
+        public static void includeTime()
+        {
+            var siteConfig = getConfiguration();
+            siteConfig.time = DateTime.UtcNow; // Get the time in UTC (international, timezone neutral)
+
+            string siteConfigSerialized = JsonConvert.SerializeObject(siteConfig, Formatting.Indented);
+            Console.WriteLine(siteConfigSerialized);
+            using (FileStream fs = File.Create("./_config.json"))
+            {
+                fs.Write(Encoding.UTF8.GetBytes(siteConfigSerialized), 0, Encoding.UTF8.GetBytes(siteConfigSerialized).Length);
+            }
+        }
+        public static void includeTags()
+        {
+            var siteConfig = getConfiguration();
+
+            siteConfig.tags = getTaggedPosts();
+
+            string siteConfigSerialized = JsonConvert.SerializeObject(siteConfig, Formatting.Indented);
+            Console.WriteLine(siteConfigSerialized);
+            using (FileStream fs = File.Create("./_config.json"))
+            {
+                fs.Write(Encoding.UTF8.GetBytes(siteConfigSerialized), 0, Encoding.UTF8.GetBytes(siteConfigSerialized).Length);
+            }
         }
         public static GlobalConfiguration getConfiguration()
         {
