@@ -92,10 +92,14 @@ namespace WDHAN
         }
         public static void includeTags()
         {
-            var siteConfig = getConfiguration();
+            GlobalConfiguration siteConfig = getConfiguration();
 
             siteConfig.tags = getTaggedPosts();
-            Console.WriteLine("TAGSAAA: " + siteConfig.tags);
+            Console.WriteLine("TAGAAA!");
+            foreach(var tag in getTaggedPosts())
+            {
+                Console.WriteLine("TAGAAA:" + tag);
+            }
 
             string siteConfigSerialized = JsonConvert.SerializeObject(siteConfig, Formatting.Indented);
             Console.WriteLine(siteConfigSerialized);
