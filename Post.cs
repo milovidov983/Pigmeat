@@ -12,7 +12,6 @@ namespace WDHAN
         public JObject frontmatter { get; set; }
         public string content { get; set; }
         public string url { get; set; }
-        public string[] tags { get; set; }
         public Post()
         {
             

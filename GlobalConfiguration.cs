@@ -45,13 +45,44 @@ namespace WDHAN
         public Boolean quiet { get; set; }
         public Boolean verbose { get; set; }
         public string url { get; set; }
-        public Dictionary<string, object> tags { get; set; }
+        public Dictionary<string, object> TAGS { get; set; }
         DateTime time { get; set; }
         string[] static_files { get; set; }
         string[] html_files { get; set; }
         public GlobalConfiguration()
         {
             
+        }
+        public static List<string> filesWithTag(string tag)
+        {
+            var siteConfig = getConfiguration();
+            List<string> postsWithTag = new List<string>();
+            foreach(var collection in siteConfig.collections)
+            {
+                foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
+                {
+                    if(isMarkdown(Path.GetExtension(post).Substring(1)))
+                    {
+                        try
+                        {
+                            var postJSON = JArray.Parse(Post.parseFrontMatter(post)["tags"].ToString());
+                            Console.WriteLine("TAGCCC: ");
+                            foreach(var foundTag in postJSON)
+                            {
+                                if(foundTag.ToString().Equals(tag.ToString(), StringComparison.Ordinal))
+                                {
+                                    postsWithTag.Add(Path.GetDirectoryName(post) + "/" + Path.GetFileName(post));
+                                }
+                            }
+                        }
+                        catch(NullReferenceException)
+                        {
+                            continue;
+                        }
+                    }
+                }
+            }
+            return postsWithTag;
         }
         public static Dictionary<string, object> getTaggedPosts()
         {
@@ -62,16 +93,26 @@ namespace WDHAN
             {
                 foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                 {
-                    if(isMarkdown(post))
+                    if(isMarkdown(Path.GetExtension(post).Substring(1)))
                     {
-                        var postJSON = JsonConvert.DeserializeObject<Post>(File.ReadAllText(siteConfig.source + "/temp/_" + collection + "/" + Path.GetFileNameWithoutExtension(post) + ".json"));
-                        foreach(var tag in postJSON.tags)
+                        //var postJSON = JsonConvert.DeserializeObject<Post>(File.ReadAllText(siteConfig.source + "/temp/_" + collection + "/" + Path.GetFileNameWithoutExtension(post) + ".json"));
+                        try
                         {
-                            if(!tags.Contains(tag))
+                            var postJSON = JArray.Parse(Post.parseFrontMatter(post)["tags"].ToString());
+                            Console.WriteLine("TAGCCC: ");
+                            foreach(var tag in postJSON)
                             {
-                                tags.Add(tag);
-                                taggedPosts.Add(tag, Path.GetDirectoryName(post) + Path.GetFileName(post));
+                                if(!tags.Contains(tag.ToString()))
+                                {
+                                    tags.Add(tag.ToString());
+                                    Console.WriteLine("TAGBBB: " + tag.ToString());
+                                    taggedPosts.Add(tag.ToString(), filesWithTag(tag.ToString()));
+                                }
                             }
+                        }
+                        catch(NullReferenceException)
+                        {
+                            continue;
                         }
                     }
                 }
@@ -94,7 +135,7 @@ namespace WDHAN
         {
             GlobalConfiguration siteConfig = getConfiguration();
 
-            siteConfig.tags = getTaggedPosts();
+            siteConfig.TAGS = getTaggedPosts();
             Console.WriteLine("TAGAAA!");
             foreach(var tag in getTaggedPosts())
             {
