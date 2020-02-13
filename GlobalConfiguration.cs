@@ -74,7 +74,6 @@ namespace WDHAN
                             }
                         }
                     }
-                    
                 }
             }
             return taggedPosts;
@@ -96,6 +95,7 @@ namespace WDHAN
             var siteConfig = getConfiguration();
 
             siteConfig.tags = getTaggedPosts();
+            Console.WriteLine("TAGSAAA: " + siteConfig.tags);
 
             string siteConfigSerialized = JsonConvert.SerializeObject(siteConfig, Formatting.Indented);
             Console.WriteLine(siteConfigSerialized);
