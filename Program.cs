@@ -92,7 +92,7 @@ namespace WDHAN
                     dir.Delete(true); 
                 }
             }   
-            catch(DirectoryNotFoundException ex)
+            catch(DirectoryNotFoundException)
             {
                 // This is expected if either _site or temp are not found.
                 /*

@@ -4,7 +4,7 @@ namespace WDHAN
 {
     public class Collection
     {
-        public Dictionary<string, object> entries { get; set; }
+        public List<Post> entries { get; set; }
         public Collection()
         {
             

@@ -43,11 +43,10 @@ namespace WDHAN
             }
             return fileContents;
         }
-        public static Dictionary<string, object> getPosts(string collectionName) 
+        public static List<Post> getPosts(string collectionName) 
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
-            Dictionary<string, object> postList = new Dictionary<string, object>();
-            int i = 0;
+            List<Post> postList = new List<Post>();
             foreach(var collection in siteConfig.collections)
             {
                 if(collection.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
@@ -56,9 +55,7 @@ namespace WDHAN
                     {
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            //postList.Add(i.ToString(), getPostContents(post));
-                            postList.Add(Path.GetFileNameWithoutExtension(post), new Post() { frontmatter = parseFrontMatter(post), content = getPostContents(post), url = siteConfig.url + siteConfig.baseurl });
-                            i++;
+                            postList.Add(new Post() { frontmatter = parseFrontMatter(post), content = getPostContents(post), url = siteConfig.url + siteConfig.baseurl });
                         }
                     }
                 }
