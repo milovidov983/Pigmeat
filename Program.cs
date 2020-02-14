@@ -10,6 +10,7 @@ using Fluid.Values;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Reflection;
+using LibGit2Sharp;
 
 namespace WDHAN
 {
@@ -265,6 +266,7 @@ namespace WDHAN
             catch (IndexOutOfRangeException)
             {
                 // Create site with default theme
+                Repository.Clone("https://github.com/MadeByEmil/wdhan-basic.git", "./");
             }
             catch(Exception ex)
             {

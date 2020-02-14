@@ -43,7 +43,7 @@ namespace WDHAN
             }
             return fileContents;
         }
-        public static List<Post> getPosts(string collectionName) 
+        public static List<Post> getPosts(string collectionName)
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
             List<Post> postList = new List<Post>();
