@@ -12,9 +12,17 @@ namespace WDHAN
         public JObject frontmatter { get; set; }
         public string content { get; set; }
         public string url { get; set; }
+        public DateTime date { get; set; }
+        public List<string> tags { get; set; }
+        public string dir { get; set; }
+        public string name { get; set; }
+        public string path { get; set; }
         public Page()
         {
-            
+            name = Path.GetFileName(path);
+            dir = Path.GetDirectoryName(path);
+            tags = JsonConvert.DeserializeObject<List<string>>(frontmatter.GetValue("tags").ToString());
+            date = JsonConvert.DeserializeObject<DateTime>(frontmatter.GetValue("date").ToString());
         }
         public static string getPageContents(string filePath)
         {

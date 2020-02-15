@@ -320,10 +320,10 @@ namespace WDHAN
                         }
                         if(first && second)
                         {
-                            siteConfig.pages.Add(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents });
+                            siteConfig.pages.Add(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file });
                             if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
                             {
-                                siteConfig.html_pages.Add(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents });
+                                siteConfig.html_pages.Add(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file });
                             }
                             GlobalConfiguration.outputConfiguration(siteConfig);
 

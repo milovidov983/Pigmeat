@@ -25,7 +25,7 @@ namespace WDHAN
                     {
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            postList.Add(new Post() { frontmatter = parseFrontMatter(post), content = Page.getPageContents(post), url = siteConfig.url + siteConfig.baseurl });
+                            postList.Add(new Post() { frontmatter = parseFrontMatter(post), content = Page.getPageContents(post), path = post });
                         }
                     }
                 }
