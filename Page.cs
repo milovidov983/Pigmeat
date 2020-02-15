@@ -11,18 +11,43 @@ namespace WDHAN
     {
         public JObject frontmatter { get; set; }
         public string content { get; set; }
+        public string path { get; set; }
+
+        // The above three variables should be specified. The rest are defined by the Constructor.
         public string url { get; set; }
         public DateTime date { get; set; }
         public List<string> tags { get; set; }
         public string dir { get; set; }
         public string name { get; set; }
-        public string path { get; set; }
         public Page()
         {
-            name = Path.GetFileName(path);
-            dir = Path.GetDirectoryName(path);
-            tags = JsonConvert.DeserializeObject<List<string>>(frontmatter.GetValue("tags").ToString());
-            date = JsonConvert.DeserializeObject<DateTime>(frontmatter.GetValue("date").ToString());
+            getDefinedPage(this);
+        }
+        public static Page getDefinedPage(Page page)
+        {
+            page.name = Path.GetFileName(page.path);
+            page.dir = Path.GetDirectoryName(page.path);
+            try
+            {
+                page.tags = JsonConvert.DeserializeObject<List<string>>(page.frontmatter.GetValue("tags").ToString());
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+            try
+            {
+                page.date = JsonConvert.DeserializeObject<DateTime>(page.frontmatter.GetValue("date").ToString());
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+            return page;
+        }
+        public static JObject getPage(Page page)
+        {
+            return JObject.Parse(JsonConvert.SerializeObject(page));
         }
         public static string getPageContents(string filePath)
         {
@@ -48,6 +73,10 @@ namespace WDHAN
                         fileContents += (line + "\n");
                     }
                 }
+            }
+            else
+            {
+                fileContents = File.ReadAllText(filePath);
             }
             return fileContents;
         }
@@ -75,7 +104,7 @@ namespace WDHAN
                 }
                 if(pageFrontMatter.Equals("", StringComparison.OrdinalIgnoreCase))
                 {
-                    return JObject.Parse("{\"null\": true}");
+                    return JObject.Parse("{\"exists\": true}");
                 }
                 else
                 {
@@ -98,7 +127,7 @@ namespace WDHAN
             }
             else
             {
-                return JObject.Parse("{\"null\": true}");
+                return JObject.Parse("{\"exists\": false}");
             }
         }
     }

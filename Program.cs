@@ -1,4 +1,4 @@
-using Markdig;
+﻿using Markdig;
 using Fluid;
 using Newtonsoft.Json;
 using System;
@@ -327,12 +327,19 @@ namespace WDHAN
                         }
                         if(first && second)
                         {
-                            siteConfig.pages.Add(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file });
-                            if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
+                            try
                             {
-                                siteConfig.html_pages.Add(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file });
+                                siteConfig.pages.Add(Page.getDefinedPage(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file }));
+                                if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    siteConfig.html_pages.Add(Page.getDefinedPage(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file }));
+                                }
+                                GlobalConfiguration.outputConfiguration(siteConfig);
                             }
-                            GlobalConfiguration.outputConfiguration(siteConfig);
+                            catch(NullReferenceException)
+                            {
+                                
+                            }
 
                             using (FileStream fs = File.Create(fileDest))
                             {
@@ -350,18 +357,25 @@ namespace WDHAN
                     }
                     else
                     {
-                        // Copy file over if included
-                        if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
+                        try
                         {
-                            File.Copy(file, fileDest);
-                        }
+                            // Copy file over if included
+                            if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
+                            {
+                                File.Copy(file, fileDest);
+                            }
 
-                        siteConfig.static_files.Add(new StaticFile { path = file.Substring(1) });
-                        if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
-                        {
-                            siteConfig.html_files.Add(new HTMLFile { path = file.Substring(1) });
+                            siteConfig.static_files.Add(new StaticFile { path = file.Substring(1) });
+                            if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
+                            {
+                                siteConfig.html_files.Add(new HTMLFile { path = file.Substring(1) });
+                            }
+                            GlobalConfiguration.outputConfiguration(siteConfig);
                         }
-                        GlobalConfiguration.outputConfiguration(siteConfig);
+                        catch(NullReferenceException)
+                        {
+
+                        }
                     }
                 }
             }
@@ -414,6 +428,17 @@ namespace WDHAN
                         else
                         {
                             continue;
+                        }
+
+                        try
+                        {
+                            string layout = Page.parseFrontMatter(file)["layout"].ToString();
+                            var pageContents = fileContents;
+                            fileContents = Page.getPageContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
+                        }
+                        catch
+                        {
+
                         }
 
                         // Configure the pipeline with all advanced extensions active
@@ -506,6 +531,32 @@ namespace WDHAN
                 var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
 
                 JObject pageModel = Page.parseFrontMatter(filePath);
+
+                try
+                {
+                    string layout = pageModel["layout"].ToString();
+                    JObject layoutModel = Page.parseFrontMatter(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html");
+                    postModel.Merge(layoutModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                }
+                catch(NullReferenceException)
+                {
+
+                }
+                try
+                {
+                    JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = fileContents, path = filePath }));
+                    pageModel.Merge(pageObjectModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                }
+                catch
+                {
+
+                }
 
                 if (FluidTemplate.TryParse(fileContents, out var template))
                 {

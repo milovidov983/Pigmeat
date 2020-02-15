@@ -13,6 +13,28 @@ namespace WDHAN
         {
             
         }
+        public static Post getDefinedPost(Post post)
+        {
+            post.name = Path.GetFileName(post.path);
+            post.dir = Path.GetDirectoryName(post.path);
+            try
+            {
+                post.tags = JsonConvert.DeserializeObject<List<string>>(post.frontmatter.GetValue("tags").ToString());
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+            try
+            {
+                post.date = JsonConvert.DeserializeObject<DateTime>(post.frontmatter.GetValue("date").ToString());
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+            return post;
+        }
         public static List<Post> getPosts(string collectionName)
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
@@ -25,7 +47,7 @@ namespace WDHAN
                     {
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            postList.Add(new Post() { frontmatter = parseFrontMatter(post), content = Page.getPageContents(post), path = post });
+                            postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post), content = Page.getPageContents(post), path = post }));
                         }
                     }
                 }
