@@ -1,4 +1,4 @@
-﻿using Markdig;
+using Markdig;
 using Fluid;
 using Newtonsoft.Json;
 using System;
@@ -68,15 +68,22 @@ namespace WDHAN
 
                 foreach (var file in Directory.GetFiles(siteConfig.destination, "*.*", SearchOption.AllDirectories))
                 {
-                    Console.WriteLine("Deleting " + file.Substring(siteConfig.destination.Length + 1));
-                    File.Delete(file); 
-                }
+                    if(!siteConfig.keep_files.Contains(file))
+                    {
+                        Console.WriteLine("Deleting " + file.Substring(siteConfig.destination.Length + 1));
+                        File.Delete(file);
+                    }
                     
+                }
+
+                /*
+                // May lead to deletion of files in keep_files
                 foreach (DirectoryInfo dir in outputDir.EnumerateDirectories())
                 {
                     Console.WriteLine("Deleting " + dir.Name);
                     dir.Delete(true); 
                 }
+                */
 
                 Console.WriteLine("Cleaning temporary files, " + siteConfig.source + "/temp" + " ... ");
                 System.IO.DirectoryInfo tempDir = new DirectoryInfo(siteConfig.source + "/temp");
@@ -334,12 +341,21 @@ namespace WDHAN
                         }
                         else
                         {
-                            // Copy file over
-                            File.Copy(file, fileDest);
+                            // Copy file over (if not excluded)
+                            if(!siteConfig.exclude.Contains(file) && !siteConfig.exclude.Contains(Path.GetDirectoryName(file)))
+                            {
+                                File.Copy(file, fileDest);
+                            }
                         }
                     }
                     else
                     {
+                        // Copy file over if included
+                        if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
+                        {
+                            File.Copy(file, fileDest);
+                        }
+
                         siteConfig.static_files.Add(new StaticFile { path = file.Substring(1) });
                         if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
                         {
