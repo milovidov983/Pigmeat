@@ -19,6 +19,7 @@ namespace WDHAN
         public List<string> tags { get; set; }
         public string dir { get; set; }
         public string name { get; set; }
+        public string excerpt { get; set; }
         public Page()
         {
             getDefinedPage(this);
@@ -27,6 +28,7 @@ namespace WDHAN
         {
             page.name = Path.GetFileName(page.path);
             page.dir = Path.GetDirectoryName(page.path);
+
             try
             {
                 page.tags = JsonConvert.DeserializeObject<List<string>>(page.frontmatter.GetValue("tags").ToString());
@@ -35,6 +37,7 @@ namespace WDHAN
             {
 
             }
+
             try
             {
                 page.date = JsonConvert.DeserializeObject<DateTime>(page.frontmatter.GetValue("date").ToString());
@@ -43,7 +46,42 @@ namespace WDHAN
             {
 
             }
+
+            try
+            {
+                page.excerpt = getExcerpt(page);
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+
             return page;
+        }
+        public static string getExcerpt(Page page)
+        {
+            string excerpt = "";
+            foreach(var currentChar in page.content)
+            {
+                excerpt += currentChar;
+                try
+                {
+                    if(excerpt.Contains(page.frontmatter["excerpt_separator"].ToString()))
+                    {
+                        excerpt = excerpt.Substring(0, page.frontmatter["excerpt_separator"].ToString().Length);
+                        break;
+                    }
+                }
+                catch(NullReferenceException)
+                {
+                    if(excerpt.Contains(GlobalConfiguration.getConfiguration().excerpt_separator))
+                    {
+                        excerpt = excerpt.Substring(0, GlobalConfiguration.getConfiguration().excerpt_separator.Length);
+                        break;
+                    }
+                }
+            }
+            return excerpt;
         }
         public static JObject getPage(Page page)
         {

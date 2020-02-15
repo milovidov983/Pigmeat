@@ -430,16 +430,7 @@ namespace WDHAN
                             continue;
                         }
 
-                        try
-                        {
-                            string layout = Page.parseFrontMatter(file)["layout"].ToString();
-                            var pageContents = fileContents;
-                            fileContents = Page.getPageContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
-                        }
-                        catch
-                        {
-
-                        }
+                        
 
                         // Configure the pipeline with all advanced extensions active
                         Console.WriteLine("Outputting " + file + " to " + siteConfig.destination + "/" + collection + "/" + Path.GetFileNameWithoutExtension(file) + ".html");
@@ -552,6 +543,10 @@ namespace WDHAN
                     {
                         MergeArrayHandling = MergeArrayHandling.Union
                     });
+
+                    string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
+                    var pageContents = fileContents;
+                    fileContents = Page.getPageContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
                 }
                 catch
                 {

@@ -17,6 +17,7 @@ namespace WDHAN
         {
             post.name = Path.GetFileName(post.path);
             post.dir = Path.GetDirectoryName(post.path);
+
             try
             {
                 post.tags = JsonConvert.DeserializeObject<List<string>>(post.frontmatter.GetValue("tags").ToString());
@@ -25,6 +26,7 @@ namespace WDHAN
             {
 
             }
+
             try
             {
                 post.date = JsonConvert.DeserializeObject<DateTime>(post.frontmatter.GetValue("date").ToString());
@@ -33,6 +35,16 @@ namespace WDHAN
             {
 
             }
+
+            try
+            {
+                post.excerpt = getExcerpt(post);
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+
             return post;
         }
         public static List<Post> getPosts(string collectionName)
