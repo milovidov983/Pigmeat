@@ -20,9 +20,9 @@ namespace WDHAN
         public string sass_dir { get; set; }
         public List<string> collections { get; set; }
         public Boolean safe { get; set; }
-        public string[] include { get; set; }
-        public string[] exclude { get; set; }
-        public string[] keep_files { get; set; }
+        public List<string> include { get; set; }
+        public List<string> exclude { get; set; }
+        public List<string> keep_files { get; set; }
         public string encoding { get; set; }
         public string culture { get; set; }
         public string markdown_ext { get; set; }
@@ -31,8 +31,8 @@ namespace WDHAN
         public int limit_posts { get; set; }
         public Boolean future { get; set; }
         public Boolean unpublished { get; set; }
-        public string[] whitelist { get; set; }
-        public string[] plugins { get; set; }
+        public List<string> whitelist { get; set; }
+        public List<string> plugins { get; set; }
         public string excerpt_separator { get; set; }
         public Boolean detach { get; set; }
         public int port { get; set; }
@@ -46,9 +46,12 @@ namespace WDHAN
         public Boolean verbose { get; set; }
         public string url { get; set; }
         public Dictionary<string, object> TAGS { get; set; }
-        DateTime time { get; set; }
-        string[] static_files { get; set; }
-        string[] html_files { get; set; }
+        public DateTime time { get; set; }
+        public List<Page> pages { get; set; }
+        public List<StaticFile> static_files { get; set; }
+        public List<HTMLFile> html_files { get; set; }
+        public List<Page> html_pages { get; set; }
+        public Defaults defaults { get; set; }
         public GlobalConfiguration()
         {
             
@@ -65,7 +68,7 @@ namespace WDHAN
                     {
                         try
                         {
-                            var postJSON = JArray.Parse(Post.parseFrontMatter(post)["tags"].ToString());
+                            var postJSON = JArray.Parse(Page.parseFrontMatter(post)["tags"].ToString());
                             Console.WriteLine("TAGCCC: ");
                             foreach(var foundTag in postJSON)
                             {
@@ -98,7 +101,7 @@ namespace WDHAN
                         //var postJSON = JsonConvert.DeserializeObject<Post>(File.ReadAllText(siteConfig.source + "/temp/_" + collection + "/" + Path.GetFileNameWithoutExtension(post) + ".json"));
                         try
                         {
-                            var postJSON = JArray.Parse(Post.parseFrontMatter(post)["tags"].ToString());
+                            var postJSON = JArray.Parse(Page.parseFrontMatter(post)["tags"].ToString());
                             Console.WriteLine("TAGCCC: ");
                             foreach(var tag in postJSON)
                             {
@@ -119,17 +122,21 @@ namespace WDHAN
             }
             return taggedPosts;
         }
-        public static void includeTime()
+        public static void outputConfiguration(GlobalConfiguration siteConfig)
         {
-            var siteConfig = getConfiguration();
-            siteConfig.time = DateTime.UtcNow; // Get the time in UTC (international, timezone neutral)
-
             string siteConfigSerialized = JsonConvert.SerializeObject(siteConfig, Formatting.Indented);
             Console.WriteLine(siteConfigSerialized);
             using (FileStream fs = File.Create("./_config.json"))
             {
                 fs.Write(Encoding.UTF8.GetBytes(siteConfigSerialized), 0, Encoding.UTF8.GetBytes(siteConfigSerialized).Length);
             }
+        }
+        public static void includeTime()
+        {
+            var siteConfig = getConfiguration();
+            siteConfig.time = DateTime.UtcNow; // Get the time in UTC (international, timezone neutral)
+
+            outputConfiguration(siteConfig);
         }
         public static void includeTags()
         {
@@ -142,12 +149,7 @@ namespace WDHAN
                 Console.WriteLine("TAGAAA:" + tag);
             }
 
-            string siteConfigSerialized = JsonConvert.SerializeObject(siteConfig, Formatting.Indented);
-            Console.WriteLine(siteConfigSerialized);
-            using (FileStream fs = File.Create("./_config.json"))
-            {
-                fs.Write(Encoding.UTF8.GetBytes(siteConfigSerialized), 0, Encoding.UTF8.GetBytes(siteConfigSerialized).Length);
-            }
+            outputConfiguration(siteConfig);
         }
         public static GlobalConfiguration getConfiguration()
         {

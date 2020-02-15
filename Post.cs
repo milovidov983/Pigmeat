@@ -7,41 +7,11 @@ using Newtonsoft.Json;
 
 namespace WDHAN
 {
-    public class Post
+    public class Post : Page
     {
-        public JObject frontmatter { get; set; }
-        public string content { get; set; }
-        public string url { get; set; }
         public Post()
         {
             
-        }
-        public static string getPostContents(string filePath)
-        {
-            var siteConfig = GlobalConfiguration.getConfiguration();
-            string fileContents = "";
-            Boolean first = false;
-            Boolean second = false;
-            if(File.ReadAllLines(filePath)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
-            {
-                foreach(var line in File.ReadAllLines(filePath)){
-                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
-                    {
-                        first = true;
-                        continue;
-                    }
-                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
-                    {
-                        second = true;
-                        continue;
-                    }
-                    if(first && second)
-                    {
-                        fileContents += (line + "\n");
-                    }
-                }
-            }
-            return fileContents;
         }
         public static List<Post> getPosts(string collectionName)
         {
@@ -55,7 +25,7 @@ namespace WDHAN
                     {
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            postList.Add(new Post() { frontmatter = parseFrontMatter(post), content = getPostContents(post), url = siteConfig.url + siteConfig.baseurl });
+                            postList.Add(new Post() { frontmatter = parseFrontMatter(post), content = Page.getPageContents(post), url = siteConfig.url + siteConfig.baseurl });
                         }
                     }
                 }
@@ -80,56 +50,5 @@ namespace WDHAN
                 fs.Write(Encoding.UTF8.GetBytes(collectionSerialized), 0, Encoding.UTF8.GetBytes(collectionSerialized).Length);
             }
         }
-        public static JObject parseFrontMatter(string filePath)
-        {
-            Boolean first = false, second = false;
-            string pageFrontMatter = "";
-            if(File.ReadAllLines(filePath)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
-            {
-                foreach(var line in File.ReadAllLines(filePath)){
-                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
-                    {
-                        first = true;
-                        continue;
-                    }
-                    if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
-                    {
-                        second = true;
-                        continue;
-                    }
-                    if(first && !second)
-                    {
-                        pageFrontMatter += (line + "\n");
-                    }
-                }
-                if(pageFrontMatter.Equals("", StringComparison.OrdinalIgnoreCase))
-                {
-                    return JObject.Parse("{\"null\": true}");
-                }
-                else
-                {
-                    Console.WriteLine("Frontmatter:\n" + pageFrontMatter);
-                    return GlobalConfiguration.yamlInterop(pageFrontMatter);
-                    /*
-                    if(isJSON(pageFrontMatter))
-                    {
-                        return JObject.Parse(pageFrontMatter);
-                    }
-                    else
-                    {
-                        var deserializer = new Deserializer();
-                        StringReader reader = new StringReader(pageFrontMatter);
-                        var yamlObject = deserializer.Deserialize(reader);
-                        return JObject.Parse(JsonConvert.SerializeObject(yamlObject, Formatting.Indented));
-                    }
-                    */
-                }
-            }
-            else
-            {
-                return JObject.Parse("{\"null\": true}");
-            }
-        }
-        
     }
 }

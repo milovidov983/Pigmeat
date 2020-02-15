@@ -181,9 +181,9 @@ namespace WDHAN
                             sass_dir = "_sass",
                             collections = defaultCollections,
                             safe = false,
-                            include = new string[] { ".htaccess" },
-                            exclude = new string[] { },
-                            keep_files = new string[] { ".git", ".svn" },
+                            include = new List<string> { ".htaccess" },
+                            exclude = new List<string> { },
+                            keep_files = new List<string> { ".git", ".svn" },
                             encoding = "utf-8",
                             culture = "en-US",
                             markdown_ext = "markdown,mkdown,mkdn,mkd,md",
@@ -192,8 +192,8 @@ namespace WDHAN
                             limit_posts = 0,
                             future = false,
                             unpublished = false,
-                            whitelist = new string[] { },
-                            plugins = new string[] { },
+                            whitelist = new List<string> { },
+                            plugins = new List<string> { },
                             excerpt_separator = @"\n\n",
                             detach = false,
                             port = 4000,
@@ -204,7 +204,9 @@ namespace WDHAN
                             paginate_path = "/page:num",
                             //timezone = "null", //Intentionally blank, generates true null field on output
                             quiet = false,
-                            verbose = false
+                            verbose = false,
+                            url = "",
+                            time = DateTime.UtcNow
                         };
                         string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
                         Console.WriteLine(defaultConfigSerialized);
@@ -318,6 +320,13 @@ namespace WDHAN
                         }
                         if(first && second)
                         {
+                            siteConfig.pages.Add(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents });
+                            if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
+                            {
+                                siteConfig.html_pages.Add(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents });
+                            }
+                            GlobalConfiguration.outputConfiguration(siteConfig);
+
                             using (FileStream fs = File.Create(fileDest))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(fileContents), 0, Encoding.UTF8.GetBytes(fileContents).Length);
@@ -328,6 +337,15 @@ namespace WDHAN
                             // Copy file over
                             File.Copy(file, fileDest);
                         }
+                    }
+                    else
+                    {
+                        siteConfig.static_files.Add(new StaticFile { path = file.Substring(1) });
+                        if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
+                        {
+                            siteConfig.html_files.Add(new HTMLFile { path = file.Substring(1) });
+                        }
+                        GlobalConfiguration.outputConfiguration(siteConfig);
                     }
                 }
             }
@@ -471,7 +489,7 @@ namespace WDHAN
 
                 var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
 
-                JObject pageModel = Post.parseFrontMatter(filePath);
+                JObject pageModel = Page.parseFrontMatter(filePath);
 
                 if (FluidTemplate.TryParse(fileContents, out var template))
                 {
@@ -576,6 +594,21 @@ namespace WDHAN
                 FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
 
                 var postModel = new JObject();
+                try
+                {
+                    if(Path.GetDirectoryName(filePath).Equals(siteConfig.defaults.scope.path, StringComparison.Ordinal))
+                    {
+                        var fileModel = JObject.Parse(JsonConvert.SerializeObject(siteConfig.defaults.values, Formatting.Indented));
+                        postModel.Merge(fileModel, new JsonMergeSettings
+                        {
+                            MergeArrayHandling = MergeArrayHandling.Union
+                        });
+                    }
+                }
+                catch(NullReferenceException)
+                {
+
+                }
 
                 //TODO: Get values from content
                 //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
@@ -592,7 +625,7 @@ namespace WDHAN
                 //NOTE: Not needed. Collection data is in _config.json. Actually, nevermind (see #8)
                 var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
 
-                JObject pageModel = Post.parseFrontMatter(filePath);
+                JObject pageModel = Page.parseFrontMatter(filePath);
 
                 if (FluidTemplate.TryParse(fileContents, out var template))
                 {
