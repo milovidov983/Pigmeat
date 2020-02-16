@@ -1,4 +1,4 @@
-using Markdig;
+﻿using Markdig;
 using Fluid;
 using Newtonsoft.Json;
 using System;
@@ -53,9 +53,10 @@ namespace WDHAN
                     printHelpMsg(args);
                 }
             }
-            catch (IndexOutOfRangeException)
+            catch (IndexOutOfRangeException ex)
             {
-                printHelpMsg(args);
+                Console.WriteLine(ex);
+                //printHelpMsg(args);
             }
         }
         static void cleanSite(string[] args)
@@ -515,6 +516,47 @@ namespace WDHAN
             try
             {
                 GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
+
+                if(fileContents.Contains("{% include "))
+                {
+                    Console.WriteLine("INCLUDESPOTTED");
+                    List<string> includeCalls = new List<string>();
+                    string readerString = "";
+                    Boolean hitOnce = false;
+                    foreach(var character in fileContents)
+                    {
+                        if(character.Equals('{') && !hitOnce)
+                        {
+                            hitOnce = true;
+                            readerString += character;
+                            continue;
+                        }
+                        if(character.Equals('}') && hitOnce)
+                        {
+                            hitOnce = false;
+                            readerString += character;
+                            if(readerString.Contains("{% include "))
+                            {
+                                includeCalls.Add(readerString);
+                                Console.WriteLine("INCLUDEADDED");
+                            }
+                            readerString = "";
+                            continue;
+                        }
+                        if(hitOnce)
+                        {
+                            readerString += character;
+                            continue;
+                        }
+                    }
+                    foreach(var includeCall in includeCalls)
+                    {
+                        Include currentInclude = new Include { input = includeCall };
+                        string includePath = siteConfig.source + "/" + siteConfig.includes_dir + "/" + currentInclude.getCallArgs()[2];
+                        fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath));
+                        Console.WriteLine("INCLUDEAAA: " + fileContents);
+                    }
+                }
 
                 // When a property of a JObject value is accessed, try to look into its properties
                 TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
