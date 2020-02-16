@@ -48,7 +48,7 @@ namespace WDHAN
         public void setVariables()
         {
             Dictionary<string, string> gatheredVariables = new Dictionary<string, string>();
-            for(int i = 0; i < getKeys().Length - 1; i++)
+            for(int i = 0; i < getKeys().Length; i++)
             {
                 gatheredVariables.Add(getKeys()[i], getValues()[i]);
                 Console.WriteLine("INCLUDEVAR: " + getKeys()[i] + ", " + getValues()[i]);
@@ -59,28 +59,36 @@ namespace WDHAN
         {
             List<string> values = new List<string>();
             string currentValue = "";
-            Boolean hitOnce = false;
-            for(int i = 2; i < getCallArgs().Length - 1; i++)
+            for(int i = 3; i < getCallArgs().Length; i++)
             {
+                Console.WriteLine("INCLUDEARGS: " + getCallArgs()[i]);
+                Boolean hitEquals = false;
                 foreach(var character in getCallArgs()[i])
                 {
-                    if(character.Equals('=') && !hitOnce)
+                    if(character.Equals('='))
                     {
-                        hitOnce = true;
+                        hitEquals = true;
                         continue;
                     }
-                    if(hitOnce)
+                    if(hitEquals)
                     {
                         currentValue += character;
-                        continue;
-                    }
-                    else
-                    {
+                        Console.WriteLine(currentValue);
                         continue;
                     }
                 }
-                hitOnce = false;
-                values.Add(currentValue);
+                if(currentValue.ToCharArray()[0].Equals('"') && currentValue.ToCharArray()[currentValue.Length - 1].Equals('"'))
+                {
+                    values.Add(currentValue.Substring(1, currentValue.Length - 2));
+                }
+                else
+                {
+                    values.Add(currentValue);
+                }
+                Console.WriteLine("INCLUDEVALUE: " + currentValue);
+                currentValue = "";
+            }
+            return values.ToArray();
                 /*
                 if(currentValue.ToCharArray()[0].Equals('"')) //&& (currentValue.ToCharArray()[currentValue.Length - 1].Equals('"')
                 {
@@ -91,18 +99,15 @@ namespace WDHAN
                     values.Add(currentValue);
                 }
                 */
-                Console.WriteLine("INCLUDEVALUE: " + currentValue);
-                currentValue = "";
-                continue;
-            }
-            return values.ToArray();
+
         }
         public string[] getKeys()
         {
             List<string> keys = new List<string>();
             string currentKey = "";
-            for(int i = 2; i < getCallArgs().Length - 1; i++)
+            for(int i = 3; i < getCallArgs().Length; i++)
             {
+                Console.WriteLine("INCLUDEARGS: " + getCallArgs()[i]);
                 foreach(var character in getCallArgs()[i])
                 {
                     if(character.Equals('='))
