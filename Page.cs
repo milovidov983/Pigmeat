@@ -98,6 +98,24 @@ namespace WDHAN
 
             }
 
+            try
+            {
+                page.title = page.frontmatter["title"].ToString();
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+
+            try
+            {
+                page.url = Permalink.GetPermalink(page).parsePagePermalink(page);
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+
             return page;
         }
         public static string getDayOfYear(DateTime date)

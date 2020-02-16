@@ -462,7 +462,7 @@ namespace WDHAN
                         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
                         try
                         {
-                            result = Markdown.ToHtml(parsePage(args, collection, file, fileContents), pipeline);
+                            result = Markdown.ToHtml(parsePage(collection, file, fileContents, true), pipeline);
                         }
                         catch(ArgumentNullException ex)
                         {
@@ -510,7 +510,7 @@ namespace WDHAN
         passing them to template.Render(context), which we can then pass to Markdig to generate HTML (in cunjunction with SharpScss).
         Site variables, including site.data variables, come from JSON data.
         */
-        static string parsePage(string[] args, string collectionName, string filePath, string fileContents)
+        public static string parsePage(string collectionName, string filePath, string fileContents, Boolean parseLayout)
         {
             try
             {
@@ -544,7 +544,20 @@ namespace WDHAN
 
                 var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
 
-                JObject pageModel = Page.parseFrontMatter(filePath);
+                JObject pageModel = WDHANFile.parseFrontMatter(filePath);
+                JObject pagePreRenderModel = JObject.Parse(JsonConvert.SerializeObject(Post.getDefinedPost(new Post { frontmatter = WDHANFile.parseFrontMatter(filePath), content = WDHANFile.getFileContents(filePath), path = filePath})));
+
+                try
+                {
+                    postModel.Merge(pagePreRenderModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                }
+                catch(NullReferenceException)
+                {
+
+                }
 
                 try
                 {
@@ -561,15 +574,18 @@ namespace WDHAN
                 }
                 try
                 {
-                    JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = fileContents, path = filePath }));
-                    pageModel.Merge(pageObjectModel, new JsonMergeSettings
+                    if(parseLayout)
                     {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
+                        JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = fileContents, path = filePath }));
+                        pageModel.Merge(pageObjectModel, new JsonMergeSettings
+                        {
+                            MergeArrayHandling = MergeArrayHandling.Union
+                        });
 
-                    string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
-                    var pageContents = fileContents;
-                    fileContents = WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
+                        string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
+                        var pageContents = fileContents;
+                        fileContents = WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
+                    }
                 }
                 catch
                 {

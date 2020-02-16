@@ -63,7 +63,12 @@ namespace WDHAN
                     {
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post), content = WDHANFile.getFileContents(post), path = post }));
+                            if(!Path.GetFileNameWithoutExtension(post).Equals("index", StringComparison.OrdinalIgnoreCase))
+                            {
+                                postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post),
+                                content = WDHAN.Program.parsePage(collectionName, post, WDHANFile.getFileContents(post), false),
+                                path = post }));
+                            }
                         }
                     }
                 }
