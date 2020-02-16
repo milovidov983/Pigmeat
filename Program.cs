@@ -1,4 +1,4 @@
-﻿using Markdig;
+using Markdig;
 using Fluid;
 using Newtonsoft.Json;
 using System;
@@ -545,19 +545,6 @@ namespace WDHAN
                 var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
 
                 JObject pageModel = WDHANFile.parseFrontMatter(filePath);
-                JObject pagePreRenderModel = JObject.Parse(JsonConvert.SerializeObject(Post.getDefinedPost(new Post { frontmatter = WDHANFile.parseFrontMatter(filePath), content = WDHANFile.getFileContents(filePath), path = filePath})));
-
-                try
-                {
-                    postModel.Merge(pagePreRenderModel, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-                }
-                catch(NullReferenceException)
-                {
-
-                }
 
                 try
                 {
@@ -574,14 +561,13 @@ namespace WDHAN
                 }
                 try
                 {
+                    JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = fileContents, path = filePath }));
+                    pageModel.Merge(pageObjectModel, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
                     if(parseLayout)
                     {
-                        JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = fileContents, path = filePath }));
-                        pageModel.Merge(pageObjectModel, new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
-
                         string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
                         var pageContents = fileContents;
                         fileContents = WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
