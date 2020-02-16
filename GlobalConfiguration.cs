@@ -48,7 +48,7 @@ namespace WDHAN
         public Dictionary<string, object> TAGS { get; set; }
         public DateTime time { get; set; }
         public List<Page> pages { get; set; }
-        public List<StaticFile> static_files { get; set; }
+        public List<WDHANFile> static_files { get; set; }
         public List<HTMLFile> html_files { get; set; }
         public List<Page> html_pages { get; set; }
         public Defaults defaults { get; set; }

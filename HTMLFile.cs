@@ -4,7 +4,7 @@ using System.IO;
 
 namespace WDHAN
 {
-    public class HTMLFile : StaticFile
+    public class HTMLFile : WDHANFile
     {
         public HTMLFile()
         {

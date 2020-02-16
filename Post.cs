@@ -15,6 +15,9 @@ namespace WDHAN
         }
         public static Post getDefinedPost(Post post)
         {
+            return (Post) getDefinedPage(post);
+
+            /*
             post.name = Path.GetFileName(post.path);
             post.dir = Path.GetDirectoryName(post.path);
 
@@ -46,6 +49,7 @@ namespace WDHAN
             }
 
             return post;
+            */
         }
         public static List<Post> getPosts(string collectionName)
         {
@@ -59,7 +63,7 @@ namespace WDHAN
                     {
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post), content = Page.getPageContents(post), path = post }));
+                            postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post), content = WDHANFile.getFileContents(post), path = post }));
                         }
                     }
                 }

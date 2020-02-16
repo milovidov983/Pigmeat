@@ -298,9 +298,8 @@ namespace WDHAN
                 Console.WriteLine("3 " + file);
                 if(!Path.GetDirectoryName(file).StartsWith("./_"))
                 {
-                    string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
-                    Console.WriteLine(fileDest);
-                    Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
+                    //string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+
 
                     Boolean first = false;
                     Boolean second = false;
@@ -341,6 +340,17 @@ namespace WDHAN
                                 
                             }
 
+                            var page = new Page { path = file, content = fileContents, frontmatter = Page.parseFrontMatter(file) };
+                            string fileDest = Permalink.GetPermalink(page).parsePagePermalink(Page.getDefinedPage(page));
+                            if(fileDest.Substring(0, 1).Equals("/", StringComparison.OrdinalIgnoreCase))
+                            {
+                                fileDest = "./" + siteConfig.destination + fileDest;
+                            }
+                            Console.WriteLine(fileDest);
+                            if(!Path.GetDirectoryName(fileDest).Equals("", StringComparison.OrdinalIgnoreCase))
+                            {
+                                Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
+                            }
                             using (FileStream fs = File.Create(fileDest))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(fileContents), 0, Encoding.UTF8.GetBytes(fileContents).Length);
@@ -349,9 +359,20 @@ namespace WDHAN
                         else
                         {
                             // Copy file over (if not excluded)
-                            if(!siteConfig.exclude.Contains(file) && !siteConfig.exclude.Contains(Path.GetDirectoryName(file)))
+                            string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+                            if(!Path.GetDirectoryName(file).Equals("", StringComparison.OrdinalIgnoreCase))
                             {
-                                File.Copy(file, fileDest);
+                                if(!siteConfig.exclude.Contains(file) && !siteConfig.exclude.Contains(Path.GetDirectoryName(file)))
+                                {
+                                    File.Copy(file, fileDest);
+                                }
+                            }
+                            else
+                            {
+                                if(!siteConfig.exclude.Contains(file))
+                                {
+                                    File.Copy(file, fileDest);
+                                }
                             }
                         }
                     }
@@ -360,12 +381,13 @@ namespace WDHAN
                         try
                         {
                             // Copy file over if included
+                            string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
                             if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
                             {
                                 File.Copy(file, fileDest);
                             }
 
-                            siteConfig.static_files.Add(new StaticFile { path = file.Substring(1) });
+                            siteConfig.static_files.Add(new WDHANFile { path = file.Substring(1) });
                             if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
                             {
                                 siteConfig.html_files.Add(new HTMLFile { path = file.Substring(1) });
@@ -433,7 +455,8 @@ namespace WDHAN
                         
 
                         // Configure the pipeline with all advanced extensions active
-                        Console.WriteLine("Outputting " + file + " to " + siteConfig.destination + "/" + collection + "/" + Path.GetFileNameWithoutExtension(file) + ".html");
+                        var post = new Post { path = file, content = fileContents, frontmatter = WDHANFile.parseFrontMatter(file)};
+                        Console.WriteLine("Outputting " + file + " to " + siteConfig.destination + Permalink.GetPermalink(post).parsePostPermalink(collection, post));
                         Console.WriteLine(fileContents + "\nis the content being parsed.\n");
                         var result = "";
                         var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -449,8 +472,8 @@ namespace WDHAN
                         }
 
                         //TODO: Implement permalinks in accordance with _config.json settings
-                        Directory.CreateDirectory(siteConfig.destination + "/" + collection); // No longer needed when permalink support is added
-                        using (FileStream fs = File.Create(siteConfig.destination + "/" + collection + "/" + Path.GetFileNameWithoutExtension(file) + ".html"))
+                        Directory.CreateDirectory(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(post).parsePostPermalink(collection, post)));
+                        using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(post).parsePostPermalink(collection, post) + "/" + Path.GetFileNameWithoutExtension(file) + ".html")))
                         {
                             fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
                         }
@@ -546,7 +569,7 @@ namespace WDHAN
 
                     string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
                     var pageContents = fileContents;
-                    fileContents = Page.getPageContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
+                    fileContents = WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
                 }
                 catch
                 {
