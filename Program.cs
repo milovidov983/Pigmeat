@@ -597,6 +597,8 @@ namespace WDHAN
             {
                 GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
 
+                fileContents = Include.evalInclude(fileContents);
+                /*
                 if(fileContents.Contains("{% include "))
                 {
                     Console.WriteLine("INCLUDESPOTTED");
@@ -637,6 +639,11 @@ namespace WDHAN
                         Console.WriteLine("INCLUDEAAA: " + fileContents);
                     }
                 }
+                else
+                {
+                    Console.WriteLine("NOINCLUDE - " + filePath);
+                }
+                */
 
                 // When a property of a JObject value is accessed, try to look into its properties
                 TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
@@ -693,71 +700,84 @@ namespace WDHAN
                         string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
                         var pageContents = fileContents;
                         fileContents = WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
+                        fileContents = Include.evalInclude(fileContents); // Recheck for includes, incase layouts have includes
                     }
                 }
                 catch
                 {
                     string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
-                    Console.WriteLine(WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html"));
+                    //Console.WriteLine(WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html"));
                 }
 
-                if (FluidTemplate.TryParse(fileContents, out var template))
+                fileContents = Include.evalInclude(fileContents);
+
+                try
                 {
-                    var context = new TemplateContext();
-                    context.CultureInfo = new CultureInfo(siteConfig.culture);
-
-                    siteModel.Merge(dataSet, new JsonMergeSettings
+                    if (FluidTemplate.TryParse(fileContents, out var template))
                     {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-                    Console.WriteLine(siteModel.ToString());
+                        var context = new TemplateContext();
+                        context.CultureInfo = new CultureInfo(siteConfig.culture);
 
-                    context.SetValue("site", siteModel);
-                    context.SetValue("page", pageModel);
-                    //context.SetValue(collectionName, JObject.Parse(collectionPosts));
-                    
-                    collectionModel.Merge(collectionPosts, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
+                        siteModel.Merge(dataSet, new JsonMergeSettings
+                        {
+                            MergeArrayHandling = MergeArrayHandling.Union
+                        });
+                        Console.WriteLine(siteModel.ToString());
 
-                    context.SetValue(collectionName, collectionModel);
-                    //context.SetValue(collectionName, collectionPosts);
+                        context.SetValue("site", siteModel);
+                        context.SetValue("page", pageModel);
+                        //context.SetValue(collectionName, JObject.Parse(collectionPosts));
+                        
+                        collectionModel.Merge(collectionPosts, new JsonMergeSettings
+                        {
+                            MergeArrayHandling = MergeArrayHandling.Union
+                        });
 
-                    Console.WriteLine(collectionModel.ToString());
+                        context.SetValue(collectionName, collectionModel);
+                        //context.SetValue(collectionName, collectionPosts);
 
-                    Console.WriteLine(filePath);
-                    Console.WriteLine(template.Render(context) + "\nis the result.\n");
-                    Console.WriteLine();
+                        Console.WriteLine(collectionModel.ToString());
 
-                    // Generate a sum JObject of all these context values
-                    postModel.Merge(siteModel, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-                    postModel.Merge(collectionModel, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-                    postModel.Merge(pageModel, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
+                        Console.WriteLine(filePath);
+                        //fileContents = Include.evalInclude(fileContents);
+                        Console.WriteLine(fileContents);
+                        Console.WriteLine(template.Render(context) + "\nis the result.\n");
+                        Console.WriteLine();
 
-                    // Output page's sum JSON values
-                    Directory.CreateDirectory(siteConfig.source + "/temp/_" + collectionName);
-                    using (FileStream fs = File.Create(siteConfig.source + "/temp/_" + collectionName + "/" + Path.GetFileNameWithoutExtension(filePath) + ".json"))
-                    {
-                        fs.Write(Encoding.UTF8.GetBytes(postModel.ToString()), 0, Encoding.UTF8.GetBytes(postModel.ToString()).Length);
+                        // Generate a sum JObject of all these context values
+                        postModel.Merge(siteModel, new JsonMergeSettings
+                        {
+                            MergeArrayHandling = MergeArrayHandling.Union
+                        });
+                        postModel.Merge(collectionModel, new JsonMergeSettings
+                        {
+                            MergeArrayHandling = MergeArrayHandling.Union
+                        });
+                        postModel.Merge(pageModel, new JsonMergeSettings
+                        {
+                            MergeArrayHandling = MergeArrayHandling.Union
+                        });
+
+                        // Output page's sum JSON values
+                        Directory.CreateDirectory(siteConfig.source + "/temp/_" + collectionName);
+                        using (FileStream fs = File.Create(siteConfig.source + "/temp/_" + collectionName + "/" + Path.GetFileNameWithoutExtension(filePath) + ".json"))
+                        {
+                            fs.Write(Encoding.UTF8.GetBytes(postModel.ToString()), 0, Encoding.UTF8.GetBytes(postModel.ToString()).Length);
+                        }
+
+                        // Return the page's render context.
+                        return template.Render(context);
                     }
-
-                    // Return the page's render context.
-                    return template.Render(context);
+                    else
+                    {
+                        Console.WriteLine("ERROR: Could not parse Liquid context.");
+                        return fileContents;
+                    }
                 }
-                else
+                catch(ArgumentNullException)
                 {
-                    Console.WriteLine("ERROR: Could not parse Liquid context.");
-                    return null;
+                    Console.WriteLine("No Liquid context to parse.");
+                    return fileContents;
                 }
             }
             catch (UnauthorizedAccessException ex)

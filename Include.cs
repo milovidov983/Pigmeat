@@ -16,6 +16,54 @@ namespace WDHAN
         {
             
         }
+        public static string evalInclude(string fileContents)
+        {
+            if(fileContents.Contains("{% include "))
+            {
+                Console.WriteLine("INCLUDESPOTTED");
+                List<string> includeCalls = new List<string>();
+                string readerString = "";
+                Boolean hitOnce = false;
+                foreach(var character in fileContents)
+                {
+                    if(character.Equals('{') && !hitOnce)
+                    {
+                        hitOnce = true;
+                        readerString += character;
+                        continue;
+                    }
+                    if(character.Equals('}') && hitOnce)
+                    {
+                        hitOnce = false;
+                        readerString += character;
+                        if(readerString.Contains("{% include "))
+                        {
+                            includeCalls.Add(readerString);
+                            Console.WriteLine("INCLUDEADDED");
+                        }
+                        readerString = "";
+                        continue;
+                    }
+                    if(hitOnce)
+                    {
+                        readerString += character;
+                        continue;
+                    }
+                }
+                foreach(var includeCall in includeCalls)
+                {
+                    Include currentInclude = new Include { input = includeCall };
+                    string includePath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().includes_dir + "/" + currentInclude.getCallArgs()[2];
+                    fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath));
+                    Console.WriteLine("INCLUDEAAA: " + fileContents);
+                }
+            }
+            else
+            {
+                //Console.WriteLine("NOINCLUDE - " + filePath);
+            }
+            return fileContents;
+        }
         public string parseInclude(string includePath)
         {
             setVariables();
@@ -38,12 +86,26 @@ namespace WDHAN
                 MergeArrayHandling = MergeArrayHandling.Union
             });
 
-            if (FluidTemplate.TryParse(includeFile, out var template))
-            {
-                context.SetValue("include", givenModel);
-            }
+            Console.WriteLine("INCFILE: \n" + includeFile);
 
-            return template.Render(context);
+            try
+            {
+                if (FluidTemplate.TryParse(includeFile, out var template))
+                {
+                    context.SetValue("include", givenModel);
+                }
+                else
+                {
+                    Console.WriteLine("ERROR: Could not parse Liquid context.");
+                    return includeFile;
+                }
+                return template.Render(context);
+            }
+            catch(ArgumentNullException)
+            {
+                Console.WriteLine("No Liquid context to parse.");
+                return includeFile;
+            }            
         }
         public void setVariables()
         {
