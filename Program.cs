@@ -699,7 +699,8 @@ namespace WDHAN
                     {
                         string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
                         var pageContents = fileContents;
-                        fileContents = WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
+                        //fileContents = WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
+                        fileContents = Layout.getLayoutContents(layout).Replace("{{ content }}", pageContents);
                         fileContents = Include.evalInclude(fileContents); // Recheck for includes, incase layouts have includes
                     }
                 }
@@ -771,7 +772,7 @@ namespace WDHAN
                     else
                     {
                         Console.WriteLine("ERROR: Could not parse Liquid context.");
-                        return fileContents;
+                        return parsePage(collectionName, filePath, fileContents, parseLayout);
                     }
                 }
                 catch(ArgumentNullException)
