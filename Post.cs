@@ -81,7 +81,7 @@ namespace WDHAN
 
             return postList;
         }
-        public static void generateEntires(string collectionName)
+        public static void generateEntries(string collectionName)
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
             Collection collectionPosts = new Collection();

@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Reflection;
 using LibGit2Sharp;
+using System.Linq;
 
 namespace WDHAN
 {
@@ -143,7 +144,6 @@ namespace WDHAN
         }
         static void createSite(string[] args)
         {
-            Console.WriteLine("Creating project files ... ");
             try 
             {
                 // Create blank site scaffolding
@@ -151,6 +151,7 @@ namespace WDHAN
                 {
                     try
                     {
+                        Console.WriteLine("Creating project files ... ");
                         /*
                         var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
                         var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
@@ -276,7 +277,40 @@ namespace WDHAN
             catch (IndexOutOfRangeException)
             {
                 // Create site with default theme
-                Repository.Clone("https://github.com/MadeByEmil/wdhan-basic.git", "./");
+                Console.WriteLine("Are you sure you wish to overwrite all pre-existing data and create a new project? (y/n)");
+                ConsoleKeyInfo yesOrNoInput = Console.ReadKey();
+                if(yesOrNoInput.Key.ToString().Equals("y", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine();
+                    /*
+                    System.IO.DirectoryInfo projectDir = new DirectoryInfo("./");
+                    foreach (var file in Directory.GetFiles("./", "*.*", SearchOption.AllDirectories))
+                    {
+                        Console.WriteLine("Deleting " + file);
+                        File.Delete(file); 
+                    }
+                    foreach (DirectoryInfo dir in projectDir.EnumerateDirectories())
+                    {
+                        Console.WriteLine("Deleting " + dir.Name);
+                        dir.Delete(true); 
+                    }
+                    */
+                    /*
+                    string logMessage = "";
+                    using (var repo = new Repository("https://github.com/MadeByEmil/wdhan-basic.git"))
+                    {
+                        var remote = repo.Network.Remotes["origin"];
+                        var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
+                        Commands.Fetch(repo, remote.Name, refSpecs, null, logMessage);
+                    }
+                    Console.WriteLine(logMessage);
+                    */
+                    Repository.Clone("https://github.com/MadeByEmil/wdhan-basic.git", "./git/");
+                }
+                else
+                {
+                    Environment.Exit(0);
+                }
             }
             catch(Exception ex)
             {
@@ -306,98 +340,144 @@ namespace WDHAN
                     Boolean second = false;
                     string fileContents = "";
 
-                    if(File.ReadAllLines(file)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
+                    try
                     {
-                        foreach(var line in File.ReadAllLines(file))
+                        if(File.ReadAllLines(file)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
                         {
-                            if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
+                            foreach(var line in File.ReadAllLines(file))
                             {
-                                first = true;
-                                continue;
-                            }
-                            if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
-                            {
-                                second = true;
-                                continue;
+                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
+                                {
+                                    first = true;
+                                    continue;
+                                }
+                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
+                                {
+                                    second = true;
+                                    continue;
+                                }
+                                if(first && second)
+                                {
+                                    fileContents += line;
+                                }
                             }
                             if(first && second)
                             {
-                                fileContents += line;
+                                try
+                                {
+                                    siteConfig.pages.Add(Page.getDefinedPage(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file }));
+                                    if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        siteConfig.html_pages.Add(Page.getDefinedPage(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file }));
+                                    }
+                                    GlobalConfiguration.outputConfiguration(siteConfig);
+                                }
+                                catch(NullReferenceException)
+                                {
+                                    
+                                }
+
+                                var page = new Page { path = file, content = fileContents, frontmatter = Page.parseFrontMatter(file) };
+                                string fileDest = Permalink.GetPermalink(page).parsePagePermalink(Page.getDefinedPage(page));
+                                if(fileDest.Substring(0, 1).Equals("/", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    fileDest = "./" + siteConfig.destination + fileDest;
+                                }
+
+                                if(Path.GetExtension(file).Equals(".scss", StringComparison.OrdinalIgnoreCase) || Path.GetExtension(file).Equals(".sass", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    try
+                                    {
+
+                                    }
+                                    catch(SharpScss.ScssException ex)
+                                    {
+                                        Console.WriteLine(ex.File);
+                                        Console.WriteLine(ex);
+                                    }
+                                    var result = Scss.ConvertToCss(Sass.getSassContents(file));
+                                    fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file);
+                                    Directory.CreateDirectory(fileDest);
+                                    using (FileStream fs = File.Create(fileDest + ".css"))
+                                    {
+                                        fs.Write(Encoding.UTF8.GetBytes(result.Css), 0, Encoding.UTF8.GetBytes(result.Css).Length);
+                                    }
+                                }
+                                else
+                                {
+                                    if(!Path.GetDirectoryName(fileDest).Equals("", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
+                                    }
+                                    using (FileStream fs = File.Create(fileDest))
+                                    {
+                                        fs.Write(Encoding.UTF8.GetBytes(fileContents), 0, Encoding.UTF8.GetBytes(fileContents).Length);
+                                    }
+                                }
+                                Console.WriteLine(fileDest);
+                            }
+                            else
+                            {
+                                // Copy file over (if not excluded)
+                                string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+                                if(!Path.GetDirectoryName(file).Equals("", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    if(!siteConfig.exclude.Contains(file) && !siteConfig.exclude.Contains(Path.GetDirectoryName(file)))
+                                    {
+                                        File.Copy(file, fileDest, true);
+                                    }
+                                }
+                                else
+                                {
+                                    if(!siteConfig.exclude.Contains(file))
+                                    {
+                                        File.Copy(file, fileDest, true);
+                                    }
+                                }
                             }
                         }
-                        if(first && second)
+                        else
                         {
                             try
                             {
-                                siteConfig.pages.Add(Page.getDefinedPage(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file }));
+                                // Copy file over if included
+                                string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+                                if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
+                                {
+                                    File.Copy(file, fileDest, true);
+                                }
+
+                                siteConfig.static_files.Add(new WDHANFile { path = file.Substring(1) });
                                 if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    siteConfig.html_pages.Add(Page.getDefinedPage(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file }));
+                                    siteConfig.html_files.Add(new HTMLFile { path = file.Substring(1) });
                                 }
                                 GlobalConfiguration.outputConfiguration(siteConfig);
                             }
                             catch(NullReferenceException)
                             {
-                                
-                            }
 
-                            var page = new Page { path = file, content = fileContents, frontmatter = Page.parseFrontMatter(file) };
-                            string fileDest = Permalink.GetPermalink(page).parsePagePermalink(Page.getDefinedPage(page));
-                            if(fileDest.Substring(0, 1).Equals("/", StringComparison.OrdinalIgnoreCase))
-                            {
-                                fileDest = "./" + siteConfig.destination + fileDest;
                             }
-                            Console.WriteLine(fileDest);
-                            if(!Path.GetDirectoryName(fileDest).Equals("", StringComparison.OrdinalIgnoreCase))
+                        }
+                    }
+                    catch(IndexOutOfRangeException)
+                    {
+                        // Copy file over (if not excluded)
+                        Directory.CreateDirectory(Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetDirectoryName(file));
+                        string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+                        if(!Path.GetDirectoryName(file).Equals("", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if(!siteConfig.exclude.Contains(file) && !siteConfig.exclude.Contains(Path.GetDirectoryName(file)))
                             {
-                                Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
-                            }
-                            using (FileStream fs = File.Create(fileDest))
-                            {
-                                fs.Write(Encoding.UTF8.GetBytes(fileContents), 0, Encoding.UTF8.GetBytes(fileContents).Length);
+                                File.Copy(file, fileDest, true);
                             }
                         }
                         else
                         {
-                            // Copy file over (if not excluded)
-                            string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
-                            if(!Path.GetDirectoryName(file).Equals("", StringComparison.OrdinalIgnoreCase))
+                            if(!siteConfig.exclude.Contains(file))
                             {
-                                if(!siteConfig.exclude.Contains(file) && !siteConfig.exclude.Contains(Path.GetDirectoryName(file)))
-                                {
-                                    File.Copy(file, fileDest);
-                                }
+                                File.Copy(file, fileDest, true);
                             }
-                            else
-                            {
-                                if(!siteConfig.exclude.Contains(file))
-                                {
-                                    File.Copy(file, fileDest);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            // Copy file over if included
-                            string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
-                            if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
-                            {
-                                File.Copy(file, fileDest);
-                            }
-
-                            siteConfig.static_files.Add(new WDHANFile { path = file.Substring(1) });
-                            if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
-                            {
-                                siteConfig.html_files.Add(new HTMLFile { path = file.Substring(1) });
-                            }
-                            GlobalConfiguration.outputConfiguration(siteConfig);
-                        }
-                        catch(NullReferenceException)
-                        {
-
                         }
                     }
                 }
@@ -421,7 +501,7 @@ namespace WDHAN
             foreach(var collection in siteConfig.collections)
             {
                 //foreach(var key in collection.Keys){
-                    Post.generateEntires(collection);
+                    Post.generateEntries(collection);
                     Data.generateDataIndex();
 
                     foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
@@ -599,7 +679,7 @@ namespace WDHAN
                 }
                 catch(NullReferenceException)
                 {
-
+                    Console.WriteLine(filePath + " did not have a layout.");
                 }
                 try
                 {
@@ -617,7 +697,8 @@ namespace WDHAN
                 }
                 catch
                 {
-
+                    string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
+                    Console.WriteLine(WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html"));
                 }
 
                 if (FluidTemplate.TryParse(fileContents, out var template))
@@ -645,6 +726,7 @@ namespace WDHAN
 
                     Console.WriteLine(collectionModel.ToString());
 
+                    Console.WriteLine(filePath);
                     Console.WriteLine(template.Render(context) + "\nis the result.\n");
                     Console.WriteLine();
 

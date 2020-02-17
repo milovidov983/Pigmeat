@@ -77,11 +77,18 @@ namespace WDHAN
                         continue;
                     }
                 }
-                if(currentValue.ToCharArray()[0].Equals('"') && currentValue.ToCharArray()[currentValue.Length - 1].Equals('"'))
+                try
                 {
-                    values.Add(currentValue.Substring(1, currentValue.Length - 2));
+                    if(currentValue.ToCharArray()[0].Equals('"') && currentValue.ToCharArray()[currentValue.Length - 1].Equals('"'))
+                    {
+                        values.Add(currentValue.Substring(1, currentValue.Length - 2));
+                    }
+                    else
+                    {
+                        values.Add(currentValue);
+                    }
                 }
-                else
+                catch(IndexOutOfRangeException)
                 {
                     values.Add(currentValue);
                 }
