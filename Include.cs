@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using Newtonsoft.Json;
 using System;
+using System.Globalization;
 
 namespace WDHAN
 {
@@ -16,8 +17,9 @@ namespace WDHAN
         {
             
         }
-        public static string evalInclude(string fileContents)
+        public static string evalInclude(string filePath)
         {
+            var fileContents = WDHANFile.getFileContents(filePath);
             if(fileContents.Contains("{% include "))
             {
                 Console.WriteLine("INCLUDESPOTTED");
@@ -54,7 +56,7 @@ namespace WDHAN
                 {
                     Include currentInclude = new Include { input = includeCall };
                     string includePath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().includes_dir + "/" + currentInclude.getCallArgs()[2];
-                    fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath));
+                    fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath, filePath));
                     Console.WriteLine("INCLUDEAAA: " + fileContents);
                 }
             }
@@ -64,9 +66,65 @@ namespace WDHAN
             }
             return fileContents;
         }
-        public string parseInclude(string includePath)
+        public string parseInclude(string includePath, string filePath)
+        {
+            var siteConfig = GlobalConfiguration.getConfiguration();
+            var fileContents = WDHANFile.getFileContents(includePath);
+
+            // Expand layouts, then parse includes
+
+            // When a property of a JObject value is accessed, try to look into its properties
+            TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
+
+            // Convert JToken to FluidValue
+            FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
+            FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
+
+            var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
+            var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
+            var pageModel = WDHANFile.parseFrontMatter(filePath);
+
+            setVariables();
+            var includeModel = JObject.Parse(JsonConvert.SerializeObject(variables));
+            var includeFrontmatter = WDHANFile.parseFrontMatter(includePath);
+            includeModel.Merge(includeFrontmatter, new JsonMergeSettings
+            {
+                MergeArrayHandling = MergeArrayHandling.Union
+            });
+
+            try
+            {
+                if(FluidTemplate.TryParse(fileContents, out var template))
+                {
+                    var context = new TemplateContext();
+                    context.CultureInfo = new CultureInfo(siteConfig.culture);
+
+                    siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                    context.SetValue("site", siteModel);
+                    context.SetValue("page", pageModel);
+                    foreach(var collection in siteConfig.collections)
+                    {
+                        context.SetValue(collection, JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collection + "/_config.json")));
+                    }
+                    context.SetValue("include", includeModel);
+                    return template.Render(context);
+                }
+                else
+                {
+                    Console.WriteLine("ERROR: Could not parse Liquid context for include " + includePath + ".");
+                    return fileContents;
+                }
+            }
+            catch(ArgumentNullException)
+            {
+                Console.WriteLine("Include " + includePath + " has no Liquid context to parse.");
+                return fileContents;
+            }
+        }
+        public string parseInclude(string includePath, JObject pageModel, string collectionName, string filePath)
         {
             setVariables();
+            var siteConfig = GlobalConfiguration.getConfiguration();
 
             // When a property of a JObject value is accessed, try to look into its properties
             TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
@@ -86,6 +144,29 @@ namespace WDHAN
                 MergeArrayHandling = MergeArrayHandling.Union
             });
 
+            var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
+            Dictionary<string, object> collectionConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(siteConfig.source + "/_" + collectionName + "/_config.json"));
+            var collectionModel = JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collectionName + "/_config.json"));
+            var collectionPosts = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_" + collectionName + "/_entries.json"));
+            var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
+            try
+            {
+                JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = WDHANFile.getFileContents(filePath), path = filePath }));
+                pageModel.Merge(pageObjectModel, new JsonMergeSettings
+                {
+                    MergeArrayHandling = MergeArrayHandling.Union
+                });
+            }
+            catch
+            {
+
+            }
+
+            siteModel.Merge(dataSet, new JsonMergeSettings
+            {
+                MergeArrayHandling = MergeArrayHandling.Union
+            });
+
             Console.WriteLine("INCFILE: \n" + includeFile);
 
             try
@@ -93,13 +174,20 @@ namespace WDHAN
                 if (FluidTemplate.TryParse(includeFile, out var template))
                 {
                     context.SetValue("include", givenModel);
+                    context.SetValue("site", siteModel);
+                    context.SetValue("page", pageModel);
+                    collectionModel.Merge(collectionPosts, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                    context.SetValue(collectionName, collectionModel);
+                    return template.Render(context);
                 }
                 else
                 {
                     Console.WriteLine("ERROR: Could not parse Liquid context.");
                     return includeFile;
                 }
-                return template.Render(context);
             }
             catch(ArgumentNullException)
             {
