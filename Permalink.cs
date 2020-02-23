@@ -56,7 +56,6 @@ namespace WDHAN
             else
             {
                 permalink = permalink = permalink.Replace(":collection", collectionName);
-                Console.WriteLine("Replacing!!!");
                 permalink = permalink = permalink.Replace(":path", post.path);
                 permalink = permalink = permalink.Replace(":name", post.name);
                 permalink = permalink = permalink.Replace(":title", post.getTitle());
@@ -80,7 +79,6 @@ namespace WDHAN
                 permalink = permalink.Replace(":minute", post.minute);
                 permalink = permalink.Replace(":second", post.second);
             }
-            Console.WriteLine("PERMALINK!!!: " + permalink);
             return permalink;
         }
         public string parsePagePermalink(Page page)
@@ -153,7 +151,6 @@ namespace WDHAN
                 permalink = permalink.Replace(":minute", page.minute);
                 permalink = permalink.Replace(":second", page.second);
             }
-            Console.WriteLine("PERMALINK!!!: " + permalink);
             return permalink;
         }
     }

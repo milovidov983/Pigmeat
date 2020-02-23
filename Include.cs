@@ -22,7 +22,6 @@ namespace WDHAN
             var fileContents = WDHANFile.getFileContents(filePath);
             if(fileContents.Contains("{% include "))
             {
-                Console.WriteLine("INCLUDESPOTTED");
                 List<string> includeCalls = new List<string>();
                 string readerString = "";
                 Boolean hitOnce = false;
@@ -41,7 +40,6 @@ namespace WDHAN
                         if(readerString.Contains("{% include "))
                         {
                             includeCalls.Add(readerString);
-                            Console.WriteLine("INCLUDEADDED");
                         }
                         readerString = "";
                         continue;
@@ -57,19 +55,12 @@ namespace WDHAN
                     Include currentInclude = new Include { input = includeCall };
                     string includePath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().includes_dir + "/" + currentInclude.getCallArgs()[2];
                     fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath, filePath));
-                    Console.WriteLine("INCLUDEAAA: " + fileContents);
                 }
             }
-            else
-            {
-                //Console.WriteLine("NOINCLUDE - " + filePath);
-            }
-            Console.WriteLine("evalInclude:\n" + fileContents);
             return fileContents;
         }
         public string parseInclude(string includePath, string filePath)
         {
-            Console.WriteLine();
             var siteConfig = GlobalConfiguration.getConfiguration();
             var fileContents = WDHANFile.getFileContents(includePath);
 
@@ -104,6 +95,8 @@ namespace WDHAN
                     siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
+                    context.SetValue("wdhan", JObject.Parse("{\"version\": " + Program.version + "}"));
+                    
                     foreach(var collection in siteConfig.collections)
                     {
                         context.SetValue(collection, JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collection + "/_config.json")));
@@ -169,8 +162,6 @@ namespace WDHAN
                 MergeArrayHandling = MergeArrayHandling.Union
             });
 
-            Console.WriteLine("INCFILE: \n" + includeFile);
-
             try
             {
                 if (FluidTemplate.TryParse(includeFile, out var template))
@@ -203,7 +194,6 @@ namespace WDHAN
             for(int i = 0; i < getKeys().Length; i++)
             {
                 gatheredVariables.Add(getKeys()[i], getValues()[i]);
-                Console.WriteLine("INCLUDEVAR: " + getKeys()[i] + ", " + getValues()[i]);
             }
             variables = gatheredVariables;
         }
@@ -213,7 +203,6 @@ namespace WDHAN
             string currentValue = "";
             for(int i = 3; i < getCallArgs().Length; i++)
             {
-                Console.WriteLine("INCLUDEARGS: " + getCallArgs()[i]);
                 Boolean hitEquals = false;
                 foreach(var character in getCallArgs()[i])
                 {
@@ -225,7 +214,6 @@ namespace WDHAN
                     if(hitEquals)
                     {
                         currentValue += character;
-                        Console.WriteLine(currentValue);
                         continue;
                     }
                 }
@@ -244,21 +232,9 @@ namespace WDHAN
                 {
                     values.Add(currentValue);
                 }
-                Console.WriteLine("INCLUDEVALUE: " + currentValue);
                 currentValue = "";
             }
             return values.ToArray();
-                /*
-                if(currentValue.ToCharArray()[0].Equals('"')) //&& (currentValue.ToCharArray()[currentValue.Length - 1].Equals('"')
-                {
-                    values.Add(currentValue.Substring(1, currentValue.Length - 1));
-                }
-                else
-                {
-                    values.Add(currentValue);
-                }
-                */
-
         }
         public string[] getKeys()
         {
@@ -266,13 +242,11 @@ namespace WDHAN
             string currentKey = "";
             for(int i = 3; i < getCallArgs().Length; i++)
             {
-                Console.WriteLine("INCLUDEARGS: " + getCallArgs()[i]);
                 foreach(var character in getCallArgs()[i])
                 {
                     if(character.Equals('='))
                     {
                         keys.Add(currentKey);
-                        Console.WriteLine("INCLUDEKEY: " + currentKey);
                         currentKey = "";
                         break;
                     }
@@ -304,33 +278,6 @@ namespace WDHAN
                 }
             }
             return callArgs.ToArray();
-        }
-        public static FluidValue IncludeFilter(FluidValue input, FilterArguments arguments, TemplateContext context)
-        {
-
-            // When a property of a JObject value is accessed, try to look into its properties
-            TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
-
-            // Convert JToken to FluidValue
-            FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
-            FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
-
-            var includePath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().includes_dir + "/" + arguments.At(0).ToStringValue();
-            string includeFile = WDHANFile.getFileContents(includePath);
-
-            var includeContext = new TemplateContext();
-            var includeJSON = WDHANFile.parseFrontMatter(includePath);
-
-            if (FluidTemplate.TryParse(includeFile, out var template))
-            {
-                for(int i = 1; i < arguments.Count - 1; i++)
-                {
-                    includeContext.SetValue(arguments.At(i).ToStringValue(), arguments.At(i));
-                }
-                includeContext.SetValue("include", includeJSON);
-            }
-
-            return new StringValue(template.Render(includeContext));
         }
     }
 }

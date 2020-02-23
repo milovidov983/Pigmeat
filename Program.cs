@@ -15,16 +15,22 @@ using System.Linq;
 using Markdig.Parsers;
 using Markdig.Extensions.AutoIdentifiers;
 using Markdig.Extensions.AutoLinks;
+using Markdig.SyntaxHighlighting;
 
 namespace WDHAN
 {
     class Program
     {
+        public static string version = "1.0";
         static void Main(string[] args)
         {
             try
             {
-                if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
+                if(args.Length == 0)
+                {
+                    printHelpMsg(args);
+                }
+                else if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
                 {
                     createSite(args);
                 }
@@ -57,10 +63,9 @@ namespace WDHAN
                     printHelpMsg(args);
                 }
             }
-            catch (IndexOutOfRangeException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                //printHelpMsg(args);
             }
         }
         static void cleanSite(string[] args)
@@ -155,14 +160,7 @@ namespace WDHAN
                     try
                     {
                         Console.WriteLine("Creating project files ... ");
-                        /*
-                        var defaultCollections = new List<Dictionary<string, List<Dictionary<string, object>>>>();
-                        var postCollection = new Dictionary<string, List<Dictionary<string, object>>>();
-                        var postsVariables = new Dictionary<string, object>();
-                        postsVariables.Add("output", true);
-                        postCollection.Add("posts", new List<Dictionary<string, object>>() { postsVariables });
-                        defaultCollections.Add(postCollection);
-                        */
+
                         var defaultCollections = new List<string>() { "posts" };
 
                         Console.WriteLine("Creating /_plugins");
@@ -222,7 +220,6 @@ namespace WDHAN
                             user = new Dictionary<string, object> { { "author", "WDHAN User" }, { "title", "WDHAN Project" } }
                         };
                         string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
-                        Console.WriteLine(defaultConfigSerialized);
                         using (FileStream fs = File.Create("./_config.json"))
                         {
                             fs.Write(Encoding.UTF8.GetBytes(defaultConfigSerialized), 0, Encoding.UTF8.GetBytes(defaultConfigSerialized).Length);
@@ -285,30 +282,6 @@ namespace WDHAN
                 ConsoleKeyInfo yesOrNoInput = Console.ReadKey();
                 if(yesOrNoInput.Key.ToString().Equals("y", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine();
-                    /*
-                    System.IO.DirectoryInfo projectDir = new DirectoryInfo("./");
-                    foreach (var file in Directory.GetFiles("./", "*.*", SearchOption.AllDirectories))
-                    {
-                        Console.WriteLine("Deleting " + file);
-                        File.Delete(file); 
-                    }
-                    foreach (DirectoryInfo dir in projectDir.EnumerateDirectories())
-                    {
-                        Console.WriteLine("Deleting " + dir.Name);
-                        dir.Delete(true); 
-                    }
-                    */
-                    /*
-                    string logMessage = "";
-                    using (var repo = new Repository("https://github.com/MadeByEmil/wdhan-basic.git"))
-                    {
-                        var remote = repo.Network.Remotes["origin"];
-                        var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
-                        Commands.Fetch(repo, remote.Name, refSpecs, null, logMessage);
-                    }
-                    Console.WriteLine(logMessage);
-                    */
                     Repository.Clone("https://github.com/MadeByEmil/wdhan-basic.git", "./git/");
                 }
                 else
@@ -325,7 +298,10 @@ namespace WDHAN
         }
         static void buildSite(string[] args, Boolean firstTime)
         {
-            Console.WriteLine("Building project files ... ");
+            if(firstTime)
+            {
+                Console.WriteLine("Building project files ... ");
+            }
             Data.generateDataIndex();
             GlobalConfiguration.includeTime();
             GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
@@ -333,9 +309,6 @@ namespace WDHAN
             Directory.CreateDirectory(siteConfig.source + "/temp");
             foreach(var file in Directory.GetFiles(siteConfig.source, "*.*", SearchOption.AllDirectories))
             {
-                Console.WriteLine("1 " + Path.GetDirectoryName(file));
-                Console.WriteLine("2 " + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-                Console.WriteLine("3 " + file);
                 if(!Path.GetDirectoryName(file).StartsWith("./_"))
                 {
                     //string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
@@ -396,7 +369,6 @@ namespace WDHAN
                                         var result = Scss.ConvertToCss(Sass.getSassContents(file));
                                         fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                         Directory.CreateDirectory(fileDest);
-                                        Console.WriteLine("SASSPARSED - " + fileDest + "/" + Path.GetFileNameWithoutExtension(file) + ".css" + ":\n" + result.Css);
                                         using (FileStream fs = File.Create(fileDest + "/" + Path.GetFileNameWithoutExtension(file) + ".css"))
                                         {
                                             fs.Write(Encoding.UTF8.GetBytes(result.Css), 0, Encoding.UTF8.GetBytes(result.Css).Length);
@@ -419,7 +391,6 @@ namespace WDHAN
                                         fs.Write(Encoding.UTF8.GetBytes(parseDocument(file)), 0, Encoding.UTF8.GetBytes(parseDocument(file)).Length);
                                     }
                                 }
-                                Console.WriteLine(fileDest);
                             }
                             else
                             {
@@ -514,7 +485,6 @@ namespace WDHAN
                 try
                 {
                     index = Markdown.ToHtml(index, pipeline);
-                    Console.WriteLine("INDEX:\n" + index);
                     Directory.CreateDirectory(siteConfig.destination);
                     using (FileStream fs = File.Create(siteConfig.destination + "/index.html"))
                     {
@@ -542,15 +512,13 @@ namespace WDHAN
                         Directory.CreateDirectory(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject)));
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+                            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSyntaxHighlighting();
                             builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
                             var pipeline = builder.Build();
                             builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
                             try
                             {
                                 result = Markdown.ToHtml(result, pipeline);
-                                //result = new Marked { }.Parse(result);
-                                Console.WriteLine("buildCollection MARKDIG:\n" + result);
                                 postObject.content = result;
                                 using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject) + "/" + Path.GetFileNameWithoutExtension(post) + ".html")))
                                 {
@@ -576,464 +544,8 @@ namespace WDHAN
             }
             GlobalConfiguration.includeTime();
         }
-        /*
-        static void buildCollection(string[] args)
-        {
-            Console.WriteLine("Building collection files ... ");
-            GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
-            Directory.CreateDirectory(siteConfig.destination);
-            Directory.CreateDirectory(siteConfig.source + "/temp");
-            foreach(var collection in siteConfig.collections)
-            {
-                //foreach(var key in collection.Keys){
-                    Post.generateEntries(collection);
-                    Data.generateDataIndex();
-
-                    foreach(var file in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
-                    {
-                        string fileContents = "";
-                        Boolean first = false;
-                        Boolean second = false;
-                        if(File.ReadAllLines(file)[0].Equals("---", StringComparison.OrdinalIgnoreCase))
-                        {
-                            foreach(var line in File.ReadAllLines(file)){
-                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && !first)
-                                {
-                                    first = true;
-                                    continue;
-                                }
-                                if(line.Equals("---", StringComparison.OrdinalIgnoreCase) && first)
-                                {
-                                    second = true;
-                                    continue;
-                                }
-                                if(first && second)
-                                {
-                                    fileContents += (line + "\n");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            continue;
-                        }
-
-                        
-
-                        // Configure the pipeline with all advanced extensions active
-                        var post = new Post { path = file, content = fileContents, frontmatter = WDHANFile.parseFrontMatter(file)};
-                        Console.WriteLine("Outputting " + file + " to " + siteConfig.destination + Permalink.GetPermalink(post).parsePostPermalink(collection, post));
-                        Console.WriteLine(fileContents + "\nis the content being parsed.\n");
-                        var result = "";
-                        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-                        try
-                        {
-                            result = Markdown.ToHtml(parsePage(collection, file, fileContents, true), pipeline);
-                        }
-                        catch(ArgumentNullException ex)
-                        {
-                            Console.WriteLine("For developers:\n" + ex);
-                            result = "ERROR [ArgumentNullException]: Pagewrite failed. Page contents are either corrupted or blank.";
-                            Environment.Exit(1);
-                        }
-
-                        //TODO: Implement permalinks in accordance with _config.json settings
-                        Directory.CreateDirectory(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(post).parsePostPermalink(collection, post)));
-                        using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(post).parsePostPermalink(collection, post) + "/" + Path.GetFileNameWithoutExtension(file) + ".html")))
-                        {
-                            fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
-                        }
-                    }
-                //}
-            }
-        }
-        */
-
-        /*
-        OK, how are we going to tackle this? We have a Liquid parser, but it's on us to find those variables to pass to the parser.
-        Hmm ... what variables do we actually have to work with?
-        Well, pages can have page.variable, site.variable, site.data.variable
-        Includes can have site.variable, site.data.variable, and include.variable
-        We don't know what include.variable is, UNTIL we get that value from the page, so ... there's an order to the parsing:
-        1. site
-        2. site.data
-        3. page (from file header AND/OR from collections in 'site,' find path, parse)
-        4. include (get references include from /_includes/<string>.html)
-        5. layout (since this can reference page data not yet generated)
-        6. misc. leftovers (rss.xml for example)
-
-        How do we get the variables into the parser (Fluid)?
-        var model = new { ParamOne = "Hello", ParamTwo = "world." };
-        var source = "{{ p.ParamOne }} {{ p.ParamTwo }}";
-        if (FluidTemplate.TryParse(source, out var template))
-        {   
-            var context = new TemplateContext();
-            context.MemberAccessStrategy.Register(model.GetType());
-            context.SetValue("p", model);
-
-            Console.WriteLine(template.Render(context));
-        }
-        So what does this mean? It means we have to get our variables and store them in classes or variable sets (models), before
-        passing them to template.Render(context), which we can then pass to Markdig to generate HTML (in cunjunction with SharpScss).
-        Site variables, including site.data variables, come from JSON data.
-        */
-        /*
-        public static string parsePage(string collectionName, string filePath, string fileContents, Boolean parseLayout)
-        {
-            try
-            {
-                GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
-
-                /*
-                if(fileContents.Contains("{% include "))
-                {
-                    Console.WriteLine("INCLUDESPOTTED");
-                    List<string> includeCalls = new List<string>();
-                    string readerString = "";
-                    Boolean hitOnce = false;
-                    foreach(var character in fileContents)
-                    {
-                        if(character.Equals('{') && !hitOnce)
-                        {
-                            hitOnce = true;
-                            readerString += character;
-                            continue;
-                        }
-                        if(character.Equals('}') && hitOnce)
-                        {
-                            hitOnce = false;
-                            readerString += character;
-                            if(readerString.Contains("{% include "))
-                            {
-                                includeCalls.Add(readerString);
-                                Console.WriteLine("INCLUDEADDED");
-                            }
-                            readerString = "";
-                            continue;
-                        }
-                        if(hitOnce)
-                        {
-                            readerString += character;
-                            continue;
-                        }
-                    }
-                    foreach(var includeCall in includeCalls)
-                    {
-                        Include currentInclude = new Include { input = includeCall };
-                        string includePath = siteConfig.source + "/" + siteConfig.includes_dir + "/" + currentInclude.getCallArgs()[2];
-                        fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath));
-                        Console.WriteLine("INCLUDEAAA: " + fileContents);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("NOINCLUDE - " + filePath);
-                }
-                //END OF THIS MULTILINE COMMENT
-
-                // When a property of a JObject value is accessed, try to look into its properties
-                TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
-
-                // Convert JToken to FluidValue
-                FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
-                FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
-
-                var postModel = new JObject();
-
-                //TODO: Get values from content
-                //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
-                //all these values PLUS the page's values, before the page itself is rendered
-
-                //var pageContent = "{{ Model.Name }}"; // String containing page's contents
-
-                //var siteModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's values
-                var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
-
-                //var siteDataModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's data values
-
-                //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
-                //NOTE: Not needed. Collection data is in _config.json. Actually, nevermind (see #8)
-                Dictionary<string, object> collectionConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(siteConfig.source + "/_" + collectionName + "/_config.json"));
-                var collectionModel = JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collectionName + "/_config.json"));
-                var collectionPosts = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_" + collectionName + "/_entries.json"));
-
-                var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-
-                JObject pageModel = WDHANFile.parseFrontMatter(filePath);
-                fileContents = Include.evalInclude(fileContents, pageModel, collectionName, filePath);
-                try
-                {
-                    if(parseLayout)
-                    {
-                        string layout = pageModel["layout"].ToString();
-                        JObject layoutModel = Page.parseFrontMatter(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html");
-                        postModel.Merge(layoutModel, new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
-                    }
-                }
-                catch(NullReferenceException)
-                {
-                    Console.WriteLine(filePath + " did not have a layout.");
-                }
-                try
-                {
-                    JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = fileContents, path = filePath }));
-                    pageModel.Merge(pageObjectModel, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-                    if(parseLayout)
-                    {
-                        string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
-                        var pageContents = fileContents;
-                        //fileContents = WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html").Replace("{{ content }}", pageContents);
-                        fileContents = Layout.getLayoutContents(layout, pageModel, collectionName, filePath).Replace("{{ content }}", pageContents);
-                        Console.WriteLine("GOOD!!!!\n" + fileContents);
-                        //fileContents = Include.evalInclude(fileContents); // Recheck for includes, incase layouts have includes
-                    }
-                }
-                catch
-                {
-                    //string layout = Page.parseFrontMatter(filePath)["layout"].ToString();
-                    //Console.WriteLine(WDHANFile.getFileContents(siteConfig.source + "/" + siteConfig.layouts_dir + "/" + layout + ".html"));
-                }
-
-                //fileContents = Include.evalInclude(fileContents);
-                
-                try
-                {
-                    
-                    if (FluidTemplate.TryParse(fileContents, out var template))
-                    {
-                        var context = new TemplateContext();
-                        context.CultureInfo = new CultureInfo(siteConfig.culture);
-
-                        siteModel.Merge(dataSet, new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
-                        Console.WriteLine(siteModel.ToString());
-
-                        context.SetValue("site", siteModel);
-                        context.SetValue("page", pageModel);
-                        //context.SetValue(collectionName, JObject.Parse(collectionPosts));
-                        
-                        collectionModel.Merge(collectionPosts, new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
-
-                        context.SetValue(collectionName, collectionModel);
-                        //context.SetValue(collectionName, collectionPosts);
-
-                        Console.WriteLine(collectionModel.ToString());
-
-                        Console.WriteLine(filePath);
-                        //fileContents = Include.evalInclude(fileContents);
-                        Console.WriteLine("MAYBE!!!\n" + fileContents);
-                        Console.WriteLine(template.Render(context) + "\nis the result.\n");
-                        Console.WriteLine();
-
-                        // Generate a sum JObject of all these context values
-                        postModel.Merge(siteModel, new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
-                        postModel.Merge(collectionModel, new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
-                        postModel.Merge(pageModel, new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
-
-                        // Output page's sum JSON values
-                        Directory.CreateDirectory(siteConfig.source + "/temp/_" + collectionName);
-                        using (FileStream fs = File.Create(siteConfig.source + "/temp/_" + collectionName + "/" + Path.GetFileNameWithoutExtension(filePath) + ".json"))
-                        {
-                            fs.Write(Encoding.UTF8.GetBytes(postModel.ToString()), 0, Encoding.UTF8.GetBytes(postModel.ToString()).Length);
-                        }
-
-                        // Return the page's render context.
-                        return template.Render(context);
-                    }
-                    else
-                    {
-                        Console.WriteLine("ERROR: Could not parse Liquid context.");
-                        Console.WriteLine("BAD!!!!\n" + fileContents);
-                        return fileContents;
-                    }
-                    
-                }
-                catch(ArgumentNullException)
-                {
-                    Console.WriteLine("No Liquid context to parse.");
-                    return fileContents;
-                }
-                
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
-                return null;
-            }
-            catch (PathTooLongException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
-                return null;
-            }
-            catch (DirectoryNotFoundException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
-                return null;
-            }
-            catch (IOException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
-                return null;
-            }
-            catch (NotSupportedException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
-                return null;
-            }
-        }
-
-        static string parseFile(string[] args, string filePath, string fileContents)
-        {
-            try
-            {
-                GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
-
-                // When a property of a JObject value is accessed, try to look into its properties
-                TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
-
-                // Convert JToken to FluidValue
-                FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
-                FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
-
-                var postModel = new JObject();
-                try
-                {
-                    if(Path.GetDirectoryName(filePath).Equals(siteConfig.defaults.scope.path, StringComparison.Ordinal))
-                    {
-                        var fileModel = JObject.Parse(JsonConvert.SerializeObject(siteConfig.defaults.values, Formatting.Indented));
-                        postModel.Merge(fileModel, new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
-                    }
-                }
-                catch(NullReferenceException)
-                {
-
-                }
-
-                //TODO: Get values from content
-                //DO NOT USE ON INCLUDES & LAYOUTS -- They rely on page data, so rendering them requires
-                //all these values PLUS the page's values, before the page itself is rendered
-
-                //var pageContent = "{{ Model.Name }}"; // String containing page's contents
-
-                //var siteModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's values
-                var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
-
-                //var siteDataModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing site's data values
-
-                //var collectionModel = JObject.Parse("{\"Name\": \"Bill\"}"); // String containing collection's values
-                //NOTE: Not needed. Collection data is in _config.json. Actually, nevermind (see #8)
-                var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-
-                JObject pageModel = Page.parseFrontMatter(filePath);
-
-                if (FluidTemplate.TryParse(fileContents, out var template))
-                {
-                    var context = new TemplateContext();
-                    context.CultureInfo = new CultureInfo(siteConfig.culture);
-
-                    siteModel.Merge(dataSet, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-                    Console.WriteLine(siteModel.ToString());
-
-                    context.SetValue("site", siteModel);
-                    context.SetValue("page", pageModel);
-                    //context.SetValue(collectionName, JObject.Parse(collectionPosts));
-                    
-                    Console.WriteLine(template.Render(context) + "\nis the result.\n");
-                    Console.WriteLine();
-
-                    // Generate a sum JObject of all these context values
-                    postModel.Merge(siteModel, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-                    postModel.Merge(pageModel, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-
-                    // Output page's sum JSON values
-                    Directory.CreateDirectory(siteConfig.source + "/temp/");
-                    using (FileStream fs = File.Create(siteConfig.source + "/temp/" + Path.GetFileNameWithoutExtension(filePath) + ".json"))
-                    {
-                        fs.Write(Encoding.UTF8.GetBytes(postModel.ToString()), 0, Encoding.UTF8.GetBytes(postModel.ToString()).Length);
-                    }
-
-                    // Return the page's render context.
-                    return template.Render(context);
-                }
-                else
-                {
-                    Console.WriteLine("ERROR: Could not parse Liquid context.");
-                    return null;
-                }
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
-                return null;
-            }
-            catch (PathTooLongException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
-                return null;
-            }
-            catch (DirectoryNotFoundException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
-                return null;
-            }
-            catch (IOException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [IOException]: A problem has occured with writing data to your system. Verify your OS and data storage device are working correctly.");
-                return null;
-            }
-            catch (NotSupportedException ex)
-            {
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
-                return null;
-            }
-        }
-        */
         public static string parseDocument(string filePath)
-        {
-            Console.WriteLine("parseDocument - " + filePath);
-            
+        {            
             var siteConfig = GlobalConfiguration.getConfiguration();
             //var fileContents = WDHANFile.getFileContents(filePath);
             var fileContents = WDHANFile.parseRaw(filePath);
@@ -1043,7 +555,6 @@ namespace WDHAN
             {
                 var layout = Layout.getLayoutContents(Page.parseFrontMatter(filePath)["layout"].ToString(), filePath); // Get layout
                 fileContents = layout.Replace("{{ content }}", fileContents); // Incorporate page into layout
-                Console.WriteLine("parseDocument WITHLAYOUT:\n" + fileContents);
             }
             catch(NullReferenceException)
             {
@@ -1064,10 +575,6 @@ namespace WDHAN
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
             var pageModel = WDHANFile.parseFrontMatter(filePath);
             
-            Console.WriteLine("parseDocument WITHINCLUDE:\n" + fileContents);
-
-            Console.WriteLine("fileContents!!!" + filePath + ":\n" + fileContents);
-
             try
             {
                 if(FluidTemplate.TryParse(fileContents, out var template))
@@ -1078,6 +585,7 @@ namespace WDHAN
                     siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
+                    context.SetValue("wdhan", JObject.Parse("{\"version\": " + Program.version + "}"));
                     foreach(var collection in siteConfig.collections)
                     {
                         if(File.Exists(siteConfig.source + "/temp/_" + collection + "/_entries.json"))
@@ -1087,7 +595,6 @@ namespace WDHAN
                             context.SetValue(collection, collectionModel);
                         }
                     }
-                    Console.WriteLine("DONE!!! - " + filePath + " \n" + template.Render(context));   
                     return template.Render(context);
                 }
                 else

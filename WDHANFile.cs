@@ -83,7 +83,6 @@ namespace WDHAN
                 }
                 else
                 {
-                    Console.WriteLine("Frontmatter:\n" + pageFrontMatter);
                     return GlobalConfiguration.yamlInterop(pageFrontMatter);
                     /*
                     if(isJSON(pageFrontMatter))
@@ -124,9 +123,7 @@ namespace WDHAN
             }
         }
         public static string parseRaw(string filePath)
-        {
-            Console.WriteLine("parseRaw - " + filePath);
-            
+        {            
             var siteConfig = GlobalConfiguration.getConfiguration();
             var fileContents = WDHANFile.getFileContents(filePath);
             fileContents = Include.evalInclude(filePath); // Expand includes (must happen after layouts are retreived, as layouts can have includes)
@@ -143,8 +140,6 @@ namespace WDHAN
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
             var pageModel = WDHANFile.parseFrontMatter(filePath);
             
-            Console.WriteLine("fileContents!!!" + filePath + ":\n" + fileContents);
-
             try
             {
                 if(FluidTemplate.TryParse(fileContents, out var template))
@@ -155,6 +150,7 @@ namespace WDHAN
                     siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
+                    context.SetValue("wdhan", JObject.Parse("{\"version\": " + Program.version + "}"));
 
                     foreach(var collection in siteConfig.collections)
                     {
@@ -165,13 +161,11 @@ namespace WDHAN
                             context.SetValue(collection, collectionModel);
                         }
                     }
-                    Console.WriteLine("DONE!!! - " + filePath + " \n" + template.Render(context));   
                     return template.Render(context);
                 }
                 else
                 {
                     Console.WriteLine("ERROR: Could not parse Liquid context for file " + filePath + ".");
-                    Console.WriteLine("TryParse error:\n" + fileContents);
                     return fileContents;
                 }
             }

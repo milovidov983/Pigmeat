@@ -63,7 +63,6 @@ namespace WDHAN
 
             try
             {
-                Console.WriteLine(page.path + " - DATE: " + '"' + page.frontmatter.GetValue("date").ToString() + '"');
                 page.date = JsonConvert.DeserializeObject<DateTime>('"' +page.frontmatter.GetValue("date").ToString() + '"', new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
                 //page.date = JsonConvert.DeserializeObject<DateTime>(page.frontmatter.GetValue("date").ToString());
 

@@ -70,7 +70,6 @@ namespace WDHAN
                         try
                         {
                             var postJSON = JArray.Parse(Page.parseFrontMatter(post)["tags"].ToString());
-                            Console.WriteLine("TAGCCC: ");
                             foreach(var foundTag in postJSON)
                             {
                                 if(foundTag.ToString().Equals(tag.ToString(), StringComparison.Ordinal))
@@ -103,13 +102,11 @@ namespace WDHAN
                         try
                         {
                             var postJSON = JArray.Parse(Page.parseFrontMatter(post)["tags"].ToString());
-                            Console.WriteLine("TAGCCC: ");
                             foreach(var tag in postJSON)
                             {
                                 if(!tags.Contains(tag.ToString()))
                                 {
                                     tags.Add(tag.ToString());
-                                    Console.WriteLine("TAGBBB: " + tag.ToString());
                                     taggedPosts.Add(tag.ToString(), filesWithTag(tag.ToString()));
                                 }
                             }
@@ -126,7 +123,6 @@ namespace WDHAN
         public static void outputConfiguration(GlobalConfiguration siteConfig)
         {
             string siteConfigSerialized = JsonConvert.SerializeObject(siteConfig, Formatting.Indented);
-            Console.WriteLine(siteConfigSerialized);
             using (FileStream fs = File.Create("./_config.json"))
             {
                 fs.Write(Encoding.UTF8.GetBytes(siteConfigSerialized), 0, Encoding.UTF8.GetBytes(siteConfigSerialized).Length);
@@ -144,12 +140,6 @@ namespace WDHAN
             GlobalConfiguration siteConfig = getConfiguration();
 
             siteConfig.TAGS = getTaggedPosts();
-            Console.WriteLine("TAGAAA!");
-            foreach(var tag in getTaggedPosts())
-            {
-                Console.WriteLine("TAGAAA:" + tag);
-            }
-
             outputConfiguration(siteConfig);
         }
         public static GlobalConfiguration getConfiguration()
