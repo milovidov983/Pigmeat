@@ -1032,7 +1032,8 @@ namespace WDHAN
             Console.WriteLine("parseDocument - " + filePath);
             
             var siteConfig = GlobalConfiguration.getConfiguration();
-            var fileContents = WDHANFile.getFileContents(filePath);
+            //var fileContents = WDHANFile.getFileContents(filePath);
+            var fileContents = WDHANFile.parseRaw(filePath);
             fileContents = Include.evalInclude(filePath); // Expand includes (must happen after layouts are retreived, as layouts can have includes)
 
             try
