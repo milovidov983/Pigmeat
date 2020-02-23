@@ -49,3 +49,5 @@
 
 ---
 [View dependency report](https://app.fossa.com/reports/b354b82b-6298-410d-b545-00e232df857a)
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN?ref=badge_large)
