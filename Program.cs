@@ -326,6 +326,7 @@ namespace WDHAN
         static void buildSite(string[] args, Boolean firstTime)
         {
             Console.WriteLine("Building project files ... ");
+            Data.generateDataIndex();
             GlobalConfiguration.includeTime();
             GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
             Directory.CreateDirectory(siteConfig.destination);
@@ -570,6 +571,7 @@ namespace WDHAN
                     }
                 }
             }
+            GlobalConfiguration.includeTime();
         }
         /*
         static void buildCollection(string[] args)
