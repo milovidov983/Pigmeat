@@ -415,7 +415,7 @@ namespace WDHAN
                                     }
                                     using (FileStream fs = File.Create(fileDest))
                                     {
-                                        fs.Write(Encoding.UTF8.GetBytes(WDHANFile.parseRaw(file)), 0, Encoding.UTF8.GetBytes(WDHANFile.parseRaw(file)).Length);
+                                        fs.Write(Encoding.UTF8.GetBytes(parseDocument(file)), 0, Encoding.UTF8.GetBytes(parseDocument(file)).Length);
                                     }
                                 }
                                 Console.WriteLine(fileDest);
