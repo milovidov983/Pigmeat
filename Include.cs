@@ -64,10 +64,12 @@ namespace WDHAN
             {
                 //Console.WriteLine("NOINCLUDE - " + filePath);
             }
+            Console.WriteLine("evalInclude:\n" + fileContents);
             return fileContents;
         }
         public string parseInclude(string includePath, string filePath)
         {
+            Console.WriteLine();
             var siteConfig = GlobalConfiguration.getConfiguration();
             var fileContents = WDHANFile.getFileContents(includePath);
 

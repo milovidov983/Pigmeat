@@ -12,6 +12,9 @@ using System.Globalization;
 using System.Reflection;
 using LibGit2Sharp;
 using System.Linq;
+using Markdig.Parsers;
+using Markdig.Extensions.AutoIdentifiers;
+using Markdig.Extensions.AutoLinks;
 
 namespace WDHAN
 {
@@ -215,7 +218,8 @@ namespace WDHAN
                             quiet = false,
                             verbose = false,
                             url = "",
-                            time = DateTime.UtcNow
+                            time = DateTime.UtcNow,
+                            user = new Dictionary<string, object> { { "author", "WDHAN User" }, { "title", "WDHAN Project" } }
                         };
                         string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
                         Console.WriteLine(defaultConfigSerialized);
@@ -389,9 +393,10 @@ namespace WDHAN
                                     try
                                     {
                                         var result = Scss.ConvertToCss(Sass.getSassContents(file));
-                                        fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file);
+                                        fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                         Directory.CreateDirectory(fileDest);
-                                        using (FileStream fs = File.Create(fileDest + ".css"))
+                                        Console.WriteLine("SASSPARSED - " + fileDest + "/" + Path.GetFileNameWithoutExtension(file) + ".css" + ":\n" + result.Css);
+                                        using (FileStream fs = File.Create(fileDest + "/" + Path.GetFileNameWithoutExtension(file) + ".css"))
                                         {
                                             fs.Write(Encoding.UTF8.GetBytes(result.Css), 0, Encoding.UTF8.GetBytes(result.Css).Length);
                                         }
@@ -480,6 +485,7 @@ namespace WDHAN
                         }
                     }
                 }
+            }
 
             // Handle _layout, _include, _data, _collection
             buildCollection(args);
@@ -490,11 +496,42 @@ namespace WDHAN
                 buildSite(args, false);
             }
         }
+
         static void buildCollection(string[] args)
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
+
+            if(File.Exists(siteConfig.source + "/index.html"))
+            {
+                var siteIndex = siteConfig.source + "/index.html";
+                var index = parseDocument(siteIndex);
+
+                var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                var pipeline = builder.Build();
+                builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
+                try
+                {
+                    index = Markdown.ToHtml(index, pipeline);
+                    Console.WriteLine("INDEX:\n" + index);
+                    Directory.CreateDirectory(siteConfig.destination);
+                    using (FileStream fs = File.Create(siteConfig.destination + "/index.html"))
+                    {
+                        fs.Write(Encoding.UTF8.GetBytes(index), 0, Encoding.UTF8.GetBytes(index).Length);
+                    }
+                }
+                catch(ArgumentNullException ex)
+                {
+                    Console.WriteLine("For developers:\n" + ex);
+                    index = "ERROR [ArgumentNullException]: Pagewrite failed. Page contents are either corrupted or blank.";
+                    Environment.Exit(1);
+                }
+            }
+
             foreach(var collection in siteConfig.collections)
             {
+                Post.generateEntries();
+                Data.generateDataIndex();
                 foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                 {
                     var result = parseDocument(post);
@@ -502,10 +539,15 @@ namespace WDHAN
                     Directory.CreateDirectory(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject)));
                     if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                     {
-                        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+                        var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+                        builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                        var pipeline = builder.Build();
+                        builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
                         try
                         {
                             result = Markdown.ToHtml(result, pipeline);
+                            //result = new Marked { }.Parse(result);
+                            Console.WriteLine("buildCollection MARKDIG:\n" + result);
                             postObject.content = result;
                             using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject) + "/" + Path.GetFileNameWithoutExtension(post) + ".html")))
                             {
@@ -528,7 +570,6 @@ namespace WDHAN
                     }
                 }
             }
-        }
         }
         /*
         static void buildCollection(string[] args)
@@ -986,12 +1027,17 @@ namespace WDHAN
         */
         public static string parseDocument(string filePath)
         {
+            Console.WriteLine("parseDocument - " + filePath);
+            
             var siteConfig = GlobalConfiguration.getConfiguration();
             var fileContents = WDHANFile.getFileContents(filePath);
+            fileContents = Include.evalInclude(filePath); // Expand includes (must happen after layouts are retreived, as layouts can have includes)
+
             try
             {
                 var layout = Layout.getLayoutContents(Page.parseFrontMatter(filePath)["layout"].ToString(), filePath); // Get layout
                 fileContents = layout.Replace("{{ content }}", fileContents); // Incorporate page into layout
+                Console.WriteLine("parseDocument WITHLAYOUT:\n" + fileContents);
             }
             catch(NullReferenceException)
             {
@@ -1006,12 +1052,13 @@ namespace WDHAN
             // Convert JToken to FluidValue
             FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
             FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
+            
 
             var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
             var pageModel = WDHANFile.parseFrontMatter(filePath);
-
-            fileContents = Include.evalInclude(filePath); // Expand includes (must happen after layouts are retreived, as layouts can have includes)
+            
+            Console.WriteLine("parseDocument WITHINCLUDE:\n" + fileContents);
 
             Console.WriteLine("fileContents!!!" + filePath + ":\n" + fileContents);
 
@@ -1027,19 +1074,26 @@ namespace WDHAN
                     context.SetValue("page", pageModel);
                     foreach(var collection in siteConfig.collections)
                     {
-                        context.SetValue(collection, JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collection + "/_config.json")));
+                        if(File.Exists(siteConfig.source + "/temp/_" + collection + "/_entries.json"))
+                        {
+                            var collectionModel = JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collection + "/_config.json"));
+                            collectionModel.Merge(JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_" + collection + "/_entries.json")), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                            context.SetValue(collection, collectionModel);
+                        }
                     }
+                    Console.WriteLine("DONE!!! - " + filePath + " \n" + template.Render(context));   
                     return template.Render(context);
                 }
                 else
                 {
                     Console.WriteLine("ERROR: Could not parse Liquid context for file " + filePath + ".");
+                    Console.WriteLine("TryParse error:\n" + fileContents);
                     return fileContents;
                 }
             }
-            catch(ArgumentNullException)
+            catch(ArgumentNullException ex)
             {
-                Console.WriteLine("File " + filePath + " has no Liquid context to parse.");
+                Console.WriteLine("File " + filePath + " has no Liquid context to parse.\n" + ex.ToString());
                 return fileContents;
             }
         }

@@ -17,10 +17,13 @@ namespace WDHAN
         }
         public static string getLayoutContents(string layout, string filePath)
         {
+            Console.WriteLine("getLayoutContents - " + layout + ", " + filePath);
             var layoutPath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().layouts_dir + "/" + layout + ".html";
             var layoutContents = WDHANFile.getFileContents(layoutPath);
+            Console.WriteLine("getLayoutContents WITHOUTINCLUDE:\n" + layoutContents);
             layoutContents = Include.evalInclude(layoutPath);
-            layoutContents = WDHANFile.getFileContents(layoutPath);
+            Console.WriteLine("getLayoutContents WITH:\n" + layoutContents);
+            //layoutContents = WDHANFile.getFileContents(layoutPath);
             try
             {
                 var subLayout = Page.parseFrontMatter(layoutPath)["layout"].ToString();

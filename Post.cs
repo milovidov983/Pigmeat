@@ -4,6 +4,9 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Markdig;
+using Markdig.Parsers;
+using Markdig.Extensions.AutoLinks;
 
 namespace WDHAN
 {
@@ -51,28 +54,29 @@ namespace WDHAN
             return post;
             */
         }
-        public static List<Post> getPosts(string collectionName)
+        public static List<Post> getPosts(string collection)
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
             List<Post> postList = new List<Post>();
-            foreach(var collection in siteConfig.collections)
+            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+            builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+            var pipeline = builder.Build();
+            builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
+
+
+            foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
             {
-                if(collection.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
+                if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                 {
-                    foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
+                    if(!Path.GetFileNameWithoutExtension(post).Equals("index", StringComparison.OrdinalIgnoreCase))
                     {
-                        if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
-                        {
-                            if(!Path.GetFileNameWithoutExtension(post).Equals("index", StringComparison.OrdinalIgnoreCase))
-                            {
-                                postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post),
-                                content = WDHAN.Program.parsePage(collectionName, post, WDHANFile.getFileContents(post), false),
-                                path = post }));
-                            }
-                        }
+                        postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post),
+                        content = Markdown.ToHtml(WDHANFile.parseRaw(post), pipeline),
+                        path = post }));
                     }
                 }
             }
+
 
             foreach(var post in postList)
             {
@@ -81,16 +85,19 @@ namespace WDHAN
 
             return postList;
         }
-        public static void generateEntries(string collectionName)
+        public static void generateEntries()
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
-            Collection collectionPosts = new Collection();
-            collectionPosts.entries = getPosts(collectionName);
-            string collectionSerialized = JsonConvert.SerializeObject(collectionPosts, Formatting.Indented);
-            Directory.CreateDirectory(siteConfig.source + "/temp/_" + collectionName);
-            using (FileStream fs = File.Create(siteConfig.source + "/temp/_" + collectionName + "/_entries.json"))
+            foreach(var collection in siteConfig.collections)
             {
-                fs.Write(Encoding.UTF8.GetBytes(collectionSerialized), 0, Encoding.UTF8.GetBytes(collectionSerialized).Length);
+                Collection collectionPosts = new Collection();
+                collectionPosts.entries = getPosts(collection);
+                string collectionSerialized = JsonConvert.SerializeObject(collectionPosts, Formatting.Indented);
+                Directory.CreateDirectory(siteConfig.source + "/temp/_" + collection);
+                using (FileStream fs = File.Create(siteConfig.source + "/temp/_" + collection + "/_entries.json"))
+                {
+                    fs.Write(Encoding.UTF8.GetBytes(collectionSerialized), 0, Encoding.UTF8.GetBytes(collectionSerialized).Length);
+                }
             }
         }
     }

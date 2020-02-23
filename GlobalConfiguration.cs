@@ -52,6 +52,7 @@ namespace WDHAN
         public List<HTMLFile> html_files { get; set; }
         public List<Page> html_pages { get; set; }
         public Defaults defaults { get; set; }
+        public Dictionary<string, object> user { get; set; }
         public GlobalConfiguration()
         {
             
