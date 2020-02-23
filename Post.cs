@@ -82,6 +82,16 @@ namespace WDHAN
             {
                 Console.WriteLine(post);
             }
+            
+            try
+            {
+                postList.Sort((y, x) => x.frontmatter["date"].ToString().CompareTo(y.frontmatter["date"].ToString()));
+                postList.Sort((y, x) => x.title.CompareTo(y.title));
+            }
+            catch(NullReferenceException)
+            {
+                postList.Sort((y, x) => x.title.CompareTo(y.title));
+            }
 
             return postList;
         }

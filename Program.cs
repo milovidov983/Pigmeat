@@ -533,40 +533,43 @@ namespace WDHAN
             {
                 Post.generateEntries();
                 Data.generateDataIndex();
-                foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
+                if(JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collection + "/_config.json"))["output"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                 {
-                    var result = parseDocument(post);
-                    var postObject = new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post };
-                    Directory.CreateDirectory(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject)));
-                    if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
+                    foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
-                        var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
-                        builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-                        var pipeline = builder.Build();
-                        builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
-                        try
+                        var result = parseDocument(post);
+                        var postObject = new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post };
+                        Directory.CreateDirectory(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject)));
+                        if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            result = Markdown.ToHtml(result, pipeline);
-                            //result = new Marked { }.Parse(result);
-                            Console.WriteLine("buildCollection MARKDIG:\n" + result);
-                            postObject.content = result;
-                            using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject) + "/" + Path.GetFileNameWithoutExtension(post) + ".html")))
+                            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+                            builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                            var pipeline = builder.Build();
+                            builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
+                            try
+                            {
+                                result = Markdown.ToHtml(result, pipeline);
+                                //result = new Marked { }.Parse(result);
+                                Console.WriteLine("buildCollection MARKDIG:\n" + result);
+                                postObject.content = result;
+                                using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject) + "/" + Path.GetFileNameWithoutExtension(post) + ".html")))
+                                {
+                                    fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
+                                }
+                            }
+                            catch(ArgumentNullException ex)
+                            {
+                                Console.WriteLine("For developers:\n" + ex);
+                                result = "ERROR [ArgumentNullException]: Pagewrite failed. Page contents are either corrupted or blank.";
+                                Environment.Exit(1);
+                            }
+                        }
+                        else
+                        {
+                            using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject) + "/" + Path.GetFileName(post))))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
                             }
-                        }
-                        catch(ArgumentNullException ex)
-                        {
-                            Console.WriteLine("For developers:\n" + ex);
-                            result = "ERROR [ArgumentNullException]: Pagewrite failed. Page contents are either corrupted or blank.";
-                            Environment.Exit(1);
-                        }
-                    }
-                    else
-                    {
-                        using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject) + "/" + Path.GetFileName(post))))
-                        {
-                            fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
                         }
                     }
                 }
