@@ -5,6 +5,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Globalization;
+using Newtonsoft.Json.Converters;
 
 namespace WDHAN
 {
@@ -62,7 +63,9 @@ namespace WDHAN
 
             try
             {
-                page.date = JsonConvert.DeserializeObject<DateTime>(page.frontmatter.GetValue("date").ToString());
+                Console.WriteLine(page.path + " - DATE: " + '"' + page.frontmatter.GetValue("date").ToString() + '"');
+                page.date = JsonConvert.DeserializeObject<DateTime>('"' +page.frontmatter.GetValue("date").ToString() + '"', new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
+                //page.date = JsonConvert.DeserializeObject<DateTime>(page.frontmatter.GetValue("date").ToString());
 
                 // Get time values
                 CultureInfo globalCulture = new CultureInfo(GlobalConfiguration.getConfiguration().culture);
