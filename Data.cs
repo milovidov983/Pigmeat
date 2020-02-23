@@ -43,6 +43,7 @@ namespace WDHAN
         public static void generateDataIndex()
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
+            Directory.CreateDirectory(siteConfig.source + "/" + siteConfig.data_dir);
             Data dataSet = new Data();
             dataSet.data = getGlobalData();
             string dataSerialized = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
