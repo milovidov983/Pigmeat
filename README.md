@@ -46,3 +46,6 @@
 ## Credits
  Created by [Emil Sayahi](https://emsa.cf) ([@MadeByEmil](https://github.com/MadeByEmil)) in the [Turpin High School](https://www.foresthills.edu/turpin/) Computer Science Lab ([@Turpin-HS-Computer-Science](https://github.com/Turpin-HS-Computer-Science))
  View all [contributors](https://github.com/MadeByEmil/WDHAN/graphs/contributors)
+
+---
+[View dependency report](https://app.fossa.com/reports/b354b82b-6298-410d-b545-00e232df857a)
