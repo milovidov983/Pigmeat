@@ -25,26 +25,29 @@
   Pre-requisites:
   - [.NET Core SDK 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 
-  ### Windows
+  #### Windows
   ```
   dotnet build --configuration Release
   ```
   Outputs to ```./bin/Release/netcoreapp3.1/```
 
-  ### MacOS
+  #### MacOS
   ```
   dotnet build --configuration Release
   ```
   Outputs to ```./bin/Release/netcoreapp3.1/```
 
-  ### Linux AppImage
+  #### Linux
   ```
   dotnet build --configuration Release
   ```
   Outputs to ```./bin/Release/netcoreapp3.1```
 
 ## Credits
- Created by [Emil Sayahi](https://emsa.cf) ([@MadeByEmil](https://github.com/MadeByEmil)) in the [Turpin High School](https://www.foresthills.edu/turpin/) Computer Science Lab ([@Turpin-HS-Computer-Science](https://github.com/Turpin-HS-Computer-Science))
+ Authored by [Emil Sayahi](https://emsa.cf) ([@MadeByEmil](https://github.com/MadeByEmil))
+ 
+ [Turpin High School](https://www.foresthills.edu/turpin/) Computer Science Lab ([@Turpin-HS-Computer-Science](https://github.com/Turpin-HS-Computer-Science))
+
  View all [contributors](https://github.com/MadeByEmil/WDHAN/graphs/contributors)
 
 ---

@@ -9,11 +9,8 @@ using System.Collections.Generic;
 using Fluid.Values;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
-using System.Reflection;
 using LibGit2Sharp;
-using System.Linq;
 using Markdig.Parsers;
-using Markdig.Extensions.AutoIdentifiers;
 using Markdig.Extensions.AutoLinks;
 using Markdig.SyntaxHighlighting;
 
@@ -21,7 +18,7 @@ namespace WDHAN
 {
     class Program
     {
-        public static string version = "1.0";
+        public const string version = "1.0";
         static void Main(string[] args)
         {
             try
@@ -52,7 +49,7 @@ namespace WDHAN
                 }
                 else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
                 {
-                    cleanSite(args);
+                    cleanSite();
                 }
                 else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
                 {
@@ -68,7 +65,7 @@ namespace WDHAN
                 Console.WriteLine(ex);
             }
         }
-        static void cleanSite(string[] args)
+        static void cleanSite()
         {
             try
             {
@@ -648,9 +645,8 @@ namespace WDHAN
                     Console.WriteLine("Please specify a parameter (e.g. 'wdhan help new,' 'wdhan help build,' 'wdhan help serve,' 'wdhan help clean')");
                 }
             }
-            catch (IndexOutOfRangeException ex)
+            catch (IndexOutOfRangeException)
             {
-                Console.WriteLine("For developers:\n" + ex);
                 Console.WriteLine(
                     "WDHAN supports the following commands:\n" +
                     "   wdhan new - Creates an empty WDHAN project in the current directory.\n" +

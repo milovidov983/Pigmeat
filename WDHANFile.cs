@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using Fluid;
 using Fluid.Values;
 using System.Globalization;
@@ -26,7 +23,6 @@ namespace WDHAN
         }
         public static string getFileContents(string filePath)
         {
-            var siteConfig = GlobalConfiguration.getConfiguration();
             string fileContents = "";
             Boolean first = false;
             Boolean second = false;

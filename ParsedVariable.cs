@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WDHAN
+﻿namespace WDHAN
 {
     public class ParsedVariable
     {

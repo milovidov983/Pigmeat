@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace WDHAN
 {
     public class Sass
     {
-        public Sass()
+        protected Sass()
         {
             
         }
