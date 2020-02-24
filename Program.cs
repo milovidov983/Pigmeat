@@ -13,6 +13,8 @@ using LibGit2Sharp;
 using Markdig.Parsers;
 using Markdig.Extensions.AutoLinks;
 using Markdig.SyntaxHighlighting;
+using System.Net;
+using System.IO.Compression;
 
 namespace WDHAN
 {
@@ -276,10 +278,24 @@ namespace WDHAN
             {
                 // Create site with default theme
                 Console.WriteLine("Are you sure you wish to overwrite all pre-existing data and create a new project? (y/n)");
-                ConsoleKeyInfo yesOrNoInput = Console.ReadKey();
-                if(yesOrNoInput.Key.ToString().Equals("y", StringComparison.OrdinalIgnoreCase))
+                var yesOrNo = Console.ReadLine(); 
+                if(yesOrNo.Trim().Equals("y", StringComparison.OrdinalIgnoreCase))
                 {
-                    Repository.Clone("https://github.com/MadeByEmil/wdhan-basic.git", "./git/");
+                    using (var client = new WebClient())
+                    {
+                        client.DownloadFile("https://github.com/MadeByEmil/wdhan-basic/archive/master.zip", "./basic.zip");
+                        ZipFile.ExtractToDirectory("./basic.zip", "./");
+                        File.Delete("./basic.zip");
+                        foreach(var directory in Directory.GetDirectories("./wdhan-basic-master", "*", SearchOption.AllDirectories))
+                        {
+                            Directory.CreateDirectory(directory.Replace("./wdhan-basic-master", "./"));
+                        }
+                        foreach(var file in Directory.GetFiles("./wdhan-basic-master", "*", SearchOption.AllDirectories))
+                        {
+                            File.Copy(file, file.Replace("./wdhan-basic-master", "./"), true);
+                        }
+                        Directory.Delete("./wdhan-basic-master", true);
+                    }
                 }
                 else
                 {
