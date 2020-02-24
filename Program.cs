@@ -368,7 +368,7 @@ namespace WDHAN
                                     
                                 }
 
-                                var page = new Page { path = file, content = fileContents, frontmatter = Page.parseFrontMatter(file) };
+                                var page = new Page { path = file, content = parseDocument(file), frontmatter = Page.parseFrontMatter(file) };
                                 string fileDest = Permalink.GetPermalink(page).parsePagePermalink(Page.getDefinedPage(page));
                                 if(fileDest.Substring(0, 1).Equals("/", StringComparison.OrdinalIgnoreCase))
                                 {
