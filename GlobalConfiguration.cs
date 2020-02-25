@@ -144,7 +144,15 @@ namespace WDHAN
         }
         public static GlobalConfiguration getConfiguration()
         {
-            return JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
+            try
+            {
+                return JsonConvert.DeserializeObject<GlobalConfiguration>(File.ReadAllText("./_config.json"));
+            }
+            catch(JsonSerializationException)
+            {
+                var timeCorrected = File.ReadAllText("./_config.json").Replace("\"time\": \"\",", "\"time\": \"" + DateTime.UtcNow.ToString()  + "\",");
+                return JsonConvert.DeserializeObject<GlobalConfiguration>(timeCorrected);
+            }
         }
         private static bool isJSON(string input)
         {
