@@ -20,7 +20,7 @@ namespace WDHAN
 {
     class Program
     {
-        public const string version = "1.0";
+        public const string version = "1.1";
         static void Main(string[] args)
         {
             try
@@ -43,11 +43,11 @@ namespace WDHAN
                 }
                 else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
                 {
-
+                    serveSite(args);
                 }
                 else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
                 {
-
+                    serveSite(args);
                 }
                 else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
                 {
@@ -67,12 +67,18 @@ namespace WDHAN
                 Console.WriteLine(ex);
             }
         }
+        static void serveSite(string[] args)
+        {
+            Console.WriteLine("Serving WDHAN project … ");
+            Console.WriteLine("[MESSAGE]: This feature will be implemented in version 1.5.");
+            Environment.Exit(0);
+        }
         static void cleanSite()
         {
             try
             {
                 GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
-                Console.WriteLine("Cleaning project directory, " + siteConfig.destination + " ... ");
+                Console.WriteLine("Cleaning project directory, " + siteConfig.destination + " … ");
                 System.IO.DirectoryInfo outputDir = new DirectoryInfo(siteConfig.destination);
 
                 foreach (var file in Directory.GetFiles(siteConfig.destination, "*.*", SearchOption.AllDirectories))
@@ -94,7 +100,7 @@ namespace WDHAN
                 }
                 */
 
-                Console.WriteLine("Cleaning temporary files, " + siteConfig.source + "/temp" + " ... ");
+                Console.WriteLine("Cleaning temporary files, " + siteConfig.source + "/temp" + " … ");
                 System.IO.DirectoryInfo tempDir = new DirectoryInfo(siteConfig.source + "/temp");
 
                 foreach (var file in Directory.GetFiles(siteConfig.destination, "*.*", SearchOption.AllDirectories))
@@ -158,7 +164,7 @@ namespace WDHAN
                 {
                     try
                     {
-                        Console.WriteLine("Creating project files ... ");
+                        Console.WriteLine("Creating project files … ");
 
                         var defaultCollections = new List<string>() { "posts" };
 
@@ -309,11 +315,11 @@ namespace WDHAN
                 Environment.Exit(1);
             }
         }
-        static void buildSite(string[] args, Boolean firstTime)
+        public static void buildSite(string[] args, Boolean firstTime)
         {
             if(firstTime)
             {
-                Console.WriteLine("Building project files ... ");
+                Console.WriteLine("Building project files … ");
             }
             Data.generateDataIndex();
             GlobalConfiguration.includeTime();
