@@ -444,10 +444,11 @@ namespace WDHAN
                             try
                             {
                                 // Copy file over (if included)
-                                string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+                                string fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                 if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
                                 {
                                     File.Copy(file, fileDest, true);
+                                    Console.WriteLine(file + " → " + fileDest);
                                 }
 
                                 siteConfig.static_files.Add(new WDHANFile { path = file.Substring(1) });
