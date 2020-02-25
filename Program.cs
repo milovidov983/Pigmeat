@@ -65,6 +65,7 @@ namespace WDHAN
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                Environment.Exit(1);
             }
         }
         static void serveSite(string[] args)
@@ -408,7 +409,7 @@ namespace WDHAN
                                     fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                     if(!Path.GetDirectoryName(fileDest).Equals("", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
+                                        Directory.CreateDirectory(fileDest);
                                     }
                                     using (FileStream fs = File.Create(fileDest + "/" + Path.GetFileName(file)))
                                     {
