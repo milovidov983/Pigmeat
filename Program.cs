@@ -405,11 +405,12 @@ namespace WDHAN
                                 }
                                 else
                                 {
+                                    fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                     if(!Path.GetDirectoryName(fileDest).Equals("", StringComparison.OrdinalIgnoreCase))
                                     {
                                         Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
                                     }
-                                    using (FileStream fs = File.Create(fileDest))
+                                    using (FileStream fs = File.Create(fileDest + "/" + Path.GetFileName(file)))
                                     {
                                         fs.Write(Encoding.UTF8.GetBytes(parseDocument(file)), 0, Encoding.UTF8.GetBytes(parseDocument(file)).Length);
                                         if(!firstTime)
@@ -444,7 +445,7 @@ namespace WDHAN
                             try
                             {
                                 // Copy file over (if included)
-                                string fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
+                                string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination;
                                 if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
                                 {
                                     File.Copy(file, fileDest, true);
