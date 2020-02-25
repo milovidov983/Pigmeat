@@ -385,6 +385,10 @@ namespace WDHAN
                                         using (FileStream fs = File.Create(fileDest + "/" + Path.GetFileNameWithoutExtension(file) + ".css"))
                                         {
                                             fs.Write(Encoding.UTF8.GetBytes(result.Css), 0, Encoding.UTF8.GetBytes(result.Css).Length);
+                                            if(!firstTime)
+                                            {
+                                                Console.WriteLine(file + " → " + fileDest);
+                                            }
                                         }
                                     }
                                     catch(SharpScss.ScssException ex)
@@ -402,6 +406,10 @@ namespace WDHAN
                                     using (FileStream fs = File.Create(fileDest))
                                     {
                                         fs.Write(Encoding.UTF8.GetBytes(parseDocument(file)), 0, Encoding.UTF8.GetBytes(parseDocument(file)).Length);
+                                        if(!firstTime)
+                                        {
+                                            Console.WriteLine(file + " → " + fileDest);
+                                        }
                                     }
                                 }
                             }
@@ -473,7 +481,7 @@ namespace WDHAN
             }
 
             // Handle _layout, _include, _data, _collection
-            buildCollection(args);
+            buildCollection(args, firstTime);
 
             if(firstTime)
             {
@@ -482,7 +490,7 @@ namespace WDHAN
             }
         }
 
-        static void buildCollection(string[] args)
+        static void buildCollection(string[] args, Boolean firstTime)
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
 
@@ -521,8 +529,9 @@ namespace WDHAN
                     foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
                         var result = parseDocument(post);
-                        var postObject = new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post };
-                        Directory.CreateDirectory(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject)));
+                        var postObject = Post.getDefinedPost(new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post }, collection);
+                        var postPath = Path.GetDirectoryName(siteConfig.destination + "/" + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject));
+                        Directory.CreateDirectory(postPath);
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
                             var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSyntaxHighlighting();
@@ -533,9 +542,13 @@ namespace WDHAN
                             {
                                 result = Markdown.ToHtml(result, pipeline);
                                 postObject.content = result;
-                                using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject) + "/" + Path.GetFileNameWithoutExtension(post) + ".html")))
+                                using (FileStream fs = File.Create(postPath + "/" + postObject.frontmatter["title"].ToString() + ".html"))
                                 {
                                     fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
+                                    if(!firstTime)
+                                    {
+                                        Console.WriteLine(post + " → " + postPath);
+                                    }
                                 }
                             }
                             catch(ArgumentNullException ex)
@@ -547,9 +560,13 @@ namespace WDHAN
                         }
                         else
                         {
-                            using (FileStream fs = File.Create(Path.GetDirectoryName(siteConfig.destination + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject) + "/" + Path.GetFileName(post))))
+                            using (FileStream fs = File.Create(postPath + "/" + Path.GetFileName(post)))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
+                                if(!firstTime)
+                                {
+                                    Console.WriteLine(post + " → " + postPath);
+                                }
                             }
                         }
                     }

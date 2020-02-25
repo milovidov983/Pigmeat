@@ -15,9 +15,11 @@ namespace WDHAN
         {
             
         }
-        public static Post getDefinedPost(Post post)
+        public static Post getDefinedPost(Post post, string collection)
         {
-            return (Post) getDefinedPage(post);
+            var currentPost = (Post) getDefinedPage(post);
+            currentPost.url = Permalink.GetPermalink(currentPost).parsePostPermalink(collection, currentPost);
+            return currentPost;
         }
         public static List<Post> getPosts(string collection)
         {
@@ -37,7 +39,7 @@ namespace WDHAN
                     {
                         postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post),
                         content = Markdown.ToHtml(WDHANFile.parseRaw(post), pipeline),
-                        path = post }));
+                        path = post }, collection));
                     }
                 }
             }
