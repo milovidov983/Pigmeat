@@ -404,6 +404,35 @@ namespace WDHAN
                                         Console.WriteLine(ex);
                                     }
                                 }
+                                else if(GlobalConfiguration.isMarkdown(Path.GetExtension(file).Substring(1)))
+                                {
+                                    fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
+                                    var result = parseDocument(file);
+                                    var pageObject = Page.getDefinedPage(new Page { frontmatter = WDHANFile.parseFrontMatter(file), content = result, path = file });
+                                    var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSyntaxHighlighting();
+                                    builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                                    var pipeline = builder.Build();
+                                    builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
+                                    try
+                                    {
+                                        result = Markdown.ToHtml(result, pipeline);
+                                        pageObject.content = result;
+                                        using (FileStream fs = File.Create(fileDest + "/" + Path.GetFileNameWithoutExtension(file) + ".html"))
+                                        {
+                                            fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
+                                            if(!firstTime)
+                                            {
+                                                Console.WriteLine(file + " → " + fileDest);
+                                            }
+                                        }
+                                    }
+                                    catch(ArgumentNullException ex)
+                                    {
+                                        Console.WriteLine("For developers:\n" + ex);
+                                        result = "ERROR [ArgumentNullException]: Pagewrite failed. Page contents are either corrupted or blank.";
+                                        Environment.Exit(1);
+                                    }
+                                }
                                 else
                                 {
                                     fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
