@@ -196,31 +196,18 @@ namespace WDHAN
                             includes_dir = "_includes",
                             sass_dir = "_sass",
                             collections = defaultCollections,
-                            safe = false,
                             include = new List<string> { ".htaccess" },
                             exclude = new List<string> { },
                             keep_files = new List<string> { ".git", ".svn" },
-                            encoding = "utf-8",
                             culture = "en-US",
                             markdown_ext = "markdown,mkdown,mkdn,mkd,md",
-                            strict_front_matter = false,
                             //show_drafts = false, //Intentionally blank, generates null field on output
-                            limit_posts = 0,
-                            future = false,
-                            unpublished = false,
                             whitelist = new List<string> { },
                             plugins = new List<string> { },
                             excerpt_separator = @"\n\n",
-                            detach = false,
-                            port = 4000,
-                            host = "127.0.0.1",
                             baseurl = "",
                             show_dir_listing = false,
                             permalink = "date",
-                            paginate_path = "/page:num",
-                            //timezone = "null", //Intentionally blank, generates true null field on output
-                            quiet = false,
-                            verbose = false,
                             url = "",
                             time = DateTime.UtcNow,
                             user = new Dictionary<string, object> { { "author", "WDHAN User" }, { "title", "WDHAN Project" } }
@@ -361,20 +348,6 @@ namespace WDHAN
                             }
                             if(first && second)
                             {
-                                try
-                                {
-                                    siteConfig.pages.Add(Page.getDefinedPage(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file }));
-                                    if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        siteConfig.html_pages.Add(Page.getDefinedPage(new Page { frontmatter = Page.parseFrontMatter(file), content = fileContents, path = file }));
-                                    }
-                                    GlobalConfiguration.outputConfiguration(siteConfig);
-                                }
-                                catch(NullReferenceException)
-                                {
-                                    
-                                }
-
                                 var page = new Page { path = file, content = parseDocument(file), frontmatter = Page.parseFrontMatter(file) };
                                 string fileDest = Permalink.GetPermalink(page).parsePagePermalink(Page.getDefinedPage(page));
                                 if(fileDest.Substring(0, 1).Equals("/", StringComparison.OrdinalIgnoreCase))
@@ -481,13 +454,6 @@ namespace WDHAN
                                     File.Copy(file, fileDest, true);
                                     Console.WriteLine(file + " → " + fileDest);
                                 }
-
-                                siteConfig.static_files.Add(new WDHANFile { path = file.Substring(1) });
-                                if(Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    siteConfig.html_files.Add(new HTMLFile { path = file.Substring(1) });
-                                }
-                                GlobalConfiguration.outputConfiguration(siteConfig);
                             }
                             catch(NullReferenceException)
                             {

@@ -19,38 +19,20 @@ namespace WDHAN
         public string includes_dir { get; set; }
         public string sass_dir { get; set; }
         public List<string> collections { get; set; }
-        public Boolean safe { get; set; }
         public List<string> include { get; set; }
         public List<string> exclude { get; set; }
         public List<string> keep_files { get; set; }
-        public string encoding { get; set; }
         public string culture { get; set; }
         public string markdown_ext { get; set; }
-        public Boolean strict_front_matter { get; set; }
-        public Boolean show_drafts { get; set; }
-        public int limit_posts { get; set; }
-        public Boolean future { get; set; }
-        public Boolean unpublished { get; set; }
         public List<string> whitelist { get; set; }
         public List<string> plugins { get; set; }
         public string excerpt_separator { get; set; }
-        public Boolean detach { get; set; }
-        public int port { get; set; }
-        public string host { get; set; }
         public string baseurl { get; set; }
         public Boolean show_dir_listing { get; set; }
         public string permalink { get; set; }
-        public string paginate_path { get; set; }
-        public string timezone { get; set; }
-        public Boolean quiet { get; set; }
-        public Boolean verbose { get; set; }
         public string url { get; set; }
         public Dictionary<string, object> TAGS { get; set; }
         public DateTime time { get; set; }
-        public List<Page> pages { get; set; }
-        public List<WDHANFile> static_files { get; set; }
-        public List<HTMLFile> html_files { get; set; }
-        public List<Page> html_pages { get; set; }
         public Defaults defaults { get; set; }
         public Dictionary<string, object> user { get; set; }
         public GlobalConfiguration()
