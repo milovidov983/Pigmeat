@@ -1,4 +1,4 @@
-﻿using Markdig;
+using Markdig;
 using Fluid;
 using Newtonsoft.Json;
 using System;
@@ -24,6 +24,65 @@ namespace WDHAN
         static void Main(string[] args)
         {
             try
+            {
+
+                try
+                {
+                    if (!args[0].Equals("help", StringComparison.OrdinalIgnoreCase) && !args[1].Equals("--blank", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            Directory.SetCurrentDirectory(args[1]);
+                        }
+                        catch (DirectoryNotFoundException ex)
+                        {
+                            Console.WriteLine("The specified directory does not exist. " + args[1], ex);
+                        }
+                    }
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Console.WriteLine("The specified directory does not exist. {0}", e);
+                }
+
+                if(args.Length == 0)
+                {
+                    printHelpMsg(args);
+                }
+                else if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
+                {
+                    createSite(args);
+                }
+                else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
+                {
+                    buildSite(args, true);
+                }
+                else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
+                {
+                    buildSite(args, true);
+                }
+                else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
+                {
+                    serveSite(args);
+                }
+                else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
+                {
+                    serveSite(args);
+                }
+                else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
+                {
+                    cleanSite();
+                }
+                else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
+                {
+                    printHelpMsg(args);
+                }
+                else
+                {
+                    printHelpMsg(args);
+                }
+            }
+            catch(IndexOutOfRangeException)
             {
                 if(args.Length == 0)
                 {
