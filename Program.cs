@@ -20,7 +20,7 @@ namespace WDHAN
 {
     class Program
     {
-        public const string version = "1.1";
+        public const string version = "1.2";
         static void Main(string[] args)
         {
             try
