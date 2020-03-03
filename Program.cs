@@ -28,21 +28,21 @@ namespace WDHAN
 
                 try
                 {
-                    if (!args[0].Equals("help", StringComparison.OrdinalIgnoreCase) && !args[1].Equals("--blank", StringComparison.OrdinalIgnoreCase))
+                    if (!args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
                     {
                         try
                         {
-                            Directory.SetCurrentDirectory(args[1]);
+                            Directory.SetCurrentDirectory(args[args.Length - 1]);
                         }
                         catch (DirectoryNotFoundException ex)
                         {
-                            Console.WriteLine("The specified directory does not exist. " + args[1], ex);
+                            Console.WriteLine("The specified directory does not exist. " + args[args.Length - 1] + ex);
                         }
                     }
                 }
-                catch (DirectoryNotFoundException e)
+                catch (DirectoryNotFoundException ex)
                 {
-                    Console.WriteLine("The specified directory does not exist. {0}", e);
+                    Console.WriteLine("The specified directory does not exist.\n" + ex);
                 }
 
                 if(args.Length == 0)
