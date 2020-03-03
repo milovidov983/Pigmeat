@@ -1,4 +1,4 @@
-using Markdig;
+﻿using Markdig;
 using Fluid;
 using Newtonsoft.Json;
 using System;
@@ -593,8 +593,8 @@ namespace WDHAN
                     {
                         var result = parseDocument(post);
                         var postObject = Post.getDefinedPost(new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post }, collection);
-                        var postPath = Path.GetDirectoryName(siteConfig.destination + "/" + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject));
-                        Directory.CreateDirectory(postPath);
+                        var postPath = siteConfig.destination + "/" + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject);
+                        Directory.CreateDirectory(Path.GetDirectoryName(postPath));
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
                             var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSyntaxHighlighting();
@@ -605,13 +605,18 @@ namespace WDHAN
                             {
                                 result = Markdown.ToHtml(result, pipeline);
                                 postObject.content = result;
-                                using (FileStream fs = File.Create(postPath + "/" + postObject.frontmatter["title"].ToString() + ".html"))
+                                using (FileStream fs = File.Create(postPath))
                                 {
                                     fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
                                     if(!firstTime)
                                     {
                                         Console.WriteLine(post + " → " + postPath);
                                     }
+                                }
+                                if(!Path.GetExtension(post).Equals(".json", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    Directory.CreateDirectory(Path.GetDirectoryName(postPath) + "/" + postObject.frontmatter["title"].ToString());
+                                    File.Copy(postPath, Path.GetDirectoryName(postPath) + "/" + postObject.frontmatter["title"].ToString() + "/index.html", true);
                                 }
                             }
                             catch(ArgumentNullException ex)
@@ -623,12 +628,12 @@ namespace WDHAN
                         }
                         else
                         {
-                            using (FileStream fs = File.Create(postPath + "/" + Path.GetFileName(post)))
+                            using (FileStream fs = File.Create(Path.GetDirectoryName(postPath) + "/" + Path.GetFileName(post)))
                             {
                                 fs.Write(Encoding.UTF8.GetBytes(result), 0, Encoding.UTF8.GetBytes(result).Length);
                                 if(!firstTime)
                                 {
-                                    Console.WriteLine(post + " → " + postPath);
+                                    Console.WriteLine(post + " → " + Path.GetDirectoryName(postPath));
                                 }
                             }
                         }
