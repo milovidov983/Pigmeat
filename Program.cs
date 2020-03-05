@@ -487,7 +487,7 @@ namespace WDHAN
                             try
                             {
                                 // Copy file over (if included)
-                                string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination;
+                                string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
                                 if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
                                 {
                                     File.Copy(file, fileDest, true);
