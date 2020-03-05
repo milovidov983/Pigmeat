@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using Fluid.Values;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
-using LibGit2Sharp;
 using Markdig.Parsers;
 using Markdig.Extensions.AutoLinks;
 using Markdig.SyntaxHighlighting;
+using System.Diagnostics;
 using System.Net;
 using System.IO.Compression;
 
@@ -21,8 +21,18 @@ namespace WDHAN
     class Program
     {
         public const string version = "1.2";
+        private static Stopwatch buildWatch = new Stopwatch();
         static void Main(string[] args)
         {
+            try
+            {
+                Plugins.getPlugins();
+            }
+            catch
+            {
+                Console.WriteLine("Plugin(s) not loaded.");
+            }
+
             try
             {
 
@@ -45,86 +55,55 @@ namespace WDHAN
                     Console.WriteLine("The specified directory does not exist.\n" + ex);
                 }
 
-                if(args.Length == 0)
-                {
-                    printHelpMsg(args);
-                }
-                else if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
-                {
-                    createSite(args);
-                }
-                else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
-                {
-                    buildSite(args, true);
-                }
-                else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
-                {
-                    buildSite(args, true);
-                }
-                else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
-                {
-                    serveSite(args);
-                }
-                else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
-                {
-                    serveSite(args);
-                }
-                else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
-                {
-                    cleanSite();
-                }
-                else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
-                {
-                    printHelpMsg(args);
-                }
-                else
-                {
-                    printHelpMsg(args);
-                }
+                getCommands(args);
             }
             catch(IndexOutOfRangeException)
             {
-                if(args.Length == 0)
-                {
-                    printHelpMsg(args);
-                }
-                else if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
-                {
-                    createSite(args);
-                }
-                else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
-                {
-                    buildSite(args, true);
-                }
-                else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
-                {
-                    buildSite(args, true);
-                }
-                else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
-                {
-                    serveSite(args);
-                }
-                else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
-                {
-                    serveSite(args);
-                }
-                else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
-                {
-                    cleanSite();
-                }
-                else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
-                {
-                    printHelpMsg(args);
-                }
-                else
-                {
-                    printHelpMsg(args);
-                }
+                getCommands(args);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 Environment.Exit(1);
+            }
+        }
+        static void getCommands(string[] args)
+        {
+            if(args.Length == 0)
+            {
+                printHelpMsg(args);
+            }
+            else if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
+            {
+                createSite(args);
+            }
+            else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
+            {
+                buildSite(args, true);
+            }
+            else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
+            {
+                buildSite(args, true);
+            }
+            else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
+            {
+                serveSite(args);
+            }
+            else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
+            {
+                serveSite(args);
+            }
+            else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
+            {
+                cleanSite();
+            }
+            else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
+            {
+                printHelpMsg(args);
+            }
+            else
+            {
+                printHelpMsg(args);
             }
         }
         static void serveSite(string[] args)
@@ -366,6 +345,7 @@ namespace WDHAN
         {
             if(firstTime)
             {
+                buildWatch.Start();
                 Console.WriteLine("Building project files … ");
             }
             Data.generateDataIndex();
@@ -550,6 +530,11 @@ namespace WDHAN
             {
                 GlobalConfiguration.includeTags(); // The process to include tags requires two passes at the build process.
                 buildSite(args, false);
+            }
+            else
+            {
+                buildWatch.Stop();
+                Console.WriteLine("Site successfully built in " + (float) (buildWatch.ElapsedMilliseconds / 1000f) + " seconds.");
             }
         }
 
