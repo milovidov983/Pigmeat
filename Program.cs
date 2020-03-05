@@ -38,7 +38,7 @@ namespace WDHAN
 
                 try
                 {
-                    if (!args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
+                    if (!args[0].Equals("help", StringComparison.OrdinalIgnoreCase) && args.Length > 1)
                     {
                         try
                         {
