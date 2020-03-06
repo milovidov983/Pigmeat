@@ -26,15 +26,6 @@ namespace WDHAN
         {
             try
             {
-                Plugins.getPlugins();
-            }
-            catch
-            {
-                Console.WriteLine("Plugin(s) not loaded.");
-            }
-
-            try
-            {
 
                 try
                 {
@@ -53,6 +44,16 @@ namespace WDHAN
                 catch (DirectoryNotFoundException ex)
                 {
                     Console.WriteLine("The specified directory does not exist.\n" + ex);
+                }
+
+                try
+                {
+                    Console.WriteLine("Searching for plugins … ");
+                    Plugins.getPlugins(args);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Plugin(s) not loaded.\n" + e.ToString());
                 }
 
                 getCommands(args);
