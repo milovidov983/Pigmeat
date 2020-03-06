@@ -11,7 +11,6 @@ using Newtonsoft.Json.Linq;
 using System.Globalization;
 using Markdig.Parsers;
 using Markdig.Extensions.AutoLinks;
-using Markdig.SyntaxHighlighting;
 using System.Diagnostics;
 using System.Net;
 using System.IO.Compression;
@@ -422,7 +421,7 @@ namespace WDHAN
                                     fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                     var result = parseDocument(file);
                                     var pageObject = Page.getDefinedPage(new Page { frontmatter = WDHANFile.parseFrontMatter(file), content = result, path = file });
-                                    var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSyntaxHighlighting();
+                                    var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
                                     builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
                                     var pipeline = builder.Build();
                                     builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
@@ -583,7 +582,7 @@ namespace WDHAN
                         Directory.CreateDirectory(Path.GetDirectoryName(postPath));
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {
-                            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSyntaxHighlighting();
+                            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
                             builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
                             var pipeline = builder.Build();
                             builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
