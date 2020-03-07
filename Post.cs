@@ -53,6 +53,10 @@ namespace WDHAN
             {
                 postList.Sort((y, x) => x.title.CompareTo(y.title));
             }
+            catch(InvalidOperationException)
+            {
+
+            }
 
             return postList;
         }
