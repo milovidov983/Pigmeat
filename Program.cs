@@ -579,6 +579,10 @@ namespace WDHAN
                         var result = parseDocument(post);
                         var postObject = Post.getDefinedPost(new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post }, collection);
                         var postPath = siteConfig.destination + "/" + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject);
+                        if(Path.GetFileName(postPath).Equals(".html", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
                         Directory.CreateDirectory(Path.GetDirectoryName(postPath));
                         if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                         {

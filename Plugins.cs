@@ -15,7 +15,7 @@ namespace WDHAN
             var siteConfig = GlobalConfiguration.getConfiguration();
             foreach(var file in Directory.GetFiles(siteConfig.source + "/" + siteConfig.plugins_dir, "*", SearchOption.AllDirectories))
             {
-                Console.WriteLine("Found plugins directory. - " + siteConfig.source + "/" + siteConfig.plugins_dir);
+                Console.WriteLine("Found plugins directory, " + siteConfig.source + "/" + siteConfig.plugins_dir);
                 if(siteConfig.plugins.Contains(Path.GetFileNameWithoutExtension(file)))
                 {
                     Console.WriteLine("Loading plugin: " + Path.GetFileName(file));
