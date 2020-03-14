@@ -45,16 +45,6 @@ namespace WDHAN
                     Console.WriteLine("The specified directory does not exist.\n" + ex);
                 }
 
-                try
-                {
-                    Console.WriteLine("Searching for plugins … ");
-                    Plugins.getPlugins(args);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Plugin(s) not loaded.\n" + e.ToString());
-                }
-
                 getCommands(args);
             }
             catch(IndexOutOfRangeException)
@@ -108,9 +98,15 @@ namespace WDHAN
         }
         static void serveSite(string[] args)
         {
-            Console.WriteLine("Serving WDHAN project … ");
-            Console.WriteLine("[MESSAGE]: This feature will be implemented in version 1.5.");
-            Environment.Exit(0);
+            try
+            {
+                Console.WriteLine("Searching for plugins … ");
+                Plugins.getPlugins(args);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Plugin(s) not loaded.\n" + e.ToString());
+            }
         }
         static void cleanSite()
         {
@@ -715,7 +711,7 @@ namespace WDHAN
                 }
                 else if (args[1].Equals("serve", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Rebuilds the site anytime a change is detected and hosts it.");
+                    Console.WriteLine("Calls a project's plugins.");
                 }
                 else if (args[1].Equals("s", StringComparison.OrdinalIgnoreCase))
                 {
@@ -741,7 +737,7 @@ namespace WDHAN
                     "   wdhan new - Creates an empty WDHAN project in the current directory.\n" +
                     "   wdhan build - Outputs a publishable WDHAN project.\n" +
                     "   wdhan b - Same as above.\n" +
-                    "   wdhan serve - Rebuilds the site anytime a change is detected.\n" +
+                    "   wdhan serve - Calls a project's plugins.\n" +
                     "   wdhan s - Same as above.\n" +
                     "   wdhan clean - Deletes all generated files.\n" +
                     "   wdhan help - Shows this message.\n" +
