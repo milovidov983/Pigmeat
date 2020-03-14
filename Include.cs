@@ -20,7 +20,7 @@ namespace WDHAN
         public static string evalInclude(string filePath)
         {
             var fileContents = WDHANFile.getFileContents(filePath);
-            if(fileContents.Contains("{% include "))
+            if(fileContents.Contains("{% inc "))
             {
                 List<string> includeCalls = new List<string>();
                 string readerString = "";
@@ -37,7 +37,7 @@ namespace WDHAN
                     {
                         hitOnce = false;
                         readerString += character;
-                        if(readerString.Contains("{% include "))
+                        if(readerString.Contains("{% inc "))
                         {
                             includeCalls.Add(readerString);
                         }
@@ -106,7 +106,7 @@ namespace WDHAN
                 }
                 else
                 {
-                    Console.WriteLine("ERROR: Could not parse Liquid context for include " + includePath + ".");
+                    Console.WriteLine("ERROR [parseInclude]: Could not parse Liquid context for include " + includePath + ".");
                     return fileContents;
                 }
             }
@@ -178,7 +178,7 @@ namespace WDHAN
                 }
                 else
                 {
-                    Console.WriteLine("ERROR: Could not parse Liquid context.");
+                    Console.WriteLine("ERROR [parseInclude]: Could not parse Liquid context.");
                     return includeFile;
                 }
             }

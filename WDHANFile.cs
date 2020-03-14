@@ -161,7 +161,7 @@ namespace WDHAN
                 }
                 else
                 {
-                    Console.WriteLine("ERROR: Could not parse Liquid context for file " + filePath + ".");
+                    Console.WriteLine("ERROR [parseRaw]: Could not parse Liquid context for file " + filePath + ".");
                     return fileContents;
                 }
             }
