@@ -462,7 +462,7 @@ namespace WDHAN
                             else
                             {
                                 // Copy file over (if not excluded)
-                                var fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file) + Path.GetFileName(file);
+                                var fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file) + "/" + Path.GetFileName(file);
                                 if(!Path.GetDirectoryName(file).Equals("", StringComparison.OrdinalIgnoreCase))
                                 {
                                     if(!siteConfig.exclude.Contains(file) && !siteConfig.exclude.Contains(Path.GetDirectoryName(file)))
@@ -484,7 +484,7 @@ namespace WDHAN
                             try
                             {
                                 // Copy file over (if included)
-                                var fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file) + Path.GetFileName(file);
+                                var fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file) + "/" + Path.GetFileName(file);
                                 if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
                                 {
                                     Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
