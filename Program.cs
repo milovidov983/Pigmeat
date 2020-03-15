@@ -530,7 +530,7 @@ namespace WDHAN
             else
             {
                 buildWatch.Stop();
-                Console.WriteLine("Site successfully built in " + (float) (buildWatch.ElapsedMilliseconds / 1000f) + " seconds.");
+                Console.WriteLine("Project successfully built in " + (float) (buildWatch.ElapsedMilliseconds / 1000f) + " seconds.");
             }
         }
 
@@ -575,6 +575,7 @@ namespace WDHAN
                         var result = parseDocument(post);
                         var postObject = Post.getDefinedPost(new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post }, collection);
                         var postPath = siteConfig.destination + "/" + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject);
+                        postObject.path = postPath;
                         if(Path.GetFileName(postPath).Equals(".html", StringComparison.OrdinalIgnoreCase))
                         {
                             continue;
@@ -600,8 +601,20 @@ namespace WDHAN
                                 }
                                 if(!Path.GetExtension(post).Equals(".json", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    Directory.CreateDirectory(Path.GetDirectoryName(postPath) + "/" + postObject.frontmatter["title"].ToString());
-                                    File.Copy(postPath, Path.GetDirectoryName(postPath) + "/" + postObject.frontmatter["title"].ToString() + "/index.html", true);
+                                    try
+                                    {
+                                        Directory.CreateDirectory(Path.GetDirectoryName(postPath) + "/" + postObject.frontmatter["title"].ToString());
+                                        File.Copy(postPath, Path.GetDirectoryName(postPath) + "/" + postObject.frontmatter["title"].ToString() + "/index.html", true);
+                                    }
+                                    catch(NullReferenceException)
+                                    {
+                                        if(!firstTime)
+                                        {
+                                            Console.WriteLine("WARNING [buildCollection]: " + Path.GetFileName(post) + " does not have a title.");
+                                        }
+                                        Directory.CreateDirectory(Path.GetDirectoryName(postPath) + "/" + Path.GetFileNameWithoutExtension(postPath));
+                                        File.Copy(postPath, Path.GetDirectoryName(postPath) + "/" + Path.GetFileNameWithoutExtension(postPath) + "/index.html", true);
+                                    }
                                 }
                             }
                             catch(ArgumentNullException ex)

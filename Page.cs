@@ -48,7 +48,7 @@ namespace WDHAN
         {
             page = (Page) getDefinedFile(page);
 
-            page.name = Path.GetFileName(page.path);
+            page.name = Path.GetFileNameWithoutExtension(page.path);
             page.dir = Path.GetDirectoryName(page.path);
 
             try
