@@ -462,7 +462,7 @@ namespace WDHAN
                             else
                             {
                                 // Copy file over (if not excluded)
-                                string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+                                var fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                 if(!Path.GetDirectoryName(file).Equals("", StringComparison.OrdinalIgnoreCase))
                                 {
                                     if(!siteConfig.exclude.Contains(file) && !siteConfig.exclude.Contains(Path.GetDirectoryName(file)))
@@ -484,12 +484,25 @@ namespace WDHAN
                             try
                             {
                                 // Copy file over (if included)
-                                string fileDest = Path.GetDirectoryName(file) + "/" + siteConfig.destination + "/" + Path.GetFileName(file);
+                                var fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                 if(siteConfig.include.Contains(file) || siteConfig.include.Contains(Path.GetDirectoryName(file)))
                                 {
+                                    Directory.CreateDirectory(Path.GetDirectoryName(fileDest));
                                     File.Copy(file, fileDest, true);
-                                    Console.WriteLine(file + " → " + fileDest);
+                                    if(!firstTime)
+                                    {
+                                        Console.WriteLine(file + " → " + fileDest);
+                                    }
                                 }
+                                /*
+                                else
+                                {
+                                    if(!firstTime)
+                                    {
+                                        Console.WriteLine("MESSAGE [buildSite]: File " + file + " was not included.");
+                                    }
+                                }
+                                */
                             }
                             catch(NullReferenceException)
                             {
