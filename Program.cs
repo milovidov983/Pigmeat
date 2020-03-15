@@ -100,6 +100,7 @@ namespace WDHAN
         {
             try
             {
+                Directory.CreateDirectory(GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().plugins_dir);
                 Console.WriteLine("Searching for plugins … ");
                 Plugins.getPlugins(args);
             }
