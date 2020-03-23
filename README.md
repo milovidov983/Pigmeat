@@ -1,5 +1,7 @@
 # WDHAN
 
+<img src="https://github.com/MadeByEmil/WDHAN/raw/master/branding/logo.png" alt="Logo" title="WDHAN Logo" style="max-width:100%;">
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0403d9ba4494e7c820394cf9bafa917)](https://app.codacy.com/gh/MadeByEmil/WDHAN?utm_source=github.com&utm_medium=referral&utm_content=MadeByEmil/WDHAN&utm_campaign=Badge_Grade_Dashboard)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN?ref=badge_shield)
 
@@ -13,7 +15,7 @@
 ## Getting started
  * Download WDHAN
    * EXPERIMENTAL: Download the latest build artifact from our [commits](https://github.com/MadeByEmil/WDHAN/commits/master) page that corresponds to your operating system.
-   * STABLE: Download the latest release from our [releases](https://github.com/MadeByEmil/WDHAN/releases) page that corresponds to your operating system.
+   * STABLE: Download the [latest release](https://github.com/MadeByEmil/WDHAN/releases/latest) from our [releases](https://github.com/MadeByEmil/WDHAN/releases) page that corresponds to your operating system.
  * Read up on the [documentation](https://github.com/MadeByEmil/WDHAN/wiki)
  * Take a look at [other people's WDHAN projects](https://github.com/topics/wdhan)
 
