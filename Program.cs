@@ -19,7 +19,7 @@ namespace WDHAN
 {
     class Program
     {
-        public const string version = "1.2";
+        public const string version = "1.5";
         private static Stopwatch buildWatch = new Stopwatch();
         static void Main(string[] args)
         {
