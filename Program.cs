@@ -714,7 +714,7 @@ namespace WDHAN
                 {
                     if(!firstTime)
                     {
-                        Console.WriteLine("ERROR [parseDocument]: Could not parse Liquid context for file " + filePath + ".");
+                        Console.WriteLine("WARNING [parseDocument]: Could not parse Liquid context for file " + filePath + ".");
                     }
                     return fileContents;
                 }
