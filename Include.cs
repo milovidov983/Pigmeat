@@ -17,6 +17,47 @@ namespace WDHAN
         {
             
         }
+        public static string evalInclude(string filePath, string fileContents)
+        {
+            if(fileContents.Contains("{% inc "))
+            {
+                List<string> includeCalls = new List<string>();
+                string readerString = "";
+                Boolean hitOnce = false;
+                foreach(var character in fileContents)
+                {
+                    if(character.Equals('{') && !hitOnce)
+                    {
+                        hitOnce = true;
+                        readerString += character;
+                        continue;
+                    }
+                    if(character.Equals('}') && hitOnce)
+                    {
+                        hitOnce = false;
+                        readerString += character;
+                        if(readerString.Contains("{% inc "))
+                        {
+                            includeCalls.Add(readerString);
+                        }
+                        readerString = "";
+                        continue;
+                    }
+                    if(hitOnce)
+                    {
+                        readerString += character;
+                        continue;
+                    }
+                }
+                foreach(var includeCall in includeCalls)
+                {
+                    Include currentInclude = new Include { input = includeCall };
+                    string includePath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().includes_dir + "/" + currentInclude.getCallArgs()[2];
+                    fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath, filePath));
+                }
+            }
+            return fileContents;
+        }
         public static string evalInclude(string filePath)
         {
             var fileContents = WDHANFile.getFileContents(filePath);

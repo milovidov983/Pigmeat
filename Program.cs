@@ -20,6 +20,7 @@ namespace WDHAN
     class Program
     {
         public const string version = "1.5";
+        public static Boolean firstTime = true;
         private static Stopwatch buildWatch = new Stopwatch();
         static void Main(string[] args)
         {
@@ -69,11 +70,11 @@ namespace WDHAN
             }
             else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
             {
-                buildSite(args, true);
+                buildSite(args);
             }
             else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
             {
-                buildSite(args, true);
+                buildSite(args);
             }
             else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
             {
@@ -338,7 +339,7 @@ namespace WDHAN
                 Environment.Exit(1);
             }
         }
-        public static void buildSite(string[] args, Boolean firstTime)
+        public static void buildSite(string[] args)
         {
             if(firstTime)
             {
@@ -534,12 +535,13 @@ namespace WDHAN
             }
 
             // Handle _layout, _include, _data, _collection
-            buildCollection(args, firstTime);
+            buildCollection(args);
 
             if(firstTime)
             {
                 GlobalConfiguration.includeTags(); // The process to include tags requires two passes at the build process.
-                buildSite(args, false);
+                firstTime = false;
+                buildSite(args);
             }
             else
             {
@@ -548,7 +550,7 @@ namespace WDHAN
             }
         }
 
-        static void buildCollection(string[] args, Boolean firstTime)
+        static void buildCollection(string[] args)
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
 
@@ -672,6 +674,7 @@ namespace WDHAN
             }
 
             // Expand layouts, then parse includes
+            fileContents = Include.evalInclude(filePath, fileContents);
 
             // When a property of a JObject value is accessed, try to look into its properties
             TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
@@ -709,7 +712,10 @@ namespace WDHAN
                 }
                 else
                 {
-                    Console.WriteLine("ERROR [parseDocument]: Could not parse Liquid context for file " + filePath + ".");
+                    if(!firstTime)
+                    {
+                        Console.WriteLine("ERROR [parseDocument]: Could not parse Liquid context for file " + filePath + ".");
+                    }
                     return fileContents;
                 }
             }

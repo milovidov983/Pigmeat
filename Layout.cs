@@ -12,7 +12,7 @@ namespace WDHAN
         {
             var layoutPath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().layouts_dir + "/" + layout + ".html";
             var layoutContents = WDHANFile.getFileContents(layoutPath);
-            layoutContents = Include.evalInclude(layoutPath);
+            //layoutContents = Include.evalInclude(layoutPath); - Design change (2020-03-31): Evaluate includes in file, not layout (allows for using document context)
             //layoutContents = WDHANFile.getFileContents(layoutPath);
             try
             {
