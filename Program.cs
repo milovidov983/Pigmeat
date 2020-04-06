@@ -686,8 +686,9 @@ namespace WDHAN
 
             var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-            var pageModel = WDHANFile.parseFrontMatter(filePath);
-            
+            var pageFrontmatter = WDHANFile.parseFrontMatter(filePath);
+            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = WDHANFile.parseFrontMatter(filePath), path = filePath, content = WDHANFile.parseRaw(filePath) })));
+
             try
             {
                 if(FluidTemplate.TryParse(fileContents, out var template))
@@ -696,6 +697,7 @@ namespace WDHAN
                     context.CultureInfo = new CultureInfo(siteConfig.culture);
 
                     siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                    pageModel.Merge(pageFrontmatter, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
                     context.SetValue("wdhan", JObject.Parse("{\"version\": " + Program.version + "}"));
@@ -744,11 +746,11 @@ namespace WDHAN
                 }
                 else if (args[1].Equals("serve", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Calls a project's plugins.");
+                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used regardless of authorization in the project's configuration file (e.g. 'wdhan serve RandomPlugin -f').");
                 }
                 else if (args[1].Equals("s", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Rebuilds the site anytime a change is detected.");
+                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used regardless of authorization in the project's configuration file (e.g. 'wdhan s RandomPlugin -f').");
                 }
                 else if (args[1].Equals("clean", StringComparison.OrdinalIgnoreCase))
                 {
@@ -756,11 +758,11 @@ namespace WDHAN
                 }
                 else if (args[1].Equals("help", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Prints a message outlining WDHAN's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'wdhan help serve')");
+                    Console.WriteLine("Prints a message outlining WDHAN's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'wdhan help serve').");
                 }
                 else
                 {
-                    Console.WriteLine("Please specify a parameter (e.g. 'wdhan help new,' 'wdhan help build,' 'wdhan help serve,' 'wdhan help clean')");
+                    Console.WriteLine("Please specify a parameter (e.g. 'wdhan help new,' 'wdhan help build,' 'wdhan help serve,' 'wdhan help clean').");
                 }
             }
             catch (IndexOutOfRangeException)
@@ -772,9 +774,11 @@ namespace WDHAN
                     "   wdhan b - Same as above.\n" +
                     "   wdhan serve - Calls a project's plugins.\n" +
                     "   wdhan s - Same as above.\n" +
+                    "   wdhan serve <string> - Calls a specified plugin (e.g. 'wdhan serve SomePlugin').\n" +
+                    "   wdhan s <string> - Same as above.\n" +
                     "   wdhan clean - Deletes all generated files.\n" +
                     "   wdhan help - Shows this message.\n" +
-                    "   wdhan help <string> - Displays a message outlining the usage of a given parameter (e.g. 'wdhan help serve')"
+                    "   wdhan help <string> - Displays a message outlining the usage of a given parameter (e.g. 'wdhan help serve')."
                     );
             }
         }

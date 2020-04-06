@@ -13,7 +13,6 @@ namespace WDHAN
         public string content { get; set; }
         public string path { get; set; }
         public DateTime modified_time { get; set; }
-        public string name { get; set; }
         public string basename { get; set; }
         public string extname { get; set; }
         public string title { get; set; }

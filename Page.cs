@@ -19,7 +19,7 @@ namespace WDHAN
         public DateTime date { get; set; }
         public List<string> tags { get; set; }
         public string dir { get; set; }
-        //public string name { get; set; }
+        public string name { get; set; }
         public string excerpt { get; set; }
         // Time-related values
         public string year { get; set; }
@@ -62,6 +62,14 @@ namespace WDHAN
 
             try
             {
+                if(page.dir.Length > 1)
+                {
+                    page.dir = page.dir.Substring(2);
+                }
+                else{
+                    page.dir = page.dir.Substring(1);
+                }
+
                 page.date = JsonConvert.DeserializeObject<DateTime>('"' +page.frontmatter.GetValue("date").ToString() + '"', new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
                 //page.date = JsonConvert.DeserializeObject<DateTime>(page.frontmatter.GetValue("date").ToString());
 
