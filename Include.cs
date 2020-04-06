@@ -116,7 +116,8 @@ namespace WDHAN
 
             var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-            var pageModel = WDHANFile.parseFrontMatter(filePath);
+            var pageFrontmatter = WDHANFile.parseFrontMatter(filePath);
+            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = WDHANFile.parseFrontMatter(filePath), path = filePath })));
 
             setVariables();
             var includeModel = JObject.Parse(JsonConvert.SerializeObject(variables));
@@ -134,6 +135,7 @@ namespace WDHAN
                     context.CultureInfo = new CultureInfo(siteConfig.culture);
 
                     siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                    pageModel.Merge(pageFrontmatter, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
                     context.SetValue("wdhan", JObject.Parse("{\"version\": " + Program.version + "}"));
