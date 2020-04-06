@@ -38,7 +38,7 @@ namespace WDHAN
                         script.Main(args);
                     }
                 }
-                catch(ArgumentOutOfRangeException)
+                catch(IndexOutOfRangeException)
                 {
                     if(siteConfig.plugins.Contains(args[1]))
                     {
