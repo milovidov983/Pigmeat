@@ -1,4 +1,5 @@
 # WDHAN
+**W**ORLD-WIDE-WEB **D**ATA & **H**YPERTEXT **A**MALGAMATION **N**ETWORK
 
 <p align="center">
   <img src="https://github.com/MadeByEmil/WDHAN/raw/master/branding/logo.png" alt="Logo" title="WDHAN Logo">
