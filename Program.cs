@@ -735,27 +735,27 @@ namespace WDHAN
             {
                 if (args[1].Equals("new", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Creates an empty WDHAN project in the current directory.");
+                    Console.WriteLine("Creates an empty WDHAN project. A path may be specified, otherwise a project will be created where WDHAN is running.");
                 }
                 else if (args[1].Equals("build", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Outputs a publishable WDHAN project.");
+                    Console.WriteLine("Outputs a publishable WDHAN project. A path may be specified, otherwise a project will be built where WDHAN is running.");
                 }
                 else if (args[1].Equals("b", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Outputs a publishable WDHAN project.");
+                    Console.WriteLine("Outputs a publishable WDHAN project. A path may be specified, otherwise a project will be built where WDHAN is running.");
                 }
                 else if (args[1].Equals("serve", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used regardless of authorization in the project's configuration file (e.g. 'wdhan serve RandomPlugin -f').");
+                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used to force execution of a plugin, regardless of authorization in the project's configuration file (e.g. 'wdhan serve RandomPlugin -f').");
                 }
                 else if (args[1].Equals("s", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used regardless of authorization in the project's configuration file (e.g. 'wdhan s RandomPlugin -f').");
+                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used to force execution of a plugin, regardless of authorization in the project's configuration file (e.g. 'wdhan s RandomPlugin -f').");
                 }
                 else if (args[1].Equals("clean", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Deletes all generated files.");
+                    Console.WriteLine("Deletes all generated files as a result of building.");
                 }
                 else if (args[1].Equals("help", StringComparison.OrdinalIgnoreCase))
                 {
@@ -770,14 +770,14 @@ namespace WDHAN
             {
                 Console.WriteLine(
                     "WDHAN supports the following commands:\n" +
-                    "   wdhan new - Creates an empty WDHAN project in the current directory.\n" +
+                    "   wdhan new - Creates an empty WDHAN project.\n" +
                     "   wdhan build - Outputs a publishable WDHAN project.\n" +
                     "   wdhan b - Same as above.\n" +
                     "   wdhan serve - Calls a project's plugins.\n" +
                     "   wdhan s - Same as above.\n" +
                     "   wdhan serve <string> - Calls a specified plugin (e.g. 'wdhan serve SomePlugin').\n" +
                     "   wdhan s <string> - Same as above.\n" +
-                    "   wdhan clean - Deletes all generated files.\n" +
+                    "   wdhan clean - Deletes all generated files as a result of building.\n" +
                     "   wdhan help - Shows this message.\n" +
                     "   wdhan help <string> - Displays a message outlining the usage of a given parameter (e.g. 'wdhan help serve')."
                     );
