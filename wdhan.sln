@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29521.150
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WDHAN", "WDHAN.csproj", "{A331CFC3-DF9D-4862-9D8D-1E69D4F77E8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WDHAN", "wdhan.csproj", "{A331CFC3-DF9D-4862-9D8D-1E69D4F77E8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
