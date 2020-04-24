@@ -22,4 +22,4 @@ jobs:
         # Artifact name
         name: wdhan.mac
         # Directory containing files to upload
-        path: ./bin/Release/netcoreapp3.1
+        path: ./bin/Release/netcoreapp3.1/osx-x64
