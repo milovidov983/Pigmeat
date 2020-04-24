@@ -20,7 +20,7 @@ namespace WDHAN
 {
     class Program
     {
-        public static string version = 'v' + typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        public static string version = typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         public static Boolean firstTime = true;
         private static Stopwatch buildWatch = new Stopwatch();
         static void Main(string[] args)

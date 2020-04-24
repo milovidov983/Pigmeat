@@ -138,7 +138,7 @@ namespace WDHAN
                     pageModel.Merge(pageFrontmatter, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
-                    context.SetValue("wdhan", JObject.Parse("{\"version\": " + Program.version + "}"));
+                    context.SetValue("wdhan", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
                     
                     foreach(var collection in siteConfig.collections)
                     {
