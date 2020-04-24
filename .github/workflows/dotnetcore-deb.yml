@@ -24,4 +24,4 @@ jobs:
       uses: actions/upload-artifact@v2-preview
       with:
         name: wdhan.deb
-        path: ./bin/Release/netcoreapp3.1/WDHAN.1.0.0.deb
+        path: ./bin/Release/netcoreapp3.1/WDHAN.deb
