@@ -32,19 +32,19 @@
 
   #### Windows
   ```
-  dotnet build --configuration Release
+  dotnet build --configuration Release --runtime win-x64
   ```
   Outputs to ```.\bin\Release\netcoreapp3.1```
 
   #### macOS
   ```
-  dotnet build --configuration Release
+  dotnet build --configuration Release --runtime osx-x64
   ```
   Outputs to ```./bin/Release/netcoreapp3.1```
 
   #### Linux
   ```
-  dotnet build --configuration Release
+  dotnet build --configuration Release --runtime linux-x64
   ```
   Outputs to ```./bin/Release/netcoreapp3.1```
 
