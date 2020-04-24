@@ -14,12 +14,13 @@ using Markdig.Extensions.AutoLinks;
 using System.Diagnostics;
 using System.Net;
 using System.IO.Compression;
+using System.Reflection;
 
 namespace WDHAN
 {
     class Program
     {
-        public const string version = "1.5.7";
+        public static string version = typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         public static Boolean firstTime = true;
         private static Stopwatch buildWatch = new Stopwatch();
         static void Main(string[] args)

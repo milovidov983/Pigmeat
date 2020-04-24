@@ -34,19 +34,19 @@
   ```
   dotnet build --configuration Release
   ```
-  Outputs to ```./bin/Release/netcoreapp3.1/```
+  Outputs to ```.\bin\Release\netcoreapp3.1```
 
-  #### MacOS
+  #### macOS
   ```
   dotnet build --configuration Release
   ```
-  Outputs to ```./bin/Release/netcoreapp3.1/```
+  Outputs to ```./bin/Release/netcoreapp3.1```
 
   #### Linux
   ```
   dotnet build --configuration Release
   ```
-  Outputs to ```./bin/Release/netcoreapp3.1/```
+  Outputs to ```./bin/Release/netcoreapp3.1```
 
 ## Credits
  Authored by [Emil Sayahi](https://emsa.cf) ([@MadeByEmil](https://github.com/MadeByEmil))

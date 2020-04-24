@@ -1,0 +1,27 @@
+name: .NET Core (deb)
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build with dotnet
+      run: |
+        dotnet tool install --global dotnet-deb
+        dotnet deb install
+        dotnet restore
+        dotnet deb --configuration Release --no-restore
+        mv ./bin/Release/netcoreapp3.1/WDHAN.*.deb ./bin/Release/netcoreapp3.1/WDHAN.deb
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2-preview
+      with:
+        name: wdhan.deb
+        path: ./bin/Release/netcoreapp3.1/WDHAN.1.0.0.deb

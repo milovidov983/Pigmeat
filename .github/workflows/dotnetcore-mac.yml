@@ -1,4 +1,4 @@
-name: .NET Core (MacOS)
+name: .NET Core (macOS)
 
 on: [push]
 
@@ -15,7 +15,7 @@ jobs:
         dotnet-version: 3.1.100
     - name: Build with dotnet
       run: |
-        dotnet build --configuration Release
+        dotnet build --configuration Release --runtime osx-x64
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:

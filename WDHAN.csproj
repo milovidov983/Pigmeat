@@ -4,6 +4,10 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ApplicationIcon>./branding/logo.ico</ApplicationIcon>
+    <Version>1.5.7</Version>
+    <Authors>Emil Sayahi</Authors>
+    <Product>WDHAN</Product>
+    <Description>A static content publishing tool for the modern web.</Description>
   </PropertyGroup>
 
   <ItemGroup>
