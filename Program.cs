@@ -1,4 +1,4 @@
-﻿using Markdig;
+using Markdig;
 using Fluid;
 using Newtonsoft.Json;
 using System;
@@ -589,7 +589,7 @@ namespace WDHAN
                 {
                     foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
-                        var result = parseDocument(post);
+                        var result = parseDocument(post, collection);
                         var postObject = Post.getDefinedPost(new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post }, collection);
                         var postPath = siteConfig.destination + "/" + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject);
                         postObject.path = postPath;
@@ -699,6 +699,80 @@ namespace WDHAN
 
                     siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     pageModel.Merge(pageFrontmatter, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                    context.SetValue("site", siteModel);
+                    context.SetValue("page", pageModel);
+                    context.SetValue("wdhan", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
+                    foreach(var collection in siteConfig.collections)
+                    {
+                        if(File.Exists(siteConfig.source + "/temp/_" + collection + "/_entries.json"))
+                        {
+                            var collectionModel = JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collection + "/_config.json"));
+                            collectionModel.Merge(JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_" + collection + "/_entries.json")), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                            context.SetValue(collection, collectionModel);
+                        }
+                    }
+                    return template.Render(context);
+                }
+                else
+                {
+                    if(!firstTime)
+                    {
+                        Console.WriteLine("WARNING [parseDocument]: Could not parse Liquid context for file " + filePath + ".");
+                    }
+                    return fileContents;
+                }
+            }
+            catch(ArgumentNullException ex)
+            {
+                Console.WriteLine("File " + filePath + " has no Liquid context to parse.\n" + ex.ToString());
+                return fileContents;
+            }
+        }
+
+        public static string parseDocument(string filePath, string collectionName)
+        {            
+            var siteConfig = GlobalConfiguration.getConfiguration();
+            //var fileContents = WDHANFile.getFileContents(filePath);
+            var fileContents = WDHANFile.parseRaw(filePath);
+            fileContents = Include.evalInclude(filePath); // Expand includes (must happen after layouts are retreived, as layouts can have includes)
+
+            try
+            {
+                var layout = Layout.getLayoutContents(Page.parseFrontMatter(filePath)["layout"].ToString(), filePath); // Get layout
+                fileContents = layout.Replace("{{ content }}", fileContents); // Incorporate page into layout
+            }
+            catch(NullReferenceException)
+            {
+
+            }
+
+            // Expand layouts, then parse includes
+            fileContents = Include.evalInclude(filePath, fileContents);
+
+            // When a property of a JObject value is accessed, try to look into its properties
+            TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
+
+            // Convert JToken to FluidValue
+            FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
+            FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
+
+
+            var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
+            var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
+            var pageFrontmatter = WDHANFile.parseFrontMatter(filePath);
+            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = WDHANFile.parseFrontMatter(filePath), path = filePath, content = WDHANFile.parseRaw(filePath) })));
+            var postModel = JObject.Parse(JsonConvert.SerializeObject(Post.getDefinedPost(new Post() { frontmatter = WDHANFile.parseFrontMatter(filePath), path = filePath, content = WDHANFile.parseRaw(filePath) }, collectionName)));
+
+            try
+            {
+                if(FluidTemplate.TryParse(fileContents, out var template))
+                {
+                    var context = new TemplateContext();
+                    context.CultureInfo = new CultureInfo(siteConfig.culture);
+
+                    siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                    pageModel.Merge(pageFrontmatter, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                    pageModel.Merge(postModel, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
                     context.SetValue("wdhan", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
