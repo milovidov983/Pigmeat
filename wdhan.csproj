@@ -15,7 +15,7 @@
     <PackageReference Include="Fluid.Core" Version="1.0.0-beta-9637" />
     <PackageReference Include="Markdig" Version="0.20.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="SharpScss" Version="1.4.0" />
+    <PackageReference Include="SharpScss" Version="1.5.0" />
     <PackageReference Include="YamlDotNet" Version="8.1.1" />
   </ItemGroup>
 
