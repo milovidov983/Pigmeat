@@ -38,7 +38,10 @@ namespace WDHAN
                         }
                         catch (DirectoryNotFoundException ex)
                         {
-                            Console.WriteLine("The specified directory does not exist. " + args[args.Length - 1] + ex);
+                            if (!args[0].Equals("serve", StringComparison.OrdinalIgnoreCase) && !args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
+                            {
+                                Console.WriteLine("The specified directory does not exist: " + args[args.Length - 1] + "\n" + ex);
+                            }
                         }
                     }
                 }
