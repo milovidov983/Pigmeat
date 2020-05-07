@@ -119,50 +119,16 @@ namespace WDHAN
             try
             {
                 GlobalConfiguration siteConfig = GlobalConfiguration.getConfiguration();
-                Console.WriteLine("Cleaning project directory, " + siteConfig.destination + " … ");
-                System.IO.DirectoryInfo outputDir = new DirectoryInfo(siteConfig.destination);
 
-                foreach (var file in Directory.GetFiles(siteConfig.destination, "*.*", SearchOption.AllDirectories))
-                {
-                    if(!siteConfig.keep_files.Contains(file))
-                    {
-                        Console.WriteLine("Deleting " + file.Substring(siteConfig.destination.Length + 1));
-                        File.Delete(file);
-                    }
-                    
-                }
+                Directory.Delete(siteConfig.destination, true);
+                Console.WriteLine("Cleaned project directory, " + siteConfig.destination + " … ");
 
-                /*
-                // May lead to deletion of files in keep_files
-                foreach (DirectoryInfo dir in outputDir.EnumerateDirectories())
-                {
-                    Console.WriteLine("Deleting " + dir.Name);
-                    dir.Delete(true); 
-                }
-                */
-
-                Console.WriteLine("Cleaning temporary files, " + siteConfig.source + "/temp" + " … ");
-                System.IO.DirectoryInfo tempDir = new DirectoryInfo(siteConfig.source + "/temp");
-
-                foreach (var file in Directory.GetFiles(siteConfig.destination, "*.*", SearchOption.AllDirectories))
-                {
-                    Console.WriteLine("Deleting " + file.Substring(siteConfig.source.Length + "/temp".Length + 1));
-                    File.Delete(file); 
-                }
-                    
-                foreach (DirectoryInfo dir in tempDir.EnumerateDirectories())
-                {
-                    Console.WriteLine("Deleting " + dir.Name);
-                    dir.Delete(true); 
-                }
+                Directory.Delete(siteConfig.source + "/temp", true);
+                Console.WriteLine("Cleaned temporary files, " + siteConfig.source + "/temp" + " … ");
             }   
             catch(DirectoryNotFoundException)
             {
                 // This is expected if either _site or temp are not found.
-                /*
-                Console.WriteLine("For developers:\n" + ex);
-                Console.WriteLine("ERROR [DirectoryNotFoundException]: The project directory you're trying to clean cannot be found.");
-                */
                 Environment.Exit(1);
             }
             catch(System.Security.SecurityException ex)
