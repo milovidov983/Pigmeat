@@ -5,10 +5,10 @@
   <img src="https://github.com/MadeByEmil/WDHAN/raw/master/branding/logo.png" alt="Logo" title="WDHAN Logo">
 </p>
 
-![.NET Core (Windows)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(Windows)/badge.svg)
-![.NET Core (macOS)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(macOS)/badge.svg)
-![.NET Core (deb)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(deb)/badge.svg)
-![.NET Core (deb)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(deb)/badge.svg)
+[![.NET Core (Windows)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(Windows)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28Windows%29%22)
+[![.NET Core (macOS)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(macOS)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28macOS%29%22)
+[![.NET Core (deb)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(deb)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28deb%29%22)
+[![.NET Core (rpm)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(rpm)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28rpm%29%22)
 
  A static content publishing tool for the modern web. It takes data in the form of JSON or YAML, and plugs it into Markdown and Liquid files, and spits out a website that can be hosted on your favorite server. WDHAN is for corporations, organizations, friends, peers, bloggers, hobbyists, and everyone under the sun.
 
