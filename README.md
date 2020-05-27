@@ -1,7 +1,7 @@
 # Pigmeat
 
 <p align="center">
-  <img src="https://github.com/MadeByEmil/Pigmeat/raw/master/branding/Yellow/Pigmeat Yellow Square.png" width=480px alt="Logo" title="Pigmeat Logo" style="border-radius: 4px">
+  <a href="https://madebyemil.github.io/pigmeat-website"><img src="https://github.com/MadeByEmil/Pigmeat/raw/master/branding/Yellow/Pigmeat Yellow Square.png" width=480px alt="Logo" title="Pigmeat Logo" style="border-radius: 4px"></a>
 </p>
 
 [![.NET Core (Windows)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(Windows)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28Windows%29%22)
