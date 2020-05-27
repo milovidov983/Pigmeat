@@ -9,7 +9,7 @@
 [![.NET Core (deb)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(deb)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28deb%29%22)
 [![.NET Core (rpm)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(rpm)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28rpm%29%22)
 
- A static content publishing tool for the modern web. It takes data in the form of JSON or YAML, and plugs it into Markdown and Liquid files, and spits out a website that can be hosted on your favorite server. Pigmeat is for corporations, organizations, friends, peers, bloggers, hobbyists, and everyone under the sun.
+Pigmeat is a static content publishing tool for the modern web. It takes data in the form of JSON or YAML, plugs it into a Liquid context, wraps it up in some HTML & CSS, and spits out a website that can be hosted on your favorite server. If you don't know what any of that means, it's OK. Point is, it's easy to learn and use. Pigmeat is for corporations, organizations, friends, peers, bloggers, hobbyists, and everyone under the sun.
 
 ## Pigmeat will get you online
  Pigmeat does *exactly* what it's told. It doesn't have any tricks to learn or exceptions to the rules. It just works.
