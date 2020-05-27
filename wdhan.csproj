@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <ApplicationIcon>./branding/logo.ico</ApplicationIcon>
+    <ApplicationIcon>./branding/Yellow/Pigmeat Yellow Square.ico</ApplicationIcon>
     <Version>1.5.8</Version>
     <Authors>Emil Sayahi</Authors>
     <Product>WDHAN</Product>

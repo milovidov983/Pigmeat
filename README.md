@@ -2,7 +2,7 @@
 **W**ORLD-WIDE-WEB **D**ATA & **H**YPERTEXT **A**MALGAMATION **N**ETWORK
 
 <p align="center">
-  <img src="https://github.com/MadeByEmil/WDHAN/raw/master/branding/logo.png" alt="Logo" title="WDHAN Logo">
+  <img src="https://github.com/MadeByEmil/WDHAN/raw/master/branding/Transparent/Pigmeat Transparent.png" alt="Logo" title="WDHAN Logo">
 </p>
 
 [![.NET Core (Windows)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(Windows)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28Windows%29%22)
