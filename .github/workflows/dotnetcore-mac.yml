@@ -20,6 +20,6 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
-        name: wdhan.mac
+        name: pigmeat.mac
         # Directory containing files to upload
         path: ./bin/Release/netcoreapp3.1/osx-x64

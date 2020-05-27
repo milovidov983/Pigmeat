@@ -19,9 +19,9 @@ jobs:
         dotnet rpm install
         dotnet restore
         dotnet rpm --configuration Release --no-restore
-        mv ./bin/Release/netcoreapp3.1/wdhan.*.rpm ./bin/Release/netcoreapp3.1/wdhan.rpm
+        mv ./bin/Release/netcoreapp3.1/pigmeat.*.rpm ./bin/Release/netcoreapp3.1/pigmeat.rpm
     - name: Upload artifact
       uses: actions/upload-artifact@v2-preview
       with:
-        name: wdhan.rpm
-        path: ./bin/Release/netcoreapp3.1/wdhan.rpm
+        name: pigmeat.rpm
+        path: ./bin/Release/netcoreapp3.1/pigmeat.rpm
