@@ -6,7 +6,7 @@ using System.IO;
 using System.Text;
 using YamlDotNet.Serialization;
 
-namespace WDHAN
+namespace Pigmeat
 {
     public class GlobalConfiguration
     {
@@ -37,7 +37,7 @@ namespace WDHAN
         public Dictionary<string, object> user { get; set; }
         public GlobalConfiguration()
         {
-            
+
         }
         public static List<string> filesWithTag(string tag)
         {

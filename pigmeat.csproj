@@ -6,7 +6,7 @@
     <ApplicationIcon>./branding/Yellow/Pigmeat Yellow Square.ico</ApplicationIcon>
     <Version>1.5.8</Version>
     <Authors>Emil Sayahi</Authors>
-    <Product>WDHAN</Product>
+    <Product>Pigmeat</Product>
     <Description>A static content publishing tool for the modern web.</Description>
   </PropertyGroup>
 

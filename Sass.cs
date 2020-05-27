@@ -1,14 +1,14 @@
-namespace WDHAN
+namespace Pigmeat
 {
     public class Sass
     {
         protected Sass()
         {
-            
+
         }
         public static string getSassContents(string file)
         {
-            var fileContents = WDHANFile.getFileContents(file);
+            var fileContents = PigmeatFile.getFileContents(file);
             var includeSection = getIncludeSection(fileContents);
             int lastInd = 0;
             for(int i = 0; i < includeSection.Split('"').Length - 1; i++)

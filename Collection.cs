@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 
-namespace WDHAN
+namespace Pigmeat
 {
     public class Collection
     {
         public List<Post> entries { get; set; }
         public Collection()
         {
-            
+
         }
     }
 }

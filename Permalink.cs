@@ -1,14 +1,14 @@
 using System;
 using System.IO;
 
-namespace WDHAN
+namespace Pigmeat
 {
     public class Permalink
     {
         public string permalink { get; set; }
         public Permalink()
         {
-            
+
         }
         public static Permalink GetPermalink(Page page)
         {

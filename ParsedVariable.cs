@@ -1,4 +1,4 @@
-﻿namespace WDHAN
+﻿namespace Pigmeat
 {
     public class ParsedVariable
     {

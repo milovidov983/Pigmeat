@@ -16,7 +16,7 @@ using System.Net;
 using System.IO.Compression;
 using System.Reflection;
 
-namespace WDHAN
+namespace Pigmeat
 {
     class Program
     {
@@ -125,7 +125,7 @@ namespace WDHAN
 
                 Directory.Delete(siteConfig.source + "/temp", true);
                 Console.WriteLine("Cleaned temporary files, " + siteConfig.source + "/temp" + " … ");
-            }   
+            }
             catch(DirectoryNotFoundException)
             {
                 // This is expected if either _site or temp are not found.
@@ -164,7 +164,7 @@ namespace WDHAN
         }
         static void createSite(string[] args)
         {
-            try 
+            try
             {
                 // Create blank site scaffolding
                 if (args[1].Equals("--blank", StringComparison.OrdinalIgnoreCase))
@@ -216,7 +216,7 @@ namespace WDHAN
                             permalink = "date",
                             url = "",
                             time = DateTime.UtcNow,
-                            user = new Dictionary<string, object> { { "author", "WDHAN User" }, { "title", "WDHAN Project" } }
+                            user = new Dictionary<string, object> { { "author", "Pigmeat User" }, { "title", "Pigmeat Project" } }
                         };
                         string defaultConfigSerialized = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
                         using (FileStream fs = File.Create("./_config.json"))
@@ -236,28 +236,28 @@ namespace WDHAN
                     catch (ArgumentNullException ex)
                     {
                         Console.WriteLine("For developers:\n" + ex);
-                        Console.WriteLine("ERROR [ArgumentNullException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
+                        Console.WriteLine("ERROR [ArgumentNullException]: Issue with generating default configuration file in Pigmeat project.\nPlease report this at https://github.com/MadeByEmil/Pigmeat/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
                     }
                     catch (ArgumentException ex)
                     {
                         Console.WriteLine("For developers:\n" + ex);
-                        Console.WriteLine("ERROR [ArgumentException]: Issue with generating default configuration file in WDHAN project.\nPlease report this at https://github.com/MadeByEmil/WDHAN/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
+                        Console.WriteLine("ERROR [ArgumentException]: Issue with generating default configuration file in Pigmeat project.\nPlease report this at https://github.com/MadeByEmil/Pigmeat/issues/new?assignees=limeschool&labels=bug&template=bug_report.md&title=%5BBUG%5D+-+");
                     }
                     catch (DirectoryNotFoundException ex)
                     {
                         Console.WriteLine("For developers:\n" + ex);
-                        Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your WDHAN project is inaccessible. Verify it still exists.");
+                        Console.WriteLine("ERROR [DirectoryNotFoundException]: The path to your Pigmeat project is inaccessible. Verify it still exists.");
                     }
                     catch (UnauthorizedAccessException ex)
                     {
                         Console.WriteLine("For developers:\n" + ex);
-                        Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to WDHAN files is denied. Try changing file permissions, or run with higher privileges.");
+                        Console.WriteLine("ERROR [UnauthorizedAccessException]: Access to Pigmeat files is denied. Try changing file permissions, or run with higher privileges.");
                         Environment.Exit(1);
                     }
                     catch (PathTooLongException ex)
                     {
                         Console.WriteLine("For developers:\n" + ex);
-                        Console.WriteLine("ERROR [PathTooLongException]: The path to your WDHAN project is too long for your file system to handle.");
+                        Console.WriteLine("ERROR [PathTooLongException]: The path to your Pigmeat project is too long for your file system to handle.");
                         Environment.Exit(1);
                     }
                     catch (IOException ex)
@@ -269,32 +269,32 @@ namespace WDHAN
                     catch (NotSupportedException ex)
                     {
                         Console.WriteLine("For developers:\n" + ex);
-                        Console.WriteLine("ERROR [NotSupportedException]: WDHAN cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
+                        Console.WriteLine("ERROR [NotSupportedException]: Pigmeat cannot create your project's output directory. Verify your OS and data storage device are working correctly, and you have proper permissions.");
                         Environment.Exit(1);
                     }
                 }
-            }    
+            }
             catch (IndexOutOfRangeException)
             {
                 // Create site with default theme
                 Console.WriteLine("Are you sure you wish to overwrite all pre-existing data and create a new project? (y/n)");
-                var yesOrNo = Console.ReadLine(); 
+                var yesOrNo = Console.ReadLine();
                 if(yesOrNo.Trim().Equals("y", StringComparison.OrdinalIgnoreCase))
                 {
                     using (var client = new WebClient())
                     {
-                        client.DownloadFile("https://github.com/MadeByEmil/wdhan-basic/archive/master.zip", "./basic.zip");
+                        client.DownloadFile("https://github.com/MadeByEmil/pigmeat-basic/archive/master.zip", "./basic.zip");
                         ZipFile.ExtractToDirectory("./basic.zip", "./");
                         File.Delete("./basic.zip");
-                        foreach(var directory in Directory.GetDirectories("./wdhan-basic-master", "*", SearchOption.AllDirectories))
+                        foreach(var directory in Directory.GetDirectories("./pigmeat-basic-master", "*", SearchOption.AllDirectories))
                         {
-                            Directory.CreateDirectory(directory.Replace("./wdhan-basic-master", "./"));
+                            Directory.CreateDirectory(directory.Replace("./pigmeat-basic-master", "./"));
                         }
-                        foreach(var file in Directory.GetFiles("./wdhan-basic-master", "*", SearchOption.AllDirectories))
+                        foreach(var file in Directory.GetFiles("./pigmeat-basic-master", "*", SearchOption.AllDirectories))
                         {
-                            File.Copy(file, file.Replace("./wdhan-basic-master", "./"), true);
+                            File.Copy(file, file.Replace("./pigmeat-basic-master", "./"), true);
                         }
-                        Directory.Delete("./wdhan-basic-master", true);
+                        Directory.Delete("./pigmeat-basic-master", true);
                     }
                 }
                 else
@@ -388,7 +388,7 @@ namespace WDHAN
                                 {
                                     fileDest = siteConfig.destination + "/" + Path.GetDirectoryName(file);
                                     var result = parseDocument(file);
-                                    var pageObject = Page.getDefinedPage(new Page { frontmatter = WDHANFile.parseFrontMatter(file), content = result, path = file });
+                                    var pageObject = Page.getDefinedPage(new Page { frontmatter = PigmeatFile.parseFrontMatter(file), content = result, path = file });
                                     var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
                                     builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
                                     var pipeline = builder.Build();
@@ -559,7 +559,7 @@ namespace WDHAN
                     foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
                     {
                         var result = parseDocument(post, collection);
-                        var postObject = Post.getDefinedPost(new Post { frontmatter = WDHANFile.parseFrontMatter(post), content = result, path = post }, collection);
+                        var postObject = Post.getDefinedPost(new Post { frontmatter = PigmeatFile.parseFrontMatter(post), content = result, path = post }, collection);
                         var postPath = siteConfig.destination + "/" + Permalink.GetPermalink(postObject).parsePostPermalink(collection, postObject);
                         postObject.path = postPath;
                         if(Path.GetFileName(postPath).Equals(".html", StringComparison.OrdinalIgnoreCase))
@@ -627,10 +627,10 @@ namespace WDHAN
             GlobalConfiguration.includeTime();
         }
         public static string parseDocument(string filePath)
-        {            
+        {
             var siteConfig = GlobalConfiguration.getConfiguration();
-            //var fileContents = WDHANFile.getFileContents(filePath);
-            var fileContents = WDHANFile.parseRaw(filePath);
+            //var fileContents = PigmeatFile.getFileContents(filePath);
+            var fileContents = PigmeatFile.parseRaw(filePath);
             fileContents = Include.evalInclude(filePath); // Expand includes (must happen after layouts are retreived, as layouts can have includes)
 
             try
@@ -652,12 +652,12 @@ namespace WDHAN
             // Convert JToken to FluidValue
             FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
             FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
-            
+
 
             var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-            var pageFrontmatter = WDHANFile.parseFrontMatter(filePath);
-            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = WDHANFile.parseFrontMatter(filePath), path = filePath, content = WDHANFile.parseRaw(filePath) })));
+            var pageFrontmatter = PigmeatFile.parseFrontMatter(filePath);
+            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = PigmeatFile.parseFrontMatter(filePath), path = filePath, content = PigmeatFile.parseRaw(filePath) })));
 
             try
             {
@@ -670,7 +670,7 @@ namespace WDHAN
                     pageModel.Merge(pageFrontmatter, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
-                    context.SetValue("wdhan", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
+                    context.SetValue("pigmeat", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
                     foreach(var collection in siteConfig.collections)
                     {
                         if(File.Exists(siteConfig.source + "/temp/_" + collection + "/_entries.json"))
@@ -699,10 +699,10 @@ namespace WDHAN
         }
 
         public static string parseDocument(string filePath, string collectionName)
-        {            
+        {
             var siteConfig = GlobalConfiguration.getConfiguration();
-            //var fileContents = WDHANFile.getFileContents(filePath);
-            var fileContents = WDHANFile.parseRaw(filePath);
+            //var fileContents = PigmeatFile.getFileContents(filePath);
+            var fileContents = PigmeatFile.parseRaw(filePath);
             fileContents = Include.evalInclude(filePath); // Expand includes (must happen after layouts are retreived, as layouts can have includes)
 
             try
@@ -728,9 +728,9 @@ namespace WDHAN
 
             var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-            var pageFrontmatter = WDHANFile.parseFrontMatter(filePath);
-            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = WDHANFile.parseFrontMatter(filePath), path = filePath, content = WDHANFile.parseRaw(filePath) })));
-            var postModel = JObject.Parse(JsonConvert.SerializeObject(Post.getDefinedPost(new Post() { frontmatter = WDHANFile.parseFrontMatter(filePath), path = filePath, content = WDHANFile.parseRaw(filePath) }, collectionName)));
+            var pageFrontmatter = PigmeatFile.parseFrontMatter(filePath);
+            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = PigmeatFile.parseFrontMatter(filePath), path = filePath, content = PigmeatFile.parseRaw(filePath) })));
+            var postModel = JObject.Parse(JsonConvert.SerializeObject(Post.getDefinedPost(new Post() { frontmatter = PigmeatFile.parseFrontMatter(filePath), path = filePath, content = PigmeatFile.parseRaw(filePath) }, collectionName)));
 
             try
             {
@@ -744,7 +744,7 @@ namespace WDHAN
                     pageModel.Merge(postModel, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
-                    context.SetValue("wdhan", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
+                    context.SetValue("pigmeat", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
                     foreach(var collection in siteConfig.collections)
                     {
                         if(File.Exists(siteConfig.source + "/temp/_" + collection + "/_entries.json"))
@@ -778,23 +778,23 @@ namespace WDHAN
             {
                 if (args[1].Equals("new", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Creates an empty WDHAN project. A path may be specified, otherwise a project will be created where WDHAN is running.");
+                    Console.WriteLine("Creates an empty Pigmeat project. A path may be specified, otherwise a project will be created where Pigmeat is running.");
                 }
                 else if (args[1].Equals("build", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Outputs a publishable WDHAN project. A path may be specified, otherwise a project will be built where WDHAN is running.");
+                    Console.WriteLine("Outputs a publishable Pigmeat project. A path may be specified, otherwise a project will be built where Pigmeat is running.");
                 }
                 else if (args[1].Equals("b", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Outputs a publishable WDHAN project. A path may be specified, otherwise a project will be built where WDHAN is running.");
+                    Console.WriteLine("Outputs a publishable Pigmeat project. A path may be specified, otherwise a project will be built where Pigmeat is running.");
                 }
                 else if (args[1].Equals("serve", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used to force execution of a plugin, regardless of authorization in the project's configuration file (e.g. 'wdhan serve RandomPlugin -f').");
+                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used to force execution of a plugin, regardless of authorization in the project's configuration file (e.g. 'pigmeat serve RandomPlugin -f').");
                 }
                 else if (args[1].Equals("s", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used to force execution of a plugin, regardless of authorization in the project's configuration file (e.g. 'wdhan s RandomPlugin -f').");
+                    Console.WriteLine("Calls a project's plugins. When specifying a plugin, the '-f' option may be used to force execution of a plugin, regardless of authorization in the project's configuration file (e.g. 'pigmeat s RandomPlugin -f').");
                 }
                 else if (args[1].Equals("clean", StringComparison.OrdinalIgnoreCase))
                 {
@@ -802,27 +802,27 @@ namespace WDHAN
                 }
                 else if (args[1].Equals("help", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Prints a message outlining WDHAN's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'wdhan help serve').");
+                    Console.WriteLine("Prints a message outlining Pigmeat's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'pigmeat help serve').");
                 }
                 else
                 {
-                    Console.WriteLine("Please specify a parameter (e.g. 'wdhan help new,' 'wdhan help build,' 'wdhan help serve,' 'wdhan help clean').");
+                    Console.WriteLine("Please specify a parameter (e.g. 'pigmeat help new,' 'pigmeat help build,' 'pigmeat help serve,' 'pigmeat help clean').");
                 }
             }
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine(
-                    "WDHAN supports the following commands:\n" +
-                    "   wdhan new - Creates an empty WDHAN project.\n" +
-                    "   wdhan build - Outputs a publishable WDHAN project.\n" +
-                    "   wdhan b - Same as above.\n" +
-                    "   wdhan serve - Calls a project's plugins.\n" +
-                    "   wdhan s - Same as above.\n" +
-                    "   wdhan serve <string> - Calls a specified plugin (e.g. 'wdhan serve SomePlugin').\n" +
-                    "   wdhan s <string> - Same as above.\n" +
-                    "   wdhan clean - Deletes all generated files as a result of building.\n" +
-                    "   wdhan help - Shows this message.\n" +
-                    "   wdhan help <string> - Displays a message outlining the usage of a given parameter (e.g. 'wdhan help serve')."
+                    "Pigmeat supports the following commands:\n" +
+                    "   pigmeat new - Creates an empty Pigmeat project.\n" +
+                    "   pigmeat build - Outputs a publishable Pigmeat project.\n" +
+                    "   pigmeat b - Same as above.\n" +
+                    "   pigmeat serve - Calls a project's plugins.\n" +
+                    "   pigmeat s - Same as above.\n" +
+                    "   pigmeat serve <string> - Calls a specified plugin (e.g. 'pigmeat serve SomePlugin').\n" +
+                    "   pigmeat s <string> - Same as above.\n" +
+                    "   pigmeat clean - Deletes all generated files as a result of building.\n" +
+                    "   pigmeat help - Shows this message.\n" +
+                    "   pigmeat help <string> - Displays a message outlining the usage of a given parameter (e.g. 'pigmeat help serve')."
                     );
             }
         }

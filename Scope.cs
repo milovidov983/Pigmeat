@@ -1,4 +1,4 @@
-namespace WDHAN
+namespace Pigmeat
 {
     public class Scope
     {
@@ -6,7 +6,7 @@ namespace WDHAN
         public string type { get; set; }
         public Scope()
         {
-            
+
         }
     }
 }

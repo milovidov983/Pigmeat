@@ -4,14 +4,14 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace WDHAN
+namespace Pigmeat
 {
     public class Data
     {
         public Dictionary<string, object> data { get; set; }
         public Data()
         {
-            
+
         }
         public static Dictionary<string, object> getGlobalData()
         {

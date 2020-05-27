@@ -1,8 +1,8 @@
 using System.IO;
 
-namespace WDHAN
+namespace Pigmeat
 {
-    public class HTMLFile : WDHANFile
+    public class HTMLFile : PigmeatFile
     {
         public HTMLFile()
         {

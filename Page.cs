@@ -6,9 +6,9 @@ using Newtonsoft.Json;
 using System.Globalization;
 using Newtonsoft.Json.Converters;
 
-namespace WDHAN
+namespace Pigmeat
 {
-    public class Page : WDHANFile
+    public class Page : PigmeatFile
     {
         //public JObject frontmatter { get; set; }
         //public string content { get; set; }

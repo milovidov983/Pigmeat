@@ -5,9 +5,9 @@ using Fluid;
 using Fluid.Values;
 using System.Globalization;
 
-namespace WDHAN
+namespace Pigmeat
 {
-    public class WDHANFile
+    public class PigmeatFile
     {
         public JObject frontmatter { get; set; }
         public string content { get; set; }
@@ -16,9 +16,9 @@ namespace WDHAN
         public string basename { get; set; }
         public string extname { get; set; }
         public string title { get; set; }
-        public WDHANFile()
+        public PigmeatFile()
         {
-            
+
         }
         public static string getFileContents(string filePath)
         {
@@ -99,7 +99,7 @@ namespace WDHAN
                 return JObject.Parse("{\"exists\": false}");
             }
         }
-        public static WDHANFile getDefinedFile(WDHANFile file)
+        public static PigmeatFile getDefinedFile(PigmeatFile file)
         {
             file.modified_time = System.IO.File.GetLastWriteTimeUtc("./" + file.path);
             file.basename = Path.GetFileNameWithoutExtension("./" + file.path);
@@ -118,9 +118,9 @@ namespace WDHAN
             }
         }
         public static string parseRaw(string filePath)
-        {            
+        {
             var siteConfig = GlobalConfiguration.getConfiguration();
-            var fileContents = WDHANFile.getFileContents(filePath);
+            var fileContents = PigmeatFile.getFileContents(filePath);
             fileContents = Include.evalInclude(filePath); // Expand includes (must happen after layouts are retreived, as layouts can have includes)
 
             // When a property of a JObject value is accessed, try to look into its properties
@@ -129,12 +129,12 @@ namespace WDHAN
             // Convert JToken to FluidValue
             FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
             FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
-            
+
 
             var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-            var pageModel = WDHANFile.parseFrontMatter(filePath);
-            
+            var pageModel = PigmeatFile.parseFrontMatter(filePath);
+
             try
             {
                 if(FluidTemplate.TryParse(fileContents, out var template))
@@ -145,7 +145,7 @@ namespace WDHAN
                     siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
-                    context.SetValue("wdhan", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
+                    context.SetValue("pigmeat", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
 
                     foreach(var collection in siteConfig.collections)
                     {

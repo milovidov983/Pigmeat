@@ -7,13 +7,13 @@ using Markdig;
 using Markdig.Parsers;
 using Markdig.Extensions.AutoLinks;
 
-namespace WDHAN
+namespace Pigmeat
 {
     public class Post : Page
     {
         public Post()
         {
-            
+
         }
         public static Post getDefinedPost(Post post, string collection)
         {
@@ -38,12 +38,12 @@ namespace WDHAN
                     if(!Path.GetFileNameWithoutExtension(post).Equals("index", StringComparison.OrdinalIgnoreCase))
                     {
                         postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post),
-                        content = Markdown.ToHtml(WDHANFile.parseRaw(post), pipeline),
+                        content = Markdown.ToHtml(PigmeatFile.parseRaw(post), pipeline),
                         path = post }, collection));
                     }
                 }
             }
-            
+
             try
             {
                 postList.Sort((y, x) => x.frontmatter["date"].ToString().CompareTo(y.frontmatter["date"].ToString()));

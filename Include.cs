@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Globalization;
 
-namespace WDHAN
+namespace Pigmeat
 {
     public class Include
     {
@@ -15,7 +15,7 @@ namespace WDHAN
         public string input { get; set; }
         public Include()
         {
-            
+
         }
         public static string evalInclude(string filePath, string fileContents)
         {
@@ -60,7 +60,7 @@ namespace WDHAN
         }
         public static string evalInclude(string filePath)
         {
-            var fileContents = WDHANFile.getFileContents(filePath);
+            var fileContents = PigmeatFile.getFileContents(filePath);
             if(fileContents.Contains("{% inc "))
             {
                 List<string> includeCalls = new List<string>();
@@ -103,7 +103,7 @@ namespace WDHAN
         public string parseInclude(string includePath, string filePath)
         {
             var siteConfig = GlobalConfiguration.getConfiguration();
-            var fileContents = WDHANFile.getFileContents(includePath);
+            var fileContents = PigmeatFile.getFileContents(includePath);
 
             // Expand layouts, then parse includes
 
@@ -116,12 +116,12 @@ namespace WDHAN
 
             var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-            var pageFrontmatter = WDHANFile.parseFrontMatter(filePath);
-            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = WDHANFile.parseFrontMatter(filePath), path = filePath })));
+            var pageFrontmatter = PigmeatFile.parseFrontMatter(filePath);
+            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = PigmeatFile.parseFrontMatter(filePath), path = filePath })));
 
             setVariables();
             var includeModel = JObject.Parse(JsonConvert.SerializeObject(variables));
-            var includeFrontmatter = WDHANFile.parseFrontMatter(includePath);
+            var includeFrontmatter = PigmeatFile.parseFrontMatter(includePath);
             includeModel.Merge(includeFrontmatter, new JsonMergeSettings
             {
                 MergeArrayHandling = MergeArrayHandling.Union
@@ -138,8 +138,8 @@ namespace WDHAN
                     pageModel.Merge(pageFrontmatter, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
                     context.SetValue("site", siteModel);
                     context.SetValue("page", pageModel);
-                    context.SetValue("wdhan", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
-                    
+                    context.SetValue("pigmeat", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
+
                     foreach(var collection in siteConfig.collections)
                     {
                         context.SetValue(collection, JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collection + "/_config.json")));
@@ -171,11 +171,11 @@ namespace WDHAN
             FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
             FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
 
-            string includeFile = WDHANFile.getFileContents(includePath);
+            string includeFile = PigmeatFile.getFileContents(includePath);
 
             var context = new TemplateContext();
             var givenModel = JObject.Parse(JsonConvert.SerializeObject(variables));
-            var frontmatterModel = WDHANFile.parseFrontMatter(includePath);
+            var frontmatterModel = PigmeatFile.parseFrontMatter(includePath);
 
             givenModel.Merge(frontmatterModel, new JsonMergeSettings
             {
@@ -189,7 +189,7 @@ namespace WDHAN
             var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
             try
             {
-                JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = WDHANFile.getFileContents(filePath), path = filePath }));
+                JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = PigmeatFile.getFileContents(filePath), path = filePath }));
                 pageModel.Merge(pageObjectModel, new JsonMergeSettings
                 {
                     MergeArrayHandling = MergeArrayHandling.Union
@@ -229,7 +229,7 @@ namespace WDHAN
             {
                 Console.WriteLine("No Liquid context to parse.");
                 return includeFile;
-            }            
+            }
         }
         public void setVariables()
         {

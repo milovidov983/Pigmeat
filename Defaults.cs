@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WDHAN
+namespace Pigmeat
 {
     public class Defaults
     {
@@ -8,7 +8,7 @@ namespace WDHAN
         public Dictionary<string, object> values { get; set; }
         public Defaults()
         {
-            
+
         }
     }
 }

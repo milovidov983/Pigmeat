@@ -1,32 +1,31 @@
-# WDHAN
-**W**ORLD-WIDE-WEB **D**ATA & **H**YPERTEXT **A**MALGAMATION **N**ETWORK
+# Pigmeat
 
 <p align="center">
-  <img src="https://github.com/MadeByEmil/WDHAN/raw/master/branding/Transparent/Pigmeat Transparent.png" alt="Logo" title="WDHAN Logo">
+  <img src="https://github.com/MadeByEmil/Pigmeat/raw/master/branding/Transparent/Pigmeat Transparent.png" alt="Logo" title="Pigmeat Logo">
 </p>
 
-[![.NET Core (Windows)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(Windows)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28Windows%29%22)
-[![.NET Core (macOS)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(macOS)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28macOS%29%22)
-[![.NET Core (deb)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(deb)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28deb%29%22)
-[![.NET Core (rpm)](https://github.com/MadeByEmil/WDHAN/workflows/.NET%20Core%20(rpm)/badge.svg)](https://github.com/MadeByEmil/WDHAN/actions?query=workflow%3A%22.NET+Core+%28rpm%29%22)
+[![.NET Core (Windows)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(Windows)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28Windows%29%22)
+[![.NET Core (macOS)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(macOS)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28macOS%29%22)
+[![.NET Core (deb)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(deb)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28deb%29%22)
+[![.NET Core (rpm)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(rpm)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28rpm%29%22)
 
- A static content publishing tool for the modern web. It takes data in the form of JSON or YAML, and plugs it into Markdown and Liquid files, and spits out a website that can be hosted on your favorite server. WDHAN is for corporations, organizations, friends, peers, bloggers, hobbyists, and everyone under the sun.
+ A static content publishing tool for the modern web. It takes data in the form of JSON or YAML, and plugs it into Markdown and Liquid files, and spits out a website that can be hosted on your favorite server. Pigmeat is for corporations, organizations, friends, peers, bloggers, hobbyists, and everyone under the sun.
 
-## WDHAN will get you online
- WDHAN does *exactly* what it's told. It doesn't have any tricks to learn or exceptions to the rules. It just works.
- With WDHAN, there's no more digging through cluttered bits of reused HTML, or updating old databases with strange syntax.
+## Pigmeat will get you online
+ Pigmeat does *exactly* what it's told. It doesn't have any tricks to learn or exceptions to the rules. It just works.
+ With Pigmeat, there's no more digging through cluttered bits of reused HTML, or updating old databases with strange syntax.
  You can focus on the only thing that matters to you: being online.
 
 ## Getting started
- * Download WDHAN
-   * EXPERIMENTAL: Download the latest build artifact from our [commits](https://github.com/MadeByEmil/WDHAN/commits/master) page that corresponds to your operating system.
-   * STABLE: Download the [latest release](https://github.com/MadeByEmil/WDHAN/releases/latest) from our [releases](https://github.com/MadeByEmil/WDHAN/releases) page that corresponds to your operating system.
- * Read up on the [documentation](https://github.com/MadeByEmil/WDHAN/wiki)
- * Take a look at [other people's WDHAN projects](https://github.com/topics/wdhan)
+ * Download Pigmeat
+   * EXPERIMENTAL: Download the latest build artifact from our [commits](https://github.com/MadeByEmil/Pigmeat/commits/master) page that corresponds to your operating system.
+   * STABLE: Download the [latest release](https://github.com/MadeByEmil/Pigmeat/releases/latest) from our [releases](https://github.com/MadeByEmil/Pigmeat/releases) page that corresponds to your operating system.
+ * Read up on the [documentation](https://github.com/MadeByEmil/Pigmeat/wiki)
+ * Take a look at [other people's Pigmeat projects](https://github.com/topics/pigmeat)
 
 ## Need help?
  If you're in need of assistance, you can reach code contributors on our GitHub repository.
- Check our [issues](https://github.com/MadeByEmil/WDHAN/issues) page to see if your problem has already been resolved. If not, [raise a new issue](https://github.com/MadeByEmil/WDHAN/issues/new/choose).
+ Check our [issues](https://github.com/MadeByEmil/Pigmeat/issues) page to see if your problem has already been resolved. If not, [raise a new issue](https://github.com/MadeByEmil/Pigmeat/issues/new/choose).
 
 ## Building from source
   Pre-requisites:
@@ -51,14 +50,14 @@
   Outputs to ```./bin/Release/netcoreapp3.1```
 
 ## Credits
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0403d9ba4494e7c820394cf9bafa917)](https://app.codacy.com/gh/MadeByEmil/WDHAN?utm_source=github.com&utm_medium=referral&utm_content=MadeByEmil/WDHAN&utm_campaign=Badge_Grade_Dashboard)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN?ref=badge_shield)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0403d9ba4494e7c820394cf9bafa917)](https://app.codacy.com/gh/MadeByEmil/Pigmeat?utm_source=github.com&utm_medium=referral&utm_content=MadeByEmil/Pigmeat&utm_campaign=Badge_Grade_Dashboard)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FPigmeat.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FPigmeat?ref=badge_shield)
 
  Authored by [Emil Sayahi](https://emsa.cf) ([@MadeByEmil](https://github.com/MadeByEmil))
 
- View all [contributors](https://github.com/MadeByEmil/WDHAN/graphs/contributors)
+ View all [contributors](https://github.com/MadeByEmil/Pigmeat/graphs/contributors)
 
 ---
 View [dependency report](https://app.fossa.com/reports/b354b82b-6298-410d-b545-00e232df857a)
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN?ref=badge_large)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FPigmeat.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FPigmeat?ref=badge_large)

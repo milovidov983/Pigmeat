@@ -2,13 +2,13 @@ using System;
 using System.IO;
 using CSScriptLib;
 
-namespace WDHAN
+namespace Pigmeat
 {
     public class Plugins
     {
         public Plugins()
         {
-            
+
         }
         public static void getPlugins(string[] args)
         {
