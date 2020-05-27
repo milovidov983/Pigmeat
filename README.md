@@ -51,13 +51,13 @@ Pigmeat is a static content publishing tool for the modern web. It takes data in
 
 ## Credits
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0403d9ba4494e7c820394cf9bafa917)](https://app.codacy.com/gh/MadeByEmil/Pigmeat?utm_source=github.com&utm_medium=referral&utm_content=MadeByEmil/Pigmeat&utm_campaign=Badge_Grade_Dashboard)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FPigmeat.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FPigmeat?ref=badge_shield)
 
  Authored by [Emil Sayahi](https://emsa.cf) ([@MadeByEmil](https://github.com/MadeByEmil))
 
  View all [contributors](https://github.com/MadeByEmil/Pigmeat/graphs/contributors)
 
 ---
-View [dependency report](https://app.fossa.com/reports/b354b82b-6298-410d-b545-00e232df857a)
+View [dependency report](https://app.fossa.com/reports/f07fb746-aeba-448f-a419-10d3ffe1567c)
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FWDHAN?ref=badge_large)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMadeByEmil%2FPigmeat.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMadeByEmil%2FPigmeat?ref=badge_large)
