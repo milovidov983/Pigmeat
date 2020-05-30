@@ -30,17 +30,23 @@ namespace Pigmeat
             var pipeline = builder.Build();
             builder.Extensions.Remove(pipeline.Extensions.Find<AutoLinkExtension>());
 
-
             foreach(var post in Directory.GetFiles(siteConfig.collections_dir + "/_" + collection))
             {
-                if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
+                try
                 {
-                    if(!Path.GetFileNameWithoutExtension(post).Equals("index", StringComparison.OrdinalIgnoreCase))
+                    if(GlobalConfiguration.isMarkdown(Path.GetExtension(post).Substring(1)))
                     {
-                        postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post),
-                        content = Markdown.ToHtml(PigmeatFile.parseRaw(post), pipeline),
-                        path = post }, collection));
+                        if(!Path.GetFileNameWithoutExtension(post).Equals("index", StringComparison.OrdinalIgnoreCase))
+                        {
+                            postList.Add(getDefinedPost(new Post() { frontmatter = parseFrontMatter(post),
+                            content = Markdown.ToHtml(PigmeatFile.parseRaw(post), pipeline),
+                            path = post }, collection));
+                        }
                     }
+                }
+                catch(YamlDotNet.Core.SemanticErrorException e)
+                {
+                    Console.WriteLine("ERROR [YamlDotNet.Core.SemanticErrorException]: Fault in processing YAML frontmatter for " + post + ". Ensure strings are enclosed in quotation marks.\n" + e);
                 }
             }
 
