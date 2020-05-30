@@ -1,4 +1,4 @@
-using Markdig;
+﻿using Markdig;
 using Fluid;
 using Newtonsoft.Json;
 using System;
@@ -72,6 +72,10 @@ namespace Pigmeat
             {
                 createSite(args);
             }
+            else if (args[0].Equals("n", StringComparison.OrdinalIgnoreCase))
+            {
+                createSite(args);
+            }
             else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
             {
                 buildSite(args);
@@ -92,7 +96,15 @@ namespace Pigmeat
             {
                 cleanSite();
             }
+            else if (args[0].Equals("c", StringComparison.OrdinalIgnoreCase))
+            {
+                cleanSite();
+            }
             else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
+            {
+                printHelpMsg(args);
+            }
+            else if (args[0].Equals("h", StringComparison.OrdinalIgnoreCase))
             {
                 printHelpMsg(args);
             }
@@ -780,6 +792,10 @@ namespace Pigmeat
                 {
                     Console.WriteLine("Creates an empty Pigmeat project. A path may be specified, otherwise a project will be created where Pigmeat is running.");
                 }
+                else if (args[1].Equals("n", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("Creates an empty Pigmeat project. A path may be specified, otherwise a project will be created where Pigmeat is running.");
+                }
                 else if (args[1].Equals("build", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("Outputs a publishable Pigmeat project. A path may be specified, otherwise a project will be built where Pigmeat is running.");
@@ -800,7 +816,15 @@ namespace Pigmeat
                 {
                     Console.WriteLine("Deletes all generated files as a result of building.");
                 }
+                else if (args[1].Equals("c", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("Deletes all generated files as a result of building.");
+                }
                 else if (args[1].Equals("help", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("Prints a message outlining Pigmeat's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'pigmeat help serve').");
+                }
+                else if (args[1].Equals("h", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("Prints a message outlining Pigmeat's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'pigmeat help serve').");
                 }
