@@ -48,6 +48,14 @@ namespace Pigmeat
                 {
                     Console.WriteLine("ERROR [YamlDotNet.Core.SemanticErrorException]: Fault in processing YAML frontmatter for " + post + ". Ensure strings are enclosed in quotation marks.\n" + e);
                 }
+                catch(System.FormatException e)
+                {
+                    Console.WriteLine("ERROR [System.FormatException]: Fault in processing " + post + ". Ensure the date is properly formatted in ISO 8601.\n" + e);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("ERROR [Exception]: Fault in processing " + post + ".\n" + e);
+                }
             }
 
             try
