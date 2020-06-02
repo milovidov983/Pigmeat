@@ -40,15 +40,15 @@ namespace Pigmeat
         {
             if(args.Length == 0)
             {
-                ShowHelp(args);
+                Help(args);
             }
             else if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
             {
-                Create();
+                New();
             }
             else if (args[0].Equals("n", StringComparison.OrdinalIgnoreCase))
             {
-                Create();
+                New();
             }
             else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
             {
@@ -68,15 +68,15 @@ namespace Pigmeat
             }
             else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
             {
-                ShowHelp(args);
+                Help(args);
             }
             else if (args[0].Equals("h", StringComparison.OrdinalIgnoreCase))
             {
-                ShowHelp(args);
+                Help(args);
             }
             else
             {
-                ShowHelp(args);
+                Help(args);
             }
         }
         static void Build()
@@ -109,17 +109,19 @@ namespace Pigmeat
             }
             IO.CleanCollections();
         }
-        static void Create()
+        static void New()
         {
             Directory.CreateDirectory("./_posts");
             Directory.CreateDirectory("./_pages");
             Directory.CreateDirectory("./drafts");
             Directory.CreateDirectory("./layouts");
+            Directory.CreateDirectory("./includes");
             File.WriteAllText("./_posts/collection.json", "{\n\t\"name\": \"posts\",\n\t\"entries\": []\n}");
             File.WriteAllText("./_pages/collection.json", "{\n\t\"name\": \"pages\",\n\t\"entries\": []\n}");
             File.WriteAllText("./_global.yml", "title: Pigmeat Project");
             File.WriteAllText("./drafts/README", "Store Markdown and HTML documents here if you don't want them to be published.");
             File.WriteAllText("./layouts/README", "This is where your HTML page templates go.");
+            File.WriteAllText("./includes/README", "This is where your HTML snippets go.");
         }
         static void Clean()
         {
@@ -135,7 +137,7 @@ namespace Pigmeat
                 Environment.Exit(1);
             }
         }
-        static void ShowHelp(string[] args)
+        static void Help(string[] args)
         {
             try
             {

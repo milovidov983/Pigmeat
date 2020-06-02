@@ -79,8 +79,10 @@ namespace Pigmeat.Core
             // Get outside data
             JObject Global = JObject.Parse(GetGlobal());
             Global.Merge(JObject.Parse(GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-
             JObject Pigmeat = GetPigmeat();
+
+            // Parse for includes
+            PageContents = Include.Parse(PageContents);
 
             var template = Template.ParseLiquid(PageContents);
             return template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat });
@@ -102,8 +104,10 @@ namespace Pigmeat.Core
             // Get outside data
             JObject Global = JObject.Parse(GetGlobal());
             Global.Merge(JObject.Parse(GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-
             JObject Pigmeat = GetPigmeat();
+
+            // Parse for includes
+            PageContents = Include.Parse(PageContents);
 
             var template = Template.ParseLiquid(PageContents);
             Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
