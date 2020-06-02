@@ -43,7 +43,6 @@ namespace Pigmeat.Core
             DeserializedCollection["entries"] = Entries.ToArray(); // Add List into JSON
 
             File.WriteAllText("./_" + Collection + "/collection.json", JsonConvert.SerializeObject(DeserializedCollection, Formatting.Indented));
-            Console.WriteLine(JsonConvert.SerializeObject(DeserializedCollection, Formatting.Indented));
         }
         public static void CleanCollections()
         {
@@ -110,7 +109,7 @@ namespace Pigmeat.Core
             Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
             File.WriteAllText("./output/" + PageObject["url"].ToString(), template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat })); // Render with Scriban
             IO.AppendEntry(Collection, PageObject);
-            Console.WriteLine(PageObject["dir"].ToString() + "/" + PageObject["name"].ToString() + " → " + "./output/" + PageObject["url"].ToString());            
+                        
         }
     }
 }
