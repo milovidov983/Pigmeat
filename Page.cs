@@ -32,6 +32,15 @@ namespace Pigmeat.Core
         public string permalink { get; set; }
         public string url { get; set; }
         public string content { get; set; }
+
+        /// <summary>
+        /// Parses a given page into a <c>JObject</c>
+        /// </summary>
+        /// <returns>
+        /// The JSON representation of a page and its metadata
+        /// </returns>
+        /// <param name="PagePath">The path to the page being parsed</param>
+        /// <para> See <see cref="IO.GetCollections"/> </para>
         public static JObject GetPageObject(string PagePath)
         {
             string PageFrontmatter = GetFrontmatter(PagePath);
@@ -73,6 +82,15 @@ namespace Pigmeat.Core
             return PageObject; // Return JObject of page
         }
         
+        /// <summary>
+        /// Gets the YAML of the frontmatter for a given page
+        /// </summary>
+        /// <returns>
+        /// The YAML <c>string</c> for a given page
+        /// </returns>
+        /// <param name="PagePath">The path of the page being parsed</param>
+        /// <para> See <see cref="IO.GetLayoutContents(string, string)"/> </para>
+        /// <seealso cref="Page.GetPageObject(string)"/>
         public static string GetFrontmatter(string PagePath)
         {
             string FrontMatter = "";
@@ -90,6 +108,14 @@ namespace Pigmeat.Core
             return FrontMatter;
         }
         
+        /// <summary>
+        /// Parses the permalink using given metadata to generate an output path
+        /// </summary>
+        /// <returns>
+        /// A <c>string</c> pointing to the page's output path
+        /// </returns>
+        /// <param name="PageObject">The <c>JObject</c> holding the page's metadata</param>
+        /// <para> See <see cref="Page.GetPageObject(string)"/> </para>
         static string GetPermalink(JObject PageObject)
         {
             string Permalink = PageObject["permalink"].ToString();

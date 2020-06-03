@@ -128,6 +128,7 @@ namespace Pigmeat
                 IO.CleanCollections();
             }
         }
+
         static void New()
         {
             Directory.CreateDirectory("./_posts");
@@ -144,12 +145,13 @@ namespace Pigmeat
             File.WriteAllText("./_posts/README", "This is where your posts should go.");
             File.WriteAllText("./_pages/README", "This is where your pages should go.");
             File.WriteAllText("./_files/README", "This is where your loose files (data, media, stylesheets, etc.) should go.");
-            File.WriteAllText("./_global.yml", "title: Pigmeat Project");
+            File.WriteAllText("./_global.yml", "title: Pigmeat Project\nculture: \"en-US\"");
             File.WriteAllText("./drafts/README", "This is where your Markdown and HTML documents should go if you don't want them to be published.");
             File.WriteAllText("./layouts/README", "This is where your HTML page templates go.");
             File.WriteAllText("./includes/README", "This is where your HTML snippets go.");
             File.WriteAllText("./sass/README", "This is where your Sass stylesheet dependencies go.");
         }
+
         static void Clean()
         {
             IO.CleanCollections();
@@ -164,6 +166,7 @@ namespace Pigmeat
                 Console.WriteLine("Nothing to clean … ");
             }
         }
+        
         static void Help(string[] args)
         {
             try

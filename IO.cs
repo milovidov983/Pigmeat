@@ -14,10 +14,25 @@ namespace Pigmeat.Core
     class IO
     {
         static string release = typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+
+        /// <summary>
+        /// Convert YAML data into JObject
+        /// </summary>
+        /// <returns>
+        /// JObject form of given YAML data
+        /// </returns>
+        /// <param name="YamlString">A <c>string</c> containing the YAML data to be converted</param>
         public static JObject GetYamlObject(string YamlString)
         {
             return JObject.Parse(JsonConvert.SerializeObject(new Deserializer().Deserialize(new StringReader(YamlString)), Formatting.None));
         }
+
+        /// <summary>
+        /// Get file representing project's <c>Global</c> context
+        /// </summary>
+        /// <returns>
+        /// File contents of <c>./_global.yml</c> as a <c>string</c>
+        /// </returns>
         public static string GetGlobal()
         {
             if(File.Exists("./_global.yml"))
@@ -29,10 +44,24 @@ namespace Pigmeat.Core
                 return File.ReadAllText("./_global.json");
             }
         }
+
+        /// <summary>
+        /// Get <c>JObject</c> representing project's <c>Pigmeat</c> context
+        /// </summary>
+        /// <returns>
+        /// JSON representation of Pigmeat's internal Liquid context
+        /// </returns>
         public static JObject GetPigmeat()
         {
             return JObject.Parse(JsonConvert.SerializeObject(new { version = release, time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") }));
         }
+
+        /// <summary>
+        /// Adds <c>JObject</c> representations of pages in a collection to the collection's <c>entries</c> field in its <c>collection.json</c> file
+        /// <para> See <see cref="IO.RenderPage(JObject, string, string)"/> </para>
+        /// </summary>
+        /// <param name="Collection">The name of the collection the page is in</param>
+        /// <param name="Entry">The <c>JObject</c> form of the page</param>
         public static void AppendEntry(string Collection, JObject Entry)
         {
             // Get Collection data, deserialize entries into List of JObjects
@@ -60,6 +89,10 @@ namespace Pigmeat.Core
 
             File.WriteAllText("./_" + Collection + "/collection.json", JsonConvert.SerializeObject(DeserializedCollection, Formatting.Indented));
         }
+
+        /// <summary>
+        /// Clean out the <c>entries</c> field in every <c>collection.json</c> file
+        /// </summary>
         public static void CleanCollections()
         {
             foreach(var directory in Directory.GetDirectories("./", "_*", SearchOption.TopDirectoryOnly))
@@ -75,6 +108,17 @@ namespace Pigmeat.Core
                 File.WriteAllText("./_" + Collection + "/collection.json", JsonConvert.SerializeObject(DeserializedCollection, Formatting.Indented));
             }
         }
+
+        /// <summary>
+        /// Create a <c>JObject</c> to merge with the <c>Global</c> context containing each collection's <c>collection.json</c> data
+        /// <para> See <see cref="IO.RenderRaw(JObject)"/></para>
+        /// <seealso cref="IO.RenderPage(JObject, string, string)"/>
+        /// <seealso cref="Include.Render(string, JObject)"/>
+        /// <seealso cref="Page.GetPageObject(string)"/>
+        /// </summary>
+        /// <returns>
+        /// A <c>JObject</c> containing collections as keys and their data as values
+        /// </returns>
         public static JObject GetCollections()
         {
             Dictionary<string, JObject> Collections = new Dictionary<string, JObject>();
@@ -85,7 +129,13 @@ namespace Pigmeat.Core
             return JObject.Parse(JsonConvert.SerializeObject(Collections));
         }
 
-        // Render with Scriban & Markdig
+        /// <summary>
+        /// Render with Scriban and Markdig
+        /// </summary>
+        /// <returns>
+        /// Rendered form of given file
+        /// </returns>
+        /// <param name="PageObject">A <c>JObject</c> representing the file</param>
         public static string RenderRaw(JObject PageObject)
         {
             string PageContents = PageObject["content"].ToString();
@@ -96,7 +146,6 @@ namespace Pigmeat.Core
             JObject Pigmeat = GetPigmeat();
 
             // Parse for includes
-            //PageContents = Include.Parse(PageContents);
             PageContents = Include.Parse(PageContents, PageObject);
 
             var template = Template.ParseLiquid(PageContents);
@@ -109,29 +158,15 @@ namespace Pigmeat.Core
             PageContents = Markdown.ToHtml(PageContents, pipeline);
             return PageContents;
         }
-        /*
-        public static string RenderRaw(string PageContents)
-        {
-            // Get outside data
-            JObject Global = JObject.Parse(GetGlobal());
-            Global.Merge(JObject.Parse(GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-            JObject Pigmeat = GetPigmeat();
 
-            // Parse for includes
-            PageContents = Include.Parse(PageContents);
-
-            var template = Template.ParseLiquid(PageContents);
-            PageContents = template.Render(new { global = Global, pigmeat = Pigmeat }); // Render with Scriban
-
-            // Turn Markdown into HTML
-            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
-            builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-            var pipeline = builder.Build();
-            PageContents = Markdown.ToHtml(PageContents, pipeline);
-            return PageContents;
-        }
-        */
-        // Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban
+        /// <summary>
+        /// Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban
+        /// </summary>
+        /// <param name="PageObject"></param>
+        /// <param name="Collection"></param>
+        /// <param name="FilePath"></param>
+        /// <para> See <see cref="IO.AppendEntry(string, JObject)"/> </para>
+        /// <seealso cref="IO.GetCollections"/>
         public static void RenderPage(JObject PageObject, string Collection, string FilePath)
         {
             string PageContents = PageObject["content"].ToString();
@@ -141,14 +176,6 @@ namespace Pigmeat.Core
             Global.Merge(JObject.Parse(GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             JObject Pigmeat = GetPigmeat();
 
-            /*
-            // If a page has a layout, include it
-            if(PageObject.ContainsKey("layout"))
-            {
-                PageContents = File.ReadAllText("./layouts/" + PageObject["layout"].ToString() + ".html").Replace("{{ content }}", PageContents);
-            }
-            */
-            // Layout.getLayoutContents(Page.parseFrontMatter(filePath)["layout"].ToString(), filePath);
             // If a page has a layout, use it
             if(PageObject.ContainsKey("layout"))
             {
@@ -171,17 +198,24 @@ namespace Pigmeat.Core
             File.WriteAllText("./output/" + PageObject["url"].ToString(), PageContents); 
             IO.AppendEntry(Collection, PageObject);
         }
+        
+        /// <summary>
+        /// Get the contents of <c>Layout</c>s recursively
+        /// </summary>
+        /// <returns>
+        /// The contents of the <c>Layout</c> given
+        /// </returns>
+        /// <param name="LayoutPath">The path to the <c>Layout</c></param>
+        /// <param name="FilePath">The path to the file requesting this <c>Layout</c></param>
+        /// <para>See <see cref="IO.RenderPage(JObject, string, string)"/> </para>
         static string GetLayoutContents(string LayoutPath, string FilePath)
         {
-            //string LayoutContents = PigmeatFile.getFileContents(LayoutPath);
             string PageFrontmatter = Page.GetFrontmatter(LayoutPath);
             string LayoutContents = File.ReadAllText(LayoutPath).Replace(PageFrontmatter + "---", "");
             try
             {
                 string SubLayout = IO.GetYamlObject(PageFrontmatter)["layout"].ToString();
                 string SubLayoutPath = "./layouts/" + SubLayout + ".html";
-                //var subLayout = Page.parseFrontMatter(layoutPath)["layout"].ToString();
-                //var subLayoutPath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().layouts_dir + "/" + subLayout + ".html";
                 LayoutContents = GetLayoutContents(SubLayoutPath, FilePath).Replace("{{ content }}", LayoutContents);
                 return LayoutContents;
             }

@@ -8,6 +8,7 @@
     <Authors>Emil Sayahi</Authors>
     <Product>Pigmeat</Product>
     <Description>A static content publishing tool for the modern web.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
