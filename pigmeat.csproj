@@ -4,11 +4,14 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ApplicationIcon>./branding/Yellow/Pigmeat Yellow Square.ico</ApplicationIcon>
+    <PackageId>Pigmeat</PackageId>
     <Version>2.0.1</Version>
     <Authors>Emil Sayahi</Authors>
     <Product>Pigmeat</Product>
     <Description>A static content publishing tool for the modern web.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageDescription>A static content publishing tool for the modern web.</PackageDescription>
+    <RepositoryUrl>https://github.com/MadeByEmil/Pigmeat</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
