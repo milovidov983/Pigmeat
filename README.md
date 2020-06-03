@@ -4,6 +4,7 @@
   <a href="https://madebyemil.github.io/pigmeat-website"><img src="https://github.com/MadeByEmil/Pigmeat/raw/master/branding/Yellow/Pigmeat Yellow Square.png" width=480px alt="Logo" title="Pigmeat Logo" style="border-radius: 4px"></a>
 </p>
 
+![Nuget](https://img.shields.io/nuget/v/Pigmeat)
 [![.NET Core (Windows)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(Windows)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28Windows%29%22)
 [![.NET Core (macOS)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(macOS)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28macOS%29%22)
 [![.NET Core (deb)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(deb)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28deb%29%22)
@@ -20,6 +21,7 @@ Pigmeat is a static content publishing tool for the modern web. It takes data in
  * Download Pigmeat
    * EXPERIMENTAL: Download the latest build artifact from our [commits](https://github.com/MadeByEmil/Pigmeat/commits/master) page that corresponds to your operating system.
    * STABLE: Download the [latest release](https://github.com/MadeByEmil/Pigmeat/releases/latest) from our [releases](https://github.com/MadeByEmil/Pigmeat/releases) page that corresponds to your operating system.
+      * Pigmeat can also be install as a .NET Core global tool `dotnet tool install Pigmeat -g`
  * Read up on the [documentation](https://github.com/MadeByEmil/Pigmeat/wiki)
  * Take a look at [other people's Pigmeat projects](https://github.com/topics/pigmeat)
 

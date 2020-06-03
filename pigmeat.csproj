@@ -8,6 +8,7 @@
     <Version>2.0.2</Version>
     <Authors>Emil Sayahi</Authors>
     <Product>Pigmeat</Product>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <Description>A static content publishing tool for the modern web.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageDescription>A static content publishing tool for the modern web.</PackageDescription>
@@ -23,6 +24,7 @@
     <PackageReference Include="Scriban" Version="2.1.2" />
     <PackageReference Include="SharpScss" Version="1.5.0" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
+    <None Include="LICENSE" Pack="true" PackagePath=""/>
   </ItemGroup>
 
 </Project>
