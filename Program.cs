@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pigmeat.Core;
 using SharpScss;
@@ -81,6 +82,8 @@ namespace Pigmeat
         }
         static void Build()
         {
+            JObject Global = JObject.Parse(IO.GetGlobal());
+            string[] IncludedFiles = JsonConvert.DeserializeObject<string[]>(Global["include"].ToString());
             for(int i = 0; i < 2; i++)
             {
                 foreach(var directory in Directory.GetDirectories("./", "_*", SearchOption.TopDirectoryOnly))
@@ -123,6 +126,15 @@ namespace Pigmeat
                                 Console.WriteLine(file + " → " + "./output/" + file);
                             }
                         }
+                    }
+                }
+                foreach(var file in IncludedFiles)
+                {
+                    JObject PageObject = Page.GetPageObject(file, true);
+                    IO.RenderPage(PageObject, "", file, true);
+                    if(i == 1)
+                    {
+                        Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
                     }
                 }
                 IO.CleanCollections();

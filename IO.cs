@@ -203,8 +203,11 @@ namespace Pigmeat.Core
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
-            File.WriteAllText("./output/" + PageObject["url"].ToString(), PageContents); 
-            IO.AppendEntry(Collection, PageObject);
+            File.WriteAllText("./output/" + PageObject["url"].ToString(), PageContents);
+            if(!string.IsNullOrEmpty(Collection))
+            {
+                IO.AppendEntry(Collection, PageObject);
+            }
         }
 
         /// <summary>
