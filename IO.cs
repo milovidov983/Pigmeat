@@ -121,7 +121,7 @@ namespace Pigmeat.Core
         }
         */
         // Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban
-        public static void RenderPage(JObject PageObject, string Collection)
+        public static void RenderPage(JObject PageObject, string Collection, string FilePath)
         {
             string PageContents = PageObject["content"].ToString();
             
@@ -130,11 +130,15 @@ namespace Pigmeat.Core
             Global.Merge(JObject.Parse(GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             JObject Pigmeat = GetPigmeat();
 
+            /*
             // If a page has a layout, include it
             if(PageObject.ContainsKey("layout"))
             {
                 PageContents = File.ReadAllText("./layouts/" + PageObject["layout"].ToString() + ".html").Replace("{{ content }}", PageContents);
             }
+            */
+            // Layout.getLayoutContents(Page.parseFrontMatter(filePath)["layout"].ToString(), filePath);
+            PageContents = GetLayoutContents("./layouts/" + PageObject["layout"].ToString() + ".html", FilePath);
 
             // Parse for includes
             PageContents = Include.Parse(PageContents, PageObject);
@@ -151,6 +155,25 @@ namespace Pigmeat.Core
             Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
             File.WriteAllText("./output/" + PageObject["url"].ToString(), PageContents); 
             IO.AppendEntry(Collection, PageObject);
+        }
+        static string GetLayoutContents(string LayoutPath, string FilePath)
+        {
+            //string LayoutContents = PigmeatFile.getFileContents(LayoutPath);
+            string PageFrontmatter = Page.GetFrontmatter(LayoutPath);
+            string LayoutContents = File.ReadAllText(LayoutPath).Replace(PageFrontmatter + "---", "");
+            try
+            {
+                string SubLayout = IO.GetYamlObject(PageFrontmatter)["layout"].ToString();
+                string SubLayoutPath = "./layouts/" + SubLayout + ".html";
+                //var subLayout = Page.parseFrontMatter(layoutPath)["layout"].ToString();
+                //var subLayoutPath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().layouts_dir + "/" + subLayout + ".html";
+                LayoutContents = GetLayoutContents(SubLayoutPath, FilePath).Replace("{{ content }}", LayoutContents);
+                return LayoutContents;
+            }
+            catch(Exception)
+            {
+                return LayoutContents;
+            }
         }
     }
 }

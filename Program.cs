@@ -90,7 +90,7 @@ namespace Pigmeat
                         if(Path.GetExtension(file).Equals(".md") || Path.GetExtension(file).Equals(".html"))
                         {
                             JObject PageObject = Page.GetPageObject(file);
-                            IO.RenderPage(PageObject, directory.Substring(3));
+                            IO.RenderPage(PageObject, directory.Substring(3), file);
                             if(i == 1)
                             {
                                 Console.WriteLine(PageObject["dir"].ToString() + "/" + PageObject["name"].ToString() + " → " + "./output/" + PageObject["url"].ToString());
@@ -123,15 +123,23 @@ namespace Pigmeat
         {
             Directory.CreateDirectory("./_posts");
             Directory.CreateDirectory("./_pages");
+            Directory.CreateDirectory("./_files");
             Directory.CreateDirectory("./drafts");
             Directory.CreateDirectory("./layouts");
             Directory.CreateDirectory("./includes");
+            Directory.CreateDirectory("./sass");
+
             File.WriteAllText("./_posts/collection.json", "{\n\t\"name\": \"posts\",\n\t\"entries\": []\n}");
             File.WriteAllText("./_pages/collection.json", "{\n\t\"name\": \"pages\",\n\t\"entries\": []\n}");
+            File.WriteAllText("./_files/collection.json", "{\n\t\"name\": \"files\",\n\t\"entries\": []\n}");
+            File.WriteAllText("./_posts/README", "This is where your posts should go.");
+            File.WriteAllText("./_pages/README", "This is where your pages should go.");
+            File.WriteAllText("./_files/README", "This is where your loose files (data, media, stylesheets, etc.) should go.");
             File.WriteAllText("./_global.yml", "title: Pigmeat Project");
-            File.WriteAllText("./drafts/README", "Store Markdown and HTML documents here if you don't want them to be published.");
+            File.WriteAllText("./drafts/README", "This is where your Markdown and HTML documents should go if you don't want them to be published.");
             File.WriteAllText("./layouts/README", "This is where your HTML page templates go.");
             File.WriteAllText("./includes/README", "This is where your HTML snippets go.");
+            File.WriteAllText("./sass/README", "This is where your Sass stylesheet dependencies go.");
         }
         static void Clean()
         {

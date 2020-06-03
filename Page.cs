@@ -73,7 +73,7 @@ namespace Pigmeat.Core
             return PageObject; // Return JObject of page
         }
         
-        static string GetFrontmatter(string PagePath)
+        public static string GetFrontmatter(string PagePath)
         {
             string FrontMatter = "";
             foreach(var line in File.ReadAllLines(PagePath))
