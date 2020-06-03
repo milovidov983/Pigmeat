@@ -4,17 +4,17 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ApplicationIcon>./branding/Yellow/Pigmeat Yellow Square.ico</ApplicationIcon>
-    <Version>1.5.8</Version>
+    <Version>2.0.0</Version>
     <Authors>Emil Sayahi</Authors>
     <Product>Pigmeat</Product>
     <Description>A static content publishing tool for the modern web.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CS-Script.Core" Version="1.3.1" />
-    <PackageReference Include="Fluid.Core" Version="1.0.0-beta-9651" />
     <PackageReference Include="Markdig" Version="0.20.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Scriban" Version="2.1.2" />
     <PackageReference Include="SharpScss" Version="1.5.0" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>

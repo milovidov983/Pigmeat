@@ -1,326 +1,209 @@
+using System;
 using System.Collections.Generic;
-using Fluid;
-using Fluid.Values;
-using Newtonsoft.Json.Linq;
 using System.IO;
 using Newtonsoft.Json;
-using System;
-using System.Globalization;
+using Newtonsoft.Json.Linq;
+using Scriban;
 
-namespace Pigmeat
+namespace Pigmeat.Core
 {
-    public class Include
+    /// <summary>
+    /// The <c>Include</c> class.
+    /// Contains all methods related to handling <c>{! inc !}</c> calls.
+    /// </summary>
+    class Include
     {
-        public Dictionary<string, string> variables { get; set; }
-        public string input { get; set; }
-        public Include()
-        {
+        public string Input { get; set; }
+        public Dictionary<string, string> Variables { get; set; }
 
-        }
-        public static string evalInclude(string filePath, string fileContents)
+        /// <summary>
+        /// Parses through each <c>{! inc !}</c> call in a page and evaluates them
+        /// <para>See <see cref="Include.Render(string, JObject)"/></para>
+        /// </summary>
+        /// <returns>
+        /// Contents of a page with <c>Include</c>s evaluated
+        /// </returns>
+        /// <param name="Contents">A <c>string</c> containing the contents of the page being parsed</param>
+        /// <param name="PageObject">A <c>JObject</c> representing the page being parsed</param>
+        public static string Parse(string Contents, JObject PageObject)
         {
-            if(fileContents.Contains("{% inc "))
+            if(Contents.Contains("{! inc "))
             {
-                List<string> includeCalls = new List<string>();
-                string readerString = "";
-                Boolean hitOnce = false;
-                foreach(var character in fileContents)
+                List<string> IncludeCalls = new List<string>();
+                string ReaderString = "";
+                Boolean HitFirstBrace = false;
+                foreach(var character in Contents)
                 {
-                    if(character.Equals('{') && !hitOnce)
+                    if(character.Equals('{') && !HitFirstBrace)
                     {
-                        hitOnce = true;
-                        readerString += character;
+                        HitFirstBrace = true;
+                        ReaderString += character;
                         continue;
                     }
-                    if(character.Equals('}') && hitOnce)
+                    if(character.Equals('}') && HitFirstBrace)
                     {
-                        hitOnce = false;
-                        readerString += character;
-                        if(readerString.Contains("{% inc "))
+                        HitFirstBrace = false;
+                        ReaderString += character;
+                        if(ReaderString.Contains("{! inc "))
                         {
-                            includeCalls.Add(readerString);
+                            IncludeCalls.Add(ReaderString);
                         }
-                        readerString = "";
+                        ReaderString = "";
                         continue;
                     }
-                    if(hitOnce)
+                    if(HitFirstBrace)
                     {
-                        readerString += character;
+                        ReaderString += character;
                         continue;
                     }
                 }
-                foreach(var includeCall in includeCalls)
+                foreach(var includeCall in IncludeCalls)
                 {
-                    Include currentInclude = new Include { input = includeCall };
-                    string includePath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().includes_dir + "/" + currentInclude.getCallArgs()[2];
-                    fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath, filePath));
+                    Include CurrentInclude = new Include { Input = includeCall };
+                    string IncludePath = "./includes/" + CurrentInclude.GetArguments()[2];
+                    Contents = Contents.Replace(includeCall, CurrentInclude.Render(IncludePath, PageObject));
                 }
             }
-            return fileContents;
+            return Contents;
         }
-        public static string evalInclude(string filePath)
+
+        /// <summary>
+        /// Renders <c>Include</c>s
+        /// </summary>
+        /// <returns>
+        /// The evaluated <c>Include</c>
+        /// </returns>
+        /// <param name="IncludePath">The path to the <c>Include</c> being rendered</param>
+        /// <param name="PageObject">A <c>JObject</c> representing the page being parsed</param>
+        string Render(string IncludePath, JObject PageObject)
         {
-            var fileContents = PigmeatFile.getFileContents(filePath);
-            if(fileContents.Contains("{% inc "))
-            {
-                List<string> includeCalls = new List<string>();
-                string readerString = "";
-                Boolean hitOnce = false;
-                foreach(var character in fileContents)
-                {
-                    if(character.Equals('{') && !hitOnce)
-                    {
-                        hitOnce = true;
-                        readerString += character;
-                        continue;
-                    }
-                    if(character.Equals('}') && hitOnce)
-                    {
-                        hitOnce = false;
-                        readerString += character;
-                        if(readerString.Contains("{% inc "))
-                        {
-                            includeCalls.Add(readerString);
-                        }
-                        readerString = "";
-                        continue;
-                    }
-                    if(hitOnce)
-                    {
-                        readerString += character;
-                        continue;
-                    }
-                }
-                foreach(var includeCall in includeCalls)
-                {
-                    Include currentInclude = new Include { input = includeCall };
-                    string includePath = GlobalConfiguration.getConfiguration().source + "/" + GlobalConfiguration.getConfiguration().includes_dir + "/" + currentInclude.getCallArgs()[2];
-                    fileContents = fileContents.Replace(includeCall, currentInclude.parseInclude(includePath, filePath));
-                }
-            }
-            return fileContents;
+            // Get outside data
+            JObject Global = JObject.Parse(IO.GetGlobal());
+            Global.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            JObject Pigmeat = IO.GetPigmeat();
+
+            SetVariables();
+            JObject IncludeObject = JObject.Parse(JsonConvert.SerializeObject(Variables));
+            var template = Template.ParseLiquid(File.ReadAllText(IncludePath));
+            return template.Render(new { include = IncludeObject, page = PageObject, global = Global, pigmeat = Pigmeat });
         }
-        public string parseInclude(string includePath, string filePath)
+
+        /// <summary>
+        /// Gets the arguments given in the <c>Include</c> call, to be parsed through later
+        /// </summary>
+        /// <returns>
+        /// Array of <c>string</c>s containing <c>Include</c> arguments
+        /// </returns>
+        string[] GetArguments()
         {
-            var siteConfig = GlobalConfiguration.getConfiguration();
-            var fileContents = PigmeatFile.getFileContents(includePath);
-
-            // Expand layouts, then parse includes
-
-            // When a property of a JObject value is accessed, try to look into its properties
-            TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
-
-            // Convert JToken to FluidValue
-            FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
-            FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
-
-            var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
-            var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-            var pageFrontmatter = PigmeatFile.parseFrontMatter(filePath);
-            var pageModel = JObject.Parse(JsonConvert.SerializeObject(Page.getDefinedPage(new Page() { frontmatter = PigmeatFile.parseFrontMatter(filePath), path = filePath })));
-
-            setVariables();
-            var includeModel = JObject.Parse(JsonConvert.SerializeObject(variables));
-            var includeFrontmatter = PigmeatFile.parseFrontMatter(includePath);
-            includeModel.Merge(includeFrontmatter, new JsonMergeSettings
+            List<string> Arguments = new List<string>();
+            string CurrentArgument = "";
+            foreach(var character in Input)
             {
-                MergeArrayHandling = MergeArrayHandling.Union
-            });
-
-            try
-            {
-                if(FluidTemplate.TryParse(fileContents, out var template))
+                if(character.Equals(' '))
                 {
-                    var context = new TemplateContext();
-                    context.CultureInfo = new CultureInfo(siteConfig.culture);
-
-                    siteModel.Merge(dataSet, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-                    pageModel.Merge(pageFrontmatter, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-                    context.SetValue("site", siteModel);
-                    context.SetValue("page", pageModel);
-                    context.SetValue("pigmeat", JObject.Parse("{\"version\": \"" + Program.version + "\"}"));
-
-                    foreach(var collection in siteConfig.collections)
-                    {
-                        context.SetValue(collection, JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collection + "/_config.json")));
-                    }
-                    context.SetValue("include", includeModel);
-                    return template.Render(context);
+                    Arguments.Add(CurrentArgument);
+                    CurrentArgument = "";
+                    continue;
                 }
                 else
                 {
-                    Console.WriteLine("ERROR [parseInclude]: Could not parse Liquid context for include " + includePath + ".");
-                    return fileContents;
+                    CurrentArgument += character;
+                    continue;
                 }
             }
-            catch(ArgumentNullException)
-            {
-                Console.WriteLine("Include " + includePath + " has no Liquid context to parse.");
-                return fileContents;
-            }
+            return Arguments.ToArray();
         }
-        public string parseInclude(string includePath, JObject pageModel, string collectionName, string filePath)
+
+        /// <summary>
+        /// Combines data from <see cref="Include.GetKeys()"/> and <see cref="Include.GetValues()"/>
+        /// </summary>
+        void SetVariables()
         {
-            setVariables();
-            var siteConfig = GlobalConfiguration.getConfiguration();
-
-            // When a property of a JObject value is accessed, try to look into its properties
-            TemplateContext.GlobalMemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
-
-            // Convert JToken to FluidValue
-            FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
-            FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
-
-            string includeFile = PigmeatFile.getFileContents(includePath);
-
-            var context = new TemplateContext();
-            var givenModel = JObject.Parse(JsonConvert.SerializeObject(variables));
-            var frontmatterModel = PigmeatFile.parseFrontMatter(includePath);
-
-            givenModel.Merge(frontmatterModel, new JsonMergeSettings
+            Dictionary<string, string> GatheredVariables = new Dictionary<string, string>();
+            for(int i = 0; i < GetKeys().Length; i++)
             {
-                MergeArrayHandling = MergeArrayHandling.Union
-            });
-
-            var siteModel = JObject.Parse(File.ReadAllText("./_config.json"));
-            Dictionary<string, object> collectionConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(siteConfig.source + "/_" + collectionName + "/_config.json"));
-            var collectionModel = JObject.Parse(File.ReadAllText(siteConfig.source + "/_" + collectionName + "/_config.json"));
-            var collectionPosts = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_" + collectionName + "/_entries.json"));
-            var dataSet = JObject.Parse(File.ReadAllText(siteConfig.source + "/temp/_data.json"));
-            try
-            {
-                JObject pageObjectModel = Page.getPage(Page.getDefinedPage(new Page { frontmatter = pageModel, content = PigmeatFile.getFileContents(filePath), path = filePath }));
-                pageModel.Merge(pageObjectModel, new JsonMergeSettings
-                {
-                    MergeArrayHandling = MergeArrayHandling.Union
-                });
+                GatheredVariables.Add(GetKeys()[i], GetValues()[i]);
             }
-            catch
-            {
-
-            }
-
-            siteModel.Merge(dataSet, new JsonMergeSettings
-            {
-                MergeArrayHandling = MergeArrayHandling.Union
-            });
-
-            try
-            {
-                if (FluidTemplate.TryParse(includeFile, out var template))
-                {
-                    context.SetValue("include", givenModel);
-                    context.SetValue("site", siteModel);
-                    context.SetValue("page", pageModel);
-                    collectionModel.Merge(collectionPosts, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
-                    context.SetValue(collectionName, collectionModel);
-                    return template.Render(context);
-                }
-                else
-                {
-                    Console.WriteLine("ERROR [parseInclude]: Could not parse Liquid context.");
-                    return includeFile;
-                }
-            }
-            catch(ArgumentNullException)
-            {
-                Console.WriteLine("No Liquid context to parse.");
-                return includeFile;
-            }
+            Variables = GatheredVariables;
         }
-        public void setVariables()
+
+        /// <summary>
+        /// Gets values of given arguments/variables when the <c>Include</c> was called
+        /// <para> See <see cref="Include.GetKeys()"/> </para>
+        /// </summary>
+        /// <returns>
+        /// Array of <c>string</c>s containing values of given arguments
+        /// </returns>
+        string[] GetValues()
         {
-            Dictionary<string, string> gatheredVariables = new Dictionary<string, string>();
-            for(int i = 0; i < getKeys().Length; i++)
+            List<string> Values = new List<string>();
+            string CurrentValue = "";
+            for(int i = 3; i < GetArguments().Length; i++)
             {
-                gatheredVariables.Add(getKeys()[i], getValues()[i]);
-            }
-            variables = gatheredVariables;
-        }
-        public string[] getValues()
-        {
-            List<string> values = new List<string>();
-            string currentValue = "";
-            for(int i = 3; i < getCallArgs().Length; i++)
-            {
-                Boolean hitEquals = false;
-                foreach(var character in getCallArgs()[i])
+                Boolean HitEquals = false; // Whether or not we've reached the equals sign yet
+                foreach(var character in GetArguments()[i])
                 {
                     if(character.Equals('='))
                     {
-                        hitEquals = true;
+                        HitEquals = true;
                         continue;
                     }
-                    if(hitEquals)
+                    if(HitEquals)
                     {
-                        currentValue += character;
+                        CurrentValue += character;
                         continue;
                     }
                 }
                 try
                 {
-                    if(currentValue.ToCharArray()[0].Equals('"') && currentValue.ToCharArray()[currentValue.Length - 1].Equals('"'))
+                    if(CurrentValue.ToCharArray()[0].Equals('"') && CurrentValue.ToCharArray()[CurrentValue.Length - 1].Equals('"'))
                     {
-                        values.Add(currentValue.Substring(1, currentValue.Length - 2));
+                        Values.Add(CurrentValue.Substring(1, CurrentValue.Length - 2));
                     }
                     else
                     {
-                        values.Add(currentValue);
+                        Values.Add(CurrentValue);
                     }
                 }
                 catch(IndexOutOfRangeException)
                 {
-                    values.Add(currentValue);
+                    Values.Add(CurrentValue);
                 }
-                currentValue = "";
+                CurrentValue = "";
             }
-            return values.ToArray();
+            return Values.ToArray();
         }
-        public string[] getKeys()
+        
+        /// <summary>
+        /// Gets the keys (names of variables) given when the Include was called
+        /// <para> See <see cref="Include.GetValues()"/> </para>
+        /// </summary>
+        /// <returns>
+        /// Array of <c>string</c>s containing names of given arguments
+        /// </returns>
+        string[] GetKeys()
         {
-            List<string> keys = new List<string>();
-            string currentKey = "";
-            for(int i = 3; i < getCallArgs().Length; i++)
+            List<string> Keys = new List<string>();
+            string CurrentKey = "";
+            for(int i = 3; i < GetArguments().Length; i++)
             {
-                foreach(var character in getCallArgs()[i])
+                foreach(var character in GetArguments()[i])
                 {
                     if(character.Equals('='))
                     {
-                        keys.Add(currentKey);
-                        currentKey = "";
+                        Keys.Add(CurrentKey);
+                        CurrentKey = "";
                         break;
                     }
                     else
                     {
-                        currentKey += character;
+                        CurrentKey += character;
                         continue;
                     }
                 }
             }
-            return keys.ToArray();
-        }
-        public string[] getCallArgs()
-        {
-            List<string> callArgs = new List<string>();
-            string currentArg = "";
-            foreach(var character in input)
-            {
-                if(character.Equals(' '))
-                {
-                    callArgs.Add(currentArg);
-                    currentArg = "";
-                    continue;
-                }
-                else
-                {
-                    currentArg += character;
-                    continue;
-                }
-            }
-            return callArgs.ToArray();
+            return Keys.ToArray();
         }
     }
 }

@@ -1,27 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.Globalization;
-using Newtonsoft.Json.Converters;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Scriban;
 
-namespace Pigmeat
+namespace Pigmeat.Core
 {
-    public class Page : PigmeatFile
+    class Page
     {
-        //public JObject frontmatter { get; set; }
-        //public string content { get; set; }
-        //public string path { get; set; }
-
-        // The above three variables should be specified. The rest are defined by the Constructor.
-        public string url { get; set; }
-        public DateTime date { get; set; }
-        public List<string> tags { get; set; }
-        public string dir { get; set; }
-        public string name { get; set; }
-        public string excerpt { get; set; }
-        // Time-related values
         public string year { get; set; }
         public string short_year { get; set; }
         public string month { get; set; }
@@ -31,7 +18,7 @@ namespace Pigmeat
         public string day { get; set; }
         public string i_day { get; set; }
         public string y_day { get; set; }
-        public string w_year { get; set; }
+        public int w_year { get; set; }
         public string week { get; set; }
         public int w_day { get; set; }
         public string short_day { get; set; }
@@ -39,95 +26,123 @@ namespace Pigmeat
         public string hour { get; set; }
         public string minute { get; set; }
         public string second { get; set; }
+        public DateTime date { get; set; }
+        public string dir { get; set; }
+        public string name { get; set; }
+        public string permalink { get; set; }
+        public string url { get; set; }
+        public string content { get; set; }
 
-        public Page()
+        /// <summary>
+        /// Parses a given page into a <c>JObject</c>
+        /// </summary>
+        /// <returns>
+        /// The JSON representation of a page and its metadata
+        /// </returns>
+        /// <param name="PagePath">The path to the page being parsed</param>
+        /// <para> See <see cref="IO.GetCollections"/> </para>
+        public static JObject GetPageObject(string PagePath)
         {
-            getDefinedPage(this);
+            string PageFrontmatter = GetFrontmatter(PagePath);
+            JObject FrontmatterObject = IO.GetYamlObject(PageFrontmatter);
+            Page page = JsonConvert.DeserializeObject<Page>(FrontmatterObject.ToString(Formatting.None));
+
+            page.name = Path.GetFileNameWithoutExtension(PagePath);
+            page.dir = Path.GetDirectoryName(PagePath);
+            page.content = File.ReadAllText(PagePath).Replace(PageFrontmatter + "---", "");
+
+            JObject GlobalObject = JObject.Parse(IO.GetGlobal());
+            GlobalObject.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            CultureInfo Culture = new CultureInfo(GlobalObject["culture"].ToString()); // Get 'culture' from Global
+            page.year = page.date.ToString("yyyy");
+            page.short_year = page.date.ToString("y");
+            page.month = page.date.ToString("MM");
+            page.i_month = page.date.ToString("M");
+            page.short_month = page.date.ToString("MMM");
+            page.long_month = page.date.ToString("MMMM");
+            page.day = page.date.ToString("dd");
+            page.i_day = page.date.ToString("d");
+            page.y_day = GetDayOfYear(page.date);
+            page.week = Culture.Calendar.GetWeekOfYear(page.date, Culture.DateTimeFormat.CalendarWeekRule, Culture.DateTimeFormat.FirstDayOfWeek).ToString();
+            page.w_day = (int) Culture.Calendar.GetDayOfWeek(page.date);
+            page.w_year = ISOWeek.GetYear(page.date);
+            page.short_day = Culture.Calendar.GetDayOfWeek(page.date).ToString().Substring(0, 2);
+            page.long_day = Culture.Calendar.GetDayOfWeek(page.date).ToString();
+            page.hour = page.date.ToString("HH");
+            page.minute = page.date.ToString("mm");
+            page.second = page.date.ToString("ss");
+
+            JObject EarlyPageObject = JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None));
+            EarlyPageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            page.url = GetPermalink(EarlyPageObject); // Generate output path based on other variables
+            page.content = IO.RenderRaw(EarlyPageObject);
+
+            JObject PageObject = JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None));
+            PageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            return PageObject; // Return JObject of page
         }
-        public static Page getDefinedPage(Page page)
+        
+        /// <summary>
+        /// Gets the YAML of the frontmatter for a given page
+        /// </summary>
+        /// <returns>
+        /// The YAML <c>string</c> for a given page
+        /// </returns>
+        /// <param name="PagePath">The path of the page being parsed</param>
+        /// <para> See <see cref="IO.GetLayoutContents(string, string)"/> </para>
+        /// <seealso cref="Page.GetPageObject(string)"/>
+        public static string GetFrontmatter(string PagePath)
         {
-            page = (Page) getDefinedFile(page);
-
-            page.name = Path.GetFileNameWithoutExtension(page.path);
-            page.dir = Path.GetDirectoryName(page.path);
-
-            try
+            string FrontMatter = "";
+            foreach(var line in File.ReadAllLines(PagePath))
             {
-                page.tags = JsonConvert.DeserializeObject<List<string>>(page.frontmatter.GetValue("tags").ToString());
-            }
-            catch(NullReferenceException)
-            {
-
-            }
-
-            try
-            {
-                if(page.dir.Length > 1)
+                if(!line.Equals("---"))
                 {
-                    page.dir = page.dir.Substring(2);
+                    FrontMatter += line + "\n";
                 }
-                else{
-                    page.dir = page.dir.Substring(1);
+                else
+                {
+                    break;
                 }
-
-                page.date = JsonConvert.DeserializeObject<DateTime>('"' +page.frontmatter.GetValue("date").ToString() + '"', new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
-                //page.date = JsonConvert.DeserializeObject<DateTime>(page.frontmatter.GetValue("date").ToString());
-
-                // Get time values
-                CultureInfo globalCulture = new CultureInfo(GlobalConfiguration.getConfiguration().culture);
-                page.year = page.date.ToString("yyyy");
-                page.short_year = page.date.ToString("y");
-                page.month = page.date.ToString("MM");
-                page.i_month = page.date.ToString("M");
-                page.short_month = page.date.ToString("MMM");
-                page.long_month = page.date.ToString("MMMM");
-                page.day = page.date.ToString("dd");
-                page.i_day = page.date.ToString("d");
-                page.y_day = getDayOfYear(page.date);
-                page.w_day = ISOWeek.GetYear(page.date);
-                page.week = globalCulture.Calendar.GetWeekOfYear(page.date, globalCulture.DateTimeFormat.CalendarWeekRule, globalCulture.DateTimeFormat.FirstDayOfWeek).ToString();
-                page.w_day = (int) globalCulture.Calendar.GetDayOfWeek(page.date);
-                page.short_day = globalCulture.Calendar.GetDayOfWeek(page.date).ToString().Substring(0, 2);
-                page.long_day = globalCulture.Calendar.GetDayOfWeek(page.date).ToString();
-                page.hour = page.date.ToString("HH");
-                page.minute = page.date.ToString("mm");
-                page.second = page.date.ToString("ss");
             }
-            catch(NullReferenceException)
-            {
-
-            }
-
-            try
-            {
-                page.excerpt = getExcerpt(page);
-            }
-            catch(NullReferenceException)
-            {
-
-            }
-
-            try
-            {
-                page.title = page.frontmatter["title"].ToString();
-            }
-            catch(NullReferenceException)
-            {
-
-            }
-
-            try
-            {
-                page.url = Permalink.GetPermalink(page).parsePagePermalink(page);
-            }
-            catch(NullReferenceException)
-            {
-
-            }
-
-            return page;
+            return FrontMatter;
         }
-        public static string getDayOfYear(DateTime date)
+        
+        /// <summary>
+        /// Parses the permalink using given metadata to generate an output path
+        /// </summary>
+        /// <returns>
+        /// A <c>string</c> pointing to the page's output path
+        /// </returns>
+        /// <param name="PageObject">The <c>JObject</c> holding the page's metadata</param>
+        /// <para> See <see cref="Page.GetPageObject(string)"/> </para>
+        static string GetPermalink(JObject PageObject)
+        {
+            string Permalink = PageObject["permalink"].ToString();
+            if(Permalink.Equals("date", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.month }}/{{ page.day }}/{{ page.title }}.html";
+            }
+            else if(Permalink.Equals("pretty", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.month }}/{{ page.day }}/{{ page.title }}.html";
+            }
+            else if(Permalink.Equals("ordinal", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.y_day }}/{{ page.title }}.html";
+            }
+            else if(Permalink.Equals("weekdate", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.year }}/W{{ page.week }}/{{ page.short_day }}/{{ page.title }}.html";
+            }
+            else if(Permalink.Equals("none", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.title }}.html";
+            }
+            var template = Template.ParseLiquid(Permalink);
+            return template.Render(new { page = PageObject, global =  IO.GetGlobal()});
+        }
+        static string GetDayOfYear(DateTime date)
         {
             if(date.DayOfYear.ToString().Length == 1)
             {
@@ -141,53 +156,6 @@ namespace Pigmeat
             {
                 return date.DayOfYear.ToString();
             }
-        }
-        public static string getExcerptSeparator(Page page)
-        {
-            try
-            {
-                return page.frontmatter["excerpt_separator"].ToString();
-            }
-            catch(NullReferenceException)
-            {
-                return GlobalConfiguration.getConfiguration().excerpt_separator;
-            }
-        }
-        public static string getExcerpt(Page page)
-        {
-            string excerpt = "";
-            foreach(var currentChar in page.content)
-            {
-                excerpt += currentChar;
-                if(excerpt.Contains(getExcerptSeparator(page)))
-                {
-                    excerpt = excerpt.Substring(0, getExcerptSeparator(page).Length);
-                    break;
-                }
-                /*
-                try
-                {
-                    if(excerpt.Contains(page.frontmatter["excerpt_separator"].ToString()))
-                    {
-                        excerpt = excerpt.Substring(0, page.frontmatter["excerpt_separator"].ToString().Length);
-                        break;
-                    }
-                }
-                catch(NullReferenceException)
-                {
-                    if(excerpt.Contains(GlobalConfiguration.getConfiguration().excerpt_separator))
-                    {
-                        excerpt = excerpt.Substring(0, GlobalConfiguration.getConfiguration().excerpt_separator.Length);
-                        break;
-                    }
-                }
-                */
-            }
-            return excerpt;
-        }
-        public static JObject getPage(Page page)
-        {
-            return JObject.Parse(JsonConvert.SerializeObject(page));
         }
     }
 }
