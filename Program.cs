@@ -142,10 +142,10 @@ namespace Pigmeat
                 }
                 try
                 {
-                    foreach(var file in IncludedFilesHTML)
+                    foreach(var file in IncludedFilesRaw)
                     {
-                        JObject PageObject = Page.GetPageObject(file, true);
-                        IO.RenderPage(PageObject, "", file, true);
+                        JObject PageObject = Page.GetPageObject(file, false);
+                        IO.RenderPage(PageObject, "", file, false);
                         if(i == 1)
                         {
                             Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
@@ -161,10 +161,10 @@ namespace Pigmeat
                 }
                 try
                 {
-                    foreach(var file in IncludedFilesRaw)
+                    foreach(var file in IncludedFilesHTML)
                     {
-                        JObject PageObject = Page.GetPageObject(file, false);
-                        IO.RenderPage(PageObject, "", file, false);
+                        JObject PageObject = Page.GetPageObject(file, true);
+                        IO.RenderPage(PageObject, "", file, true);
                         if(i == 1)
                         {
                             Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
