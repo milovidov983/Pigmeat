@@ -40,8 +40,9 @@ namespace Pigmeat.Core
         /// The JSON representation of a page and its metadata
         /// </returns>
         /// <param name="PagePath">The path to the page being parsed</param>
+        /// <param name="RenderHTML">Whether or not to run it through Markdig</param>
         /// <para> See <see cref="IO.GetCollections"/> </para>
-        public static JObject GetPageObject(string PagePath)
+        public static JObject GetPageObject(string PagePath, Boolean RenderHTML)
         {
             string PageFrontmatter = GetFrontmatter(PagePath);
             JObject FrontmatterObject = IO.GetYamlObject(PageFrontmatter);
@@ -75,7 +76,7 @@ namespace Pigmeat.Core
             JObject EarlyPageObject = JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None));
             EarlyPageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             page.url = GetPermalink(EarlyPageObject); // Generate output path based on other variables
-            page.content = IO.RenderRaw(EarlyPageObject);
+            page.content = IO.RenderRaw(EarlyPageObject, RenderHTML);
 
             JObject PageObject = JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None));
             PageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
@@ -90,7 +91,7 @@ namespace Pigmeat.Core
         /// </returns>
         /// <param name="PagePath">The path of the page being parsed</param>
         /// <para> See <see cref="IO.GetLayoutContents(string, string)"/> </para>
-        /// <seealso cref="Page.GetPageObject(string)"/>
+        /// <seealso cref="Page.GetPageObject(string, Boolean)"/>
         public static string GetFrontmatter(string PagePath)
         {
             string FrontMatter = "";
@@ -115,7 +116,7 @@ namespace Pigmeat.Core
         /// A <c>string</c> pointing to the page's output path
         /// </returns>
         /// <param name="PageObject">The <c>JObject</c> holding the page's metadata</param>
-        /// <para> See <see cref="Page.GetPageObject(string)"/> </para>
+        /// <para> See <see cref="Page.GetPageObject(string, Boolean)"/> </para>
         static string GetPermalink(JObject PageObject)
         {
             string Permalink = PageObject["permalink"].ToString();

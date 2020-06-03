@@ -89,8 +89,8 @@ namespace Pigmeat
                     {
                         if(Path.GetExtension(file).Equals(".md") || Path.GetExtension(file).Equals(".html"))
                         {
-                            JObject PageObject = Page.GetPageObject(file);
-                            IO.RenderPage(PageObject, directory.Substring(3), file);
+                            JObject PageObject = Page.GetPageObject(file, true);
+                            IO.RenderPage(PageObject, directory.Substring(3), file, true);
                             if(i == 1)
                             {
                                 Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
@@ -107,8 +107,8 @@ namespace Pigmeat
                         }
                         else if(File.ReadAllText(file).Contains("---"))
                         {
-                            JObject PageObject = Page.GetPageObject(file);
-                            IO.RenderPage(PageObject, directory.Substring(3), file);
+                            JObject PageObject = Page.GetPageObject(file, false);
+                            IO.RenderPage(PageObject, directory.Substring(3), file, false);
                             if(i == 1)
                             {
                                 Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
@@ -166,7 +166,7 @@ namespace Pigmeat
                 Console.WriteLine("Nothing to clean … ");
             }
         }
-        
+
         static void Help(string[] args)
         {
             try

@@ -58,7 +58,7 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Adds <c>JObject</c> representations of pages in a collection to the collection's <c>entries</c> field in its <c>collection.json</c> file
-        /// <para> See <see cref="IO.RenderPage(JObject, string, string)"/> </para>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, string, Boolean)"/> </para>
         /// </summary>
         /// <param name="Collection">The name of the collection the page is in</param>
         /// <param name="Entry">The <c>JObject</c> form of the page</param>
@@ -111,10 +111,10 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Create a <c>JObject</c> to merge with the <c>Global</c> context containing each collection's <c>collection.json</c> data
-        /// <para> See <see cref="IO.RenderRaw(JObject)"/></para>
-        /// <seealso cref="IO.RenderPage(JObject, string, string)"/>
+        /// <para> See <see cref="IO.RenderRaw(JObject, Boolean)"/></para>
+        /// <seealso cref="IO.RenderPage(JObject, string, string, Boolean)"/>
         /// <seealso cref="Include.Render(string, JObject)"/>
-        /// <seealso cref="Page.GetPageObject(string)"/>
+        /// <seealso cref="Page.GetPageObject(string, Boolean)"/>
         /// </summary>
         /// <returns>
         /// A <c>JObject</c> containing collections as keys and their data as values
@@ -136,7 +136,8 @@ namespace Pigmeat.Core
         /// Rendered form of given file
         /// </returns>
         /// <param name="PageObject">A <c>JObject</c> representing the file</param>
-        public static string RenderRaw(JObject PageObject)
+        /// <param name="RenderHTML">Whether or not to run it through Markdig</param>
+        public static string RenderRaw(JObject PageObject, Boolean RenderHTML)
         {
             string PageContents = PageObject["content"].ToString();
 
@@ -151,23 +152,27 @@ namespace Pigmeat.Core
             var template = Template.ParseLiquid(PageContents);
             PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat }); // Render with Scriban
 
-            // Turn Markdown into HTML
-            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
-            builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-            var pipeline = builder.Build();
-            PageContents = Markdown.ToHtml(PageContents, pipeline);
+            if(RenderHTML)
+            {
+                // Turn Markdown into HTML
+                var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                var pipeline = builder.Build();
+                PageContents = Markdown.ToHtml(PageContents, pipeline);
+            }
             return PageContents;
         }
 
         /// <summary>
         /// Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban
         /// </summary>
-        /// <param name="PageObject"></param>
-        /// <param name="Collection"></param>
-        /// <param name="FilePath"></param>
+        /// <param name="PageObject">The <c>JObject</c> representing the page being rendered</param>
+        /// <param name="Collection">The name of the collection the page is in</param>
+        /// <param name="FilePath">The path of the page</param>
+        /// <param name="RenderHTML">Whether or not to run it through Markdig</param>
         /// <para> See <see cref="IO.AppendEntry(string, JObject)"/> </para>
         /// <seealso cref="IO.GetCollections"/>
-        public static void RenderPage(JObject PageObject, string Collection, string FilePath)
+        public static void RenderPage(JObject PageObject, string Collection, string FilePath, Boolean RenderHTML)
         {
             string PageContents = PageObject["content"].ToString();
             
@@ -188,17 +193,20 @@ namespace Pigmeat.Core
             var template = Template.ParseLiquid(PageContents);
             PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat });
 
-            // Turn Markdown into HTML
-            var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
-            builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-            var pipeline = builder.Build();
-            PageContents = Markdown.ToHtml(PageContents, pipeline);
+            if(RenderHTML)
+            {
+                // Turn Markdown into HTML
+                var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                var pipeline = builder.Build();
+                PageContents = Markdown.ToHtml(PageContents, pipeline);
+            }
 
             Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
             File.WriteAllText("./output/" + PageObject["url"].ToString(), PageContents); 
             IO.AppendEntry(Collection, PageObject);
         }
-        
+
         /// <summary>
         /// Get the contents of <c>Layout</c>s recursively
         /// </summary>
@@ -207,7 +215,7 @@ namespace Pigmeat.Core
         /// </returns>
         /// <param name="LayoutPath">The path to the <c>Layout</c></param>
         /// <param name="FilePath">The path to the file requesting this <c>Layout</c></param>
-        /// <para>See <see cref="IO.RenderPage(JObject, string, string)"/> </para>
+        /// <para>See <see cref="IO.RenderPage(JObject, string, string, Boolean)"/> </para>
         static string GetLayoutContents(string LayoutPath, string FilePath)
         {
             string PageFrontmatter = Page.GetFrontmatter(LayoutPath);
