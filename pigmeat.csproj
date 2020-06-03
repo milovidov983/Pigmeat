@@ -25,6 +25,7 @@
     <PackageReference Include="SharpScss" Version="1.5.0" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
     <None Include="LICENSE" Pack="true" PackagePath=""/>
+    <None Include="NOTICE.md" Pack="true" PackagePath=""/>
   </ItemGroup>
 
 </Project>
