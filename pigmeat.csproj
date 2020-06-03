@@ -12,6 +12,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageDescription>A static content publishing tool for the modern web.</PackageDescription>
     <RepositoryUrl>https://github.com/MadeByEmil/Pigmeat</RepositoryUrl>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>pigmeat</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
