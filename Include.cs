@@ -11,7 +11,7 @@ namespace Pigmeat.Core
     {
         public string Input { get; set; }
         public Dictionary<string, string> Variables { get; set; }
-
+        /*
         // Finds and replaces include calls with rendered includes
         public static string Parse(string Contents)
         {
@@ -54,16 +54,77 @@ namespace Pigmeat.Core
             }
             return Contents;
         }
+        */
+        public static string Parse(string Contents, JObject PageObject)
+        {
+            if(Contents.Contains("{! inc "))
+            {
+                List<string> IncludeCalls = new List<string>();
+                string ReaderString = "";
+                Boolean HitFirstBrace = false;
+                foreach(var character in Contents)
+                {
+                    if(character.Equals('{') && !HitFirstBrace)
+                    {
+                        HitFirstBrace = true;
+                        ReaderString += character;
+                        continue;
+                    }
+                    if(character.Equals('}') && HitFirstBrace)
+                    {
+                        HitFirstBrace = false;
+                        ReaderString += character;
+                        if(ReaderString.Contains("{! inc "))
+                        {
+                            IncludeCalls.Add(ReaderString);
+                        }
+                        ReaderString = "";
+                        continue;
+                    }
+                    if(HitFirstBrace)
+                    {
+                        ReaderString += character;
+                        continue;
+                    }
+                }
+                foreach(var includeCall in IncludeCalls)
+                {
+                    Include CurrentInclude = new Include { Input = includeCall };
+                    string IncludePath = "./includes/" + CurrentInclude.GetArguments()[2];
+                    Contents = Contents.Replace(includeCall, CurrentInclude.Render(IncludePath, PageObject));
+                }
+            }
+            return Contents;
+        }
 
         // Renders includes
-        string Render(string IncludePath)
+        string Render(string IncludePath, JObject PageObject)
         {
+            // Get outside data
+            JObject Global = JObject.Parse(IO.GetGlobal());
+            Global.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            JObject Pigmeat = IO.GetPigmeat();
+
             SetVariables();
             JObject IncludeObject = JObject.Parse(JsonConvert.SerializeObject(Variables));
             var template = Template.ParseLiquid(File.ReadAllText(IncludePath));
-            return template.Render(new { include = IncludeObject });
+            return template.Render(new { include = IncludeObject, page = PageObject, global = Global, pigmeat = Pigmeat });
         }
+        /*
+        // Renders includes
+        string Render(string IncludePath)
+        {
+            // Get outside data
+            JObject Global = JObject.Parse(IO.GetGlobal());
+            Global.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            JObject Pigmeat = IO.GetPigmeat();
 
+            SetVariables();
+            JObject IncludeObject = JObject.Parse(JsonConvert.SerializeObject(Variables));
+            var template = Template.ParseLiquid(File.ReadAllText(IncludePath));
+            return template.Render(new { include = IncludeObject, global = Global, pigmeat = Pigmeat });
+        }
+        */
         // Gets the arguments given in the Include call, to be parsed through later
         string[] GetArguments()
         {

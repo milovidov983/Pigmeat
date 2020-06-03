@@ -72,6 +72,7 @@ namespace Pigmeat.Core
             PageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             return PageObject; // Return JObject of page
         }
+        
         static string GetFrontmatter(string PagePath)
         {
             string FrontMatter = "";
@@ -88,9 +89,31 @@ namespace Pigmeat.Core
             }
             return FrontMatter;
         }
+        
         static string GetPermalink(JObject PageObject)
         {
-            var template = Template.ParseLiquid(PageObject["permalink"].ToString());
+            string Permalink = PageObject["permalink"].ToString();
+            if(Permalink.Equals("date", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.month }}/{{ page.day }}/{{ page.title }}.html";
+            }
+            else if(Permalink.Equals("pretty", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.month }}/{{ page.day }}/{{ page.title }}.html";
+            }
+            else if(Permalink.Equals("ordinal", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.y_day }}/{{ page.title }}.html";
+            }
+            else if(Permalink.Equals("weekdate", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.year }}/W{{ page.week }}/{{ page.short_day }}/{{ page.title }}.html";
+            }
+            else if(Permalink.Equals("none", StringComparison.OrdinalIgnoreCase))
+            {
+                Permalink = "/{{ page.collection }}/{{ page.title }}.html";
+            }
+            var template = Template.ParseLiquid(Permalink);
             return template.Render(new { page = PageObject, global =  IO.GetGlobal()});
         }
         static string GetDayOfYear(DateTime date)

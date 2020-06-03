@@ -98,7 +98,17 @@ namespace Pigmeat
                         }
                         else if(Path.GetExtension(file).Equals(".scss") || Path.GetExtension(file).Equals(".sass"))
                         {
-                            File.WriteAllText("./output/" + file, Scss.ConvertToCss(File.ReadAllText(file)).Css);
+                            Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
+                            File.WriteAllText("./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css", Scss.ConvertToCss(File.ReadAllText(file)).Css);
+                            if(i == 1)
+                            {
+                                Console.WriteLine(file + " → " + "./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css");
+                            }
+                        }
+                        else if(!Path.GetExtension(file).Equals(".json") && !Path.GetExtension(file).Equals(".yml"))
+                        {
+                            Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
+                            File.Copy(file, "./output/" + file, true);
                             if(i == 1)
                             {
                                 Console.WriteLine(file + " → " + "./output/" + file);
@@ -106,8 +116,8 @@ namespace Pigmeat
                         }
                     }
                 }
+                IO.CleanCollections();
             }
-            IO.CleanCollections();
         }
         static void New()
         {
@@ -134,7 +144,7 @@ namespace Pigmeat
             catch(DirectoryNotFoundException)
             {
                 // This is expected if there is no directory to clean.
-                Environment.Exit(1);
+                Console.WriteLine("Nothing to clean … ");
             }
         }
         static void Help(string[] args)
