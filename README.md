@@ -4,7 +4,7 @@
   <a href="https://madebyemil.github.io/pigmeat-website"><img src="https://github.com/MadeByEmil/Pigmeat/raw/master/branding/Yellow/Pigmeat Yellow Square.png" width=480px alt="Logo" title="Pigmeat Logo" style="border-radius: 4px"></a>
 </p>
 
-![Nuget](https://img.shields.io/nuget/v/Pigmeat)
+[![Nuget](https://img.shields.io/nuget/v/Pigmeat)](https://www.nuget.org/packages/Pigmeat)
 [![.NET Core (Windows)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(Windows)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28Windows%29%22)
 [![.NET Core (macOS)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(macOS)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28macOS%29%22)
 [![.NET Core (deb)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(deb)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28deb%29%22)
