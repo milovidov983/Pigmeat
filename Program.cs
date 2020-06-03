@@ -93,7 +93,7 @@ namespace Pigmeat
                             IO.RenderPage(PageObject, directory.Substring(3), file);
                             if(i == 1)
                             {
-                                Console.WriteLine(PageObject["dir"].ToString() + "/" + PageObject["name"].ToString() + " → " + "./output/" + PageObject["url"].ToString());
+                                Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
                             }
                         }
                         else if(Path.GetExtension(file).Equals(".scss") || Path.GetExtension(file).Equals(".sass"))
@@ -103,6 +103,15 @@ namespace Pigmeat
                             if(i == 1)
                             {
                                 Console.WriteLine(file + " → " + "./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css");
+                            }
+                        }
+                        else if(File.ReadAllText(file).Contains("---"))
+                        {
+                            JObject PageObject = Page.GetPageObject(file);
+                            IO.RenderPage(PageObject, directory.Substring(3), file);
+                            if(i == 1)
+                            {
+                                Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
                             }
                         }
                         else if(!Path.GetExtension(file).Equals(".json") && !Path.GetExtension(file).Equals(".yml"))

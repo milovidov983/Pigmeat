@@ -40,9 +40,20 @@ namespace Pigmeat.Core
             List<JObject> Entries = JsonConvert.DeserializeObject<List<JObject>>(CollectionObject["entries"].ToString(Formatting.Indented));
             Entries.Add(Entry); // Add current entry to List
 
-            // Sort by date, then title
-            Entries.Sort((y, x) => x["date"].ToString().CompareTo(y["date"].ToString()));
-            Entries.Sort((y, x) => x["title"].ToString().CompareTo(y["title"].ToString()));
+            try
+            {
+                // Sort by date, then title
+                Entries.Sort((y, x) => x["date"].ToString().CompareTo(y["date"].ToString()));
+                Entries.Sort((y, x) => x["title"].ToString().CompareTo(y["title"].ToString()));
+            }
+            catch(NullReferenceException)
+            {
+                Entries.Sort((y, x) => x["title"].ToString().CompareTo(y["title"].ToString()));
+            }
+            catch(InvalidOperationException)
+            {
+
+            }
 
             var DeserializedCollection = JsonConvert.DeserializeObject<Dictionary<string, object>>(CollectionObject.ToString(Formatting.Indented));
             DeserializedCollection["entries"] = Entries.ToArray(); // Add List into JSON
@@ -138,13 +149,17 @@ namespace Pigmeat.Core
             }
             */
             // Layout.getLayoutContents(Page.parseFrontMatter(filePath)["layout"].ToString(), filePath);
-            PageContents = GetLayoutContents("./layouts/" + PageObject["layout"].ToString() + ".html", FilePath);
+            // If a page has a layout, use it
+            if(PageObject.ContainsKey("layout"))
+            {
+                string OldPageContents = PageContents;
+                PageContents = GetLayoutContents("./layouts/" + PageObject["layout"].ToString() + ".html", FilePath).Replace("{{ content }}", PageContents);
+            }
 
-            // Parse for includes
-            PageContents = Include.Parse(PageContents, PageObject);
-
+            //Render with Scriban
+            PageContents = Include.Parse(PageContents, PageObject); // Parse for includes
             var template = Template.ParseLiquid(PageContents);
-            PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat }); // Render with Scriban
+            PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat });
 
             // Turn Markdown into HTML
             var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
