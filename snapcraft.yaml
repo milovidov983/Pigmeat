@@ -17,4 +17,4 @@ parts:
 apps:
   pigmeat:
     command: pigmeat
-    plugs: [cifs-mount, classic-support, content, fuse-support, home, optical-drive, personal-files, removable-media, system-files]
+    plugs: [cifs-mount, fuse-support, home, optical-drive, removable-media]
