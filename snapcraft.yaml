@@ -16,4 +16,4 @@ parts:
 
 apps:
   pigmeat:
-    command: pigmeat
+    command: /snap/pigmeat/current/pigmeat
