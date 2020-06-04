@@ -13,7 +13,8 @@ jobs:
       uses: samuelmeuli/action-snapcraft@v1
       with:
         snapcraft_token: ${{ secrets.snapcraft_token }}
+        use_lxd: true
     - name: Build snap
       run: |
-        snapcraft
+        sudo snapcraft --use-lxd
         snapcraft push --release edge *.snap
