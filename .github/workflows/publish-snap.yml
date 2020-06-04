@@ -17,4 +17,4 @@ jobs:
     - name: Build snap
       run: |
         sudo snapcraft --use-lxd
-        snapcraft push --release edge *.snap
+        snapcraft push --release stable *.snap

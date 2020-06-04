@@ -5,7 +5,7 @@ description: |
   Pigmeat is a static content publishing tool for the modern web. It takes data in the form of JSON or YAML, plugs it into a Liquid context, wraps it up in some HTML & CSS, and spits out a website that can be hosted on your favorite server. If you don't know what any of that means, it's OK. Point is, it's easy to learn and use. Pigmeat is for corporations, organizations, friends, peers, bloggers, hobbyists, and everyone under the sun.
 confinement: devmode
 base: core
-grade: devel
+grade: stable
 license: GPL-3.0
 icon: branding/Yellow/android-chrome-256x256.png
 
