@@ -1,0 +1,18 @@
+name: Publish to Snapcraft
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build with dotnet
+      run: |
+        sudo apt update
+        sudo apt install snapd
+        sudo snap install snapcraft --classic
+        hash -r
+        snapcraft
