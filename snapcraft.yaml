@@ -14,16 +14,6 @@ parts:
     plugin: dotnet3
     source: .
 
-plugs:
-  access-files:
-    interface: personal-files
-    write:
-    - $HOME/pigmeat_sites
-
 apps:
   pigmeat:
     command: pigmeat
-    plugs:
-      - home
-      - removable-media
-      - access-files
