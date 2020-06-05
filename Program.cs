@@ -126,7 +126,15 @@ namespace Pigmeat
                     foreach(var file in IncludedFiles)
                     {
                         Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
-                        File.Copy(file, "./output/" + file, true);
+                        try
+                        {
+                            File.Copy(file, "./output/" + file, true);
+                        }
+                        catch(IOException)
+                        {
+                            IO.IncludeDirectory(file, "./output/" + file);
+                            Console.WriteLine(file + " → " + "./output/" + file);
+                        }
                         if(i == 1)
                         {
                             Console.WriteLine(file + " → " + "./output/" + file);

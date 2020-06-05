@@ -235,5 +235,26 @@ namespace Pigmeat.Core
                 return LayoutContents;
             }
         }
+
+        /// <summary>
+        /// Copy a directory recursively, for if in <c>{{{ global.include }}}</c>
+        /// </summary>
+        /// <param name="SourceDirectory">The directory included</param>
+        /// <param name="DestinationDirectory">Where the directory will be output</param>
+        public static void IncludeDirectory(string SourceDirectory, string DestinationDirectory)
+        {
+            DirectoryInfo DirectoryObject = new DirectoryInfo(SourceDirectory);
+            DirectoryInfo[] SubDirectories = DirectoryObject.GetDirectories();
+            Directory.CreateDirectory(DestinationDirectory);
+            FileInfo[] Files = DirectoryObject.GetFiles();
+            foreach (var file in Files)
+            {
+                file.CopyTo(Path.Combine(DestinationDirectory, file.Name), true);
+            }
+            foreach (var SubDirectory in SubDirectories)
+            {
+                IncludeDirectory(SubDirectory.FullName, Path.Combine(DestinationDirectory, SubDirectory.Name));
+            }
+        }
     }
 }
