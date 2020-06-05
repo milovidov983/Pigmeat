@@ -3,7 +3,8 @@
 [![Pigmeat Logo](https://github.com/MadeByEmil/Pigmeat/raw/master/branding/Yellow/Pigmeat%20Yellow%20Square.svg)](https://MadeByEmil.github.io/pigmeat-website)
 
 [![Nuget](https://img.shields.io/nuget/v/Pigmeat)](https://www.nuget.org/packages/Pigmeat)
-[![Snap Status](https://build.snapcraft.io/badge/MadeByEmil/Pigmeat.svg)](https://build.snapcraft.io/user/MadeByEmil/Pigmeat)
+[![pigmeat](https://snapcraft.io//pigmeat/badge.svg)](https://snapcraft.io/pigmeat)
+[![pigmeat](https://snapcraft.io//pigmeat/trending.svg?name=0)](https://snapcraft.io/pigmeat)
 [![.NET Core (Windows)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(Windows)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28Windows%29%22)
 [![.NET Core (macOS)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(macOS)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28macOS%29%22)
 [![.NET Core (deb)](https://github.com/MadeByEmil/Pigmeat/workflows/.NET%20Core%20(deb)/badge.svg)](https://github.com/MadeByEmil/Pigmeat/actions?query=workflow%3A%22.NET+Core+%28deb%29%22)
