@@ -19,7 +19,7 @@ Pigmeat is a static content publishing tool for the modern web. It takes data in
 ## Getting started
  * Download Pigmeat
    * EXPERIMENTAL: Download the latest build artifact from our [commits](https://github.com/MadeByEmil/Pigmeat/commits/master) page that corresponds to your operating system.
-      * [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/pigmeat)
+      * [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/pigmeat) (see: [#38](https://github.com/MadeByEmil/Pigmeat/issues/38))
    * STABLE: Download the [latest release](https://github.com/MadeByEmil/Pigmeat/releases/latest) from our [releases](https://github.com/MadeByEmil/Pigmeat/releases) page that corresponds to your operating system.
       * Pigmeat can also be install as a .NET Core global tool (`dotnet tool install Pigmeat -g`)
  * Read up on the [documentation](https://github.com/MadeByEmil/Pigmeat/wiki)
