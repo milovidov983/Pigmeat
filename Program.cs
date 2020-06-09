@@ -250,7 +250,7 @@ namespace Pigmeat
                 }
                 else if (args[1].Equals("clean", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("Deletes all generated files as a result of building.");
+                    Console.WriteLine("Deletes all generated data that results from the build process.");
                 }
                 else if (args[1].Equals("c", StringComparison.OrdinalIgnoreCase))
                 {
@@ -275,7 +275,6 @@ namespace Pigmeat
                     "Pigmeat supports the following commands:\n" +
                     "\tpigmeat new - Creates an empty Pigmeat project.\n" +
                     "\tpigmeat build - Outputs a publishable Pigmeat project.\n" +
-                    "\tpigmeat b - Outputs a publishable Pigmeat project. Same as above.\n" +
                     "\tpigmeat clean - Deletes all generated data that results from the build process.\n" +
                     "\tpigmeat help - Shows this message.\n" +
                     "\tpigmeat help <string> - Displays a message outlining the usage of a given parameter (e.g. 'pigmeat help serve')."
