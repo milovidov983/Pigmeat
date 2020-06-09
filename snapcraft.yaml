@@ -6,7 +6,7 @@ description: |
 confinement: strict
 base: core18
 grade: stable
-license: GPL-3.0-only
+license: GPL-3.0
 icon: branding/Yellow/android-chrome-256x256.png
 
 parts:
