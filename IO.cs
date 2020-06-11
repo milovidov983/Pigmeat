@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using Markdig;
 using Markdig.Parsers;
+using Markdig.Renderers.Normalize;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Scriban;
@@ -140,6 +141,14 @@ namespace Pigmeat.Core
         public static string RenderRaw(JObject PageObject, Boolean RenderHTML)
         {
             string PageContents = PageObject["content"].ToString();
+            if(RenderHTML)
+            {
+                // Turn Markdown into HTML
+                var builder = new MarkdownPipelineBuilder().UsePipeTables().UseEmphasisExtras().UseAutoLinks().UseTaskLists().UseListExtras().UseMediaLinks().UseMathematics().UseDiagrams();
+                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                var pipeline = builder.Build();
+                PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { ExpandAutoLinks = true }, pipeline), pipeline);
+            }
 
             // Get outside data
             JObject Global = JObject.Parse(GetGlobal());
@@ -152,14 +161,6 @@ namespace Pigmeat.Core
             var template = Template.ParseLiquid(PageContents);
             PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat }); // Render with Scriban
 
-            if(RenderHTML)
-            {
-                // Turn Markdown into HTML
-                var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
-                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-                var pipeline = builder.Build();
-                PageContents = Markdown.ToHtml(PageContents, pipeline);
-            }
             return PageContents;
         }
 
@@ -175,6 +176,14 @@ namespace Pigmeat.Core
         public static void RenderPage(JObject PageObject, string Collection, string FilePath, Boolean RenderHTML)
         {
             string PageContents = PageObject["content"].ToString();
+            if(RenderHTML)
+            {
+                // Turn Markdown into HTML
+                var builder = new MarkdownPipelineBuilder().UsePipeTables().UseEmphasisExtras().UseAutoLinks().UseTaskLists().UseListExtras().UseMediaLinks().UseMathematics().UseDiagrams();
+                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                var pipeline = builder.Build();
+                PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { ExpandAutoLinks = true }, pipeline), pipeline);
+            }
             
             // Get outside data
             JObject Global = JObject.Parse(GetGlobal());
@@ -192,15 +201,6 @@ namespace Pigmeat.Core
             PageContents = Include.Parse(PageContents, PageObject); // Parse for includes
             var template = Template.ParseLiquid(PageContents);
             PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat });
-
-            if(RenderHTML)
-            {
-                // Turn Markdown into HTML
-                var builder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
-                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-                var pipeline = builder.Build();
-                PageContents = Markdown.ToHtml(PageContents, pipeline);
-            }
 
             Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
             File.WriteAllText("./output/" + PageObject["url"].ToString(), PageContents);
