@@ -124,112 +124,85 @@ namespace Pigmeat
         }
         static void Build()
         {
+            int i = 0;
             JObject Global = JObject.Parse(IO.GetGlobal());
-            string[] IncludedFiles = JsonConvert.DeserializeObject<string[]>(Global["include"].ToString());
-            string[] IncludedFilesHTML = JsonConvert.DeserializeObject<string[]>(Global["include-html"].ToString());
-            string[] IncludedFilesRaw = JsonConvert.DeserializeObject<string[]>(Global["include-raw"].ToString());
-            for(int i = 0; i < 2; i++)
+            string[] IncludedFiles = JsonConvert.DeserializeObject<string[]>(Global["included-files"].ToString());
+            string[] IncludedPages = JsonConvert.DeserializeObject<string[]>(Global["included-pages"].ToString());
+            //string[] IncludedFilesRaw = JsonConvert.DeserializeObject<string[]>(Global["include-raw"].ToString());
+            foreach(var layout in Directory.GetFiles("./layouts", "*", SearchOption.TopDirectoryOnly))
             {
-                foreach(var directory in Directory.GetDirectories("./", "_*", SearchOption.TopDirectoryOnly))
+                IO.GetLayoutContents(layout);
+            }
+            foreach(var directory in Directory.GetDirectories("./", "_*", SearchOption.TopDirectoryOnly))
+            {
+                foreach(var file in Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly))
                 {
-                    foreach(var file in Directory.GetFiles(directory, "*", SearchOption.AllDirectories))
+                    if(Path.GetExtension(file).Equals(".md") || Path.GetExtension(file).Equals(".html"))
                     {
-                        if(Path.GetExtension(file).Equals(".md") || Path.GetExtension(file).Equals(".html"))
-                        {
-                            JObject PageObject = Page.GetPageObject(file, true);
-                            IO.RenderPage(PageObject, directory.Substring(3), file, true);
-                            if(i == 1)
-                            {
-                                Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
-                            }
-                        }
-                        else if(Path.GetExtension(file).Equals(".scss") || Path.GetExtension(file).Equals(".sass"))
-                        {
-                            Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
-                            File.WriteAllText("./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css", Scss.ConvertToCss(File.ReadAllText(file)).Css);
-                            if(i == 1)
-                            {
-                                Console.WriteLine(file + " → " + "./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css");
-                            }
-                        }
-                        else if(!Path.GetExtension(file).Equals(".json") && !Path.GetExtension(file).Equals(".yml"))
-                        {
-                            Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
-                            File.Copy(file, "./output/" + file, true);
-                            if(i == 1)
-                            {
-                                Console.WriteLine(file + " → " + "./output/" + file);
-                            }
-                        }
+                        JObject PageObject = Page.GetPageObject(file);
+                        Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
+                        //File.WriteAllText("./output/" + PageObject["url"].ToString(), IO.RenderPage(PageObject, directory.Substring(3)));
+                        File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
+                        //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
+                        i++;
                     }
-                }
-                try
-                {
-                    foreach(var file in IncludedFiles)
+                    else if(Path.GetExtension(file).Equals(".scss") || Path.GetExtension(file).Equals(".sass"))
                     {
                         Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
-                        try
-                        {
-                            File.Copy(file, "./output/" + file, true);
-                        }
-                        catch(IOException)
-                        {
-                            IO.IncludeDirectory(file, "./output/" + file);
-                            Console.WriteLine(file + " → " + "./output/" + file);
-                        }
-                        if(i == 1)
-                        {
-                            Console.WriteLine(file + " → " + "./output/" + file);
-                        }
+                        File.WriteAllText("./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css", Scss.ConvertToCss(File.ReadAllText(file)).Css);
+                        //Console.WriteLine(file + " → " + "./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css");
+                        i++;
                     }
-                }
-                catch(Exception e)
-                {
-                    if(i == 1)
+                    else if(!Path.GetExtension(file).Equals(".json") && !Path.GetExtension(file).Equals(".yml"))
                     {
-                        Console.WriteLine(e);
+                        Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
+                        File.Copy(file, "./output/" + file, true);
+                        //Console.WriteLine(file + " → " + "./output/" + file);
+                        i++;
                     }
                 }
-                try
-                {
-                    foreach(var file in IncludedFilesRaw)
-                    {
-                        JObject PageObject = Page.GetPageObject(file, false);
-                        IO.RenderPage(PageObject, "", file, false);
-                        if(i == 1)
-                        {
-                            Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
-                        }
-                    }
-                }
-                catch(Exception e)
-                {
-                    if(i == 1)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-                try
-                {
-                    foreach(var file in IncludedFilesHTML)
-                    {
-                        JObject PageObject = Page.GetPageObject(file, true);
-                        IO.RenderPage(PageObject, "", file, true);
-                        if(i == 1)
-                        {
-                            Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
-                        }
-                    }
-                }
-                catch(Exception e)
-                {
-                    if(i == 1)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-                IO.CleanCollections();
             }
+            try
+            {
+                foreach(var file in IncludedFiles)
+                {
+                    Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
+                    try
+                    {
+                        File.Copy(file, "./output/" + file, true);
+                    }
+                    catch(IOException)
+                    {
+                        IO.IncludeDirectory(file, "./output/" + file);
+                        //Console.WriteLine(file + " → " + "./output/" + file);
+                        i++;
+                    }
+                    //Console.WriteLine(file + " → " + "./output/" + file);
+                    i++;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            try
+            {
+                foreach(var file in IncludedPages)
+                {
+                    JObject PageObject = Page.GetPageObject(file);
+                    Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
+                    //File.WriteAllText("./output/" + PageObject["url"].ToString(), IO.RenderPage(PageObject, ""));
+                    File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
+                    //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
+                    i++;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            Console.WriteLine(i + " documents processed.");
+            IO.CleanCollections();
         }
 
         static void New()

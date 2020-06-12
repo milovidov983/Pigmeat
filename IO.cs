@@ -31,7 +31,8 @@ namespace Pigmeat.Core
 {
     class IO
     {
-        static string release = typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        static string Release = typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        public static Dictionary<string, string> Layouts = new Dictionary<string, string>();
 
         /// <summary>
         /// Convert YAML data into JObject
@@ -71,12 +72,12 @@ namespace Pigmeat.Core
         /// </returns>
         public static JObject GetPigmeat()
         {
-            return JObject.Parse(JsonConvert.SerializeObject(new { version = release, time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") }));
+            return JObject.Parse(JsonConvert.SerializeObject(new { version = Release, time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") }));
         }
 
         /// <summary>
         /// Adds <c>JObject</c> representations of pages in a collection to the collection's <c>entries</c> field in its <c>collection.json</c> file
-        /// <para> See <see cref="IO.RenderPage(JObject, string, string, Boolean)"/> </para>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, Boolean)"/> </para>
         /// </summary>
         /// <param name="Collection">The name of the collection the page is in</param>
         /// <param name="Entry">The <c>JObject</c> form of the page</param>
@@ -129,10 +130,9 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Create a <c>JObject</c> to merge with the <c>Global</c> context containing each collection's <c>collection.json</c> data
-        /// <para> See <see cref="IO.RenderRaw(JObject, Boolean)"/></para>
-        /// <seealso cref="IO.RenderPage(JObject, string, string, Boolean)"/>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, Boolean)"/></para>
         /// <seealso cref="Include.Render(string, JObject)"/>
-        /// <seealso cref="Page.GetPageObject(string, Boolean)"/>
+        /// <seealso cref="Page.GetPageObject(string)"/>
         /// </summary>
         /// <returns>
         /// A <c>JObject</c> containing collections as keys and their data as values
@@ -148,59 +148,21 @@ namespace Pigmeat.Core
         }
 
         /// <summary>
-        /// Render with Scriban and Markdig
-        /// </summary>
-        /// <returns>
-        /// Rendered form of given file
-        /// </returns>
-        /// <param name="PageObject">A <c>JObject</c> representing the file</param>
-        /// <param name="RenderHTML">Whether or not to run it through Markdig</param>
-        public static string RenderRaw(JObject PageObject, Boolean RenderHTML)
-        {
-            string PageContents = PageObject["content"].ToString();
-            if(RenderHTML)
-            {
-                // Turn Markdown into HTML
-                var builder = new MarkdownPipelineBuilder().UsePipeTables().UseEmphasisExtras().UseAutoLinks().UseTaskLists().UseListExtras().UseMediaLinks().UseMathematics().UseDiagrams();
-                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-                var pipeline = builder.Build();
-                PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { ExpandAutoLinks = true }, pipeline), pipeline);
-            }
-
-            // Get outside data
-            JObject Global = JObject.Parse(GetGlobal());
-            Global.Merge(JObject.Parse(GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-            JObject Pigmeat = GetPigmeat();
-
-            // Parse for includes
-            PageContents = Include.Parse(PageContents, PageObject);
-
-            var template = Template.ParseLiquid(PageContents);
-            PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat }); // Render with Scriban
-
-            return PageContents;
-        }
-
-        /// <summary>
         /// Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban
         /// </summary>
         /// <param name="PageObject">The <c>JObject</c> representing the page being rendered</param>
         /// <param name="Collection">The name of the collection the page is in</param>
-        /// <param name="FilePath">The path of the page</param>
-        /// <param name="RenderHTML">Whether or not to run it through Markdig</param>
+        /// <param name="RenderWithLayout">Whether or not to render it within its layout (for creating <c>{{ page.content }}</c>)</param>
         /// <para> See <see cref="IO.AppendEntry(string, JObject)"/> </para>
         /// <seealso cref="IO.GetCollections"/>
-        public static void RenderPage(JObject PageObject, string Collection, string FilePath, Boolean RenderHTML)
+        public static string RenderPage(JObject PageObject, string Collection, Boolean RenderWithLayout)
         {
             string PageContents = PageObject["content"].ToString();
-            if(RenderHTML)
-            {
-                // Turn Markdown into HTML
-                var builder = new MarkdownPipelineBuilder().UsePipeTables().UseEmphasisExtras().UseAutoLinks().UseTaskLists().UseListExtras().UseMediaLinks().UseMathematics().UseDiagrams();
-                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-                var pipeline = builder.Build();
-                PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { ExpandAutoLinks = true }, pipeline), pipeline);
-            }
+            // Turn Markdown into HTML
+            var builder = new MarkdownPipelineBuilder().UsePipeTables().UseEmphasisExtras().UseAutoLinks().UseTaskLists().UseListExtras().UseMediaLinks().UseMathematics().UseDiagrams();
+            builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+            var pipeline = builder.Build();
+            PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { ExpandAutoLinks = true }, pipeline), pipeline);
             
             // Get outside data
             JObject Global = JObject.Parse(GetGlobal());
@@ -208,10 +170,10 @@ namespace Pigmeat.Core
             JObject Pigmeat = GetPigmeat();
 
             // If a page has a layout, use it
-            if(PageObject.ContainsKey("layout"))
+            if(PageObject.ContainsKey("layout") && RenderWithLayout)
             {
-                string OldPageContents = PageContents;
-                PageContents = GetLayoutContents("./layouts/" + PageObject["layout"].ToString() + ".html", FilePath).Replace("{{ content }}", PageContents);
+                //PageContents = GetLayoutContents("./layouts/" + PageObject["layout"].ToString() + ".html", FilePath).Replace("{{ content }}", PageContents);
+                PageContents = Layouts[PageObject["layout"].ToString()].Replace("{{ content }}", PageContents);
             }
 
             //Render with Scriban
@@ -219,12 +181,12 @@ namespace Pigmeat.Core
             var template = Template.ParseLiquid(PageContents);
             PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat });
 
-            Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
-            File.WriteAllText("./output/" + PageObject["url"].ToString(), PageContents);
             if(!string.IsNullOrEmpty(Collection))
             {
+                PageObject["content"] = RenderPage(PageObject, "", false); // TODO: Figure out a way not to have to do this. Inefficient!
                 IO.AppendEntry(Collection, PageObject);
             }
+            return PageContents;
         }
 
         /// <summary>
@@ -234,21 +196,28 @@ namespace Pigmeat.Core
         /// The contents of the <c>Layout</c> given
         /// </returns>
         /// <param name="LayoutPath">The path to the <c>Layout</c></param>
-        /// <param name="FilePath">The path to the file requesting this <c>Layout</c></param>
-        /// <para>See <see cref="IO.RenderPage(JObject, string, string, Boolean)"/> </para>
-        static string GetLayoutContents(string LayoutPath, string FilePath)
+        /// <para>See <see cref="IO.RenderPage(JObject, string, Boolean)"/> </para>
+        public static string GetLayoutContents(string LayoutPath)
         {
             string PageFrontmatter = Page.GetFrontmatter(LayoutPath);
             string LayoutContents = File.ReadAllText(LayoutPath).Replace(PageFrontmatter + "---", "");
             try
             {
                 string SubLayout = IO.GetYamlObject(PageFrontmatter)["layout"].ToString();
-                string SubLayoutPath = "./layouts/" + SubLayout + ".html";
-                LayoutContents = GetLayoutContents(SubLayoutPath, FilePath).Replace("{{ content }}", LayoutContents);
+                if(!Layouts.ContainsKey(SubLayout))
+                {
+                    LayoutContents = GetLayoutContents("./layouts/" + SubLayout + ".html").Replace("{{ content }}", LayoutContents);
+                }
+                else
+                {
+                    LayoutContents = Layouts[SubLayout].Replace("{{ content }}", LayoutContents);
+                }
+                Layouts.Add(Path.GetFileNameWithoutExtension(LayoutPath), LayoutContents);
                 return LayoutContents;
             }
             catch(Exception)
             {
+                Layouts.Add(Path.GetFileNameWithoutExtension(LayoutPath), LayoutContents);
                 return LayoutContents;
             }
         }
