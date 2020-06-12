@@ -90,28 +90,54 @@ namespace Pigmeat.Core
             page.minute = page.date.ToString("mm");
             page.second = page.date.ToString("ss");
 
-            JObject EarlyPageObject = JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None));
-            EarlyPageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-            page.url = GetPermalink(EarlyPageObject); // Generate output path based on other variables
+            JObject PageObject = JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None));
+            PageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            
+            // Get URL from collected page data, merge back into JObject
+            page.url = GetPermalink(PageObject); // Generate output path based on other variables
+            PageObject.Merge(JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+
             try
             {
                 string DirectoryName = Path.GetDirectoryName(PagePath);
                 if(!DirectoryName.Equals(".") && DirectoryName.Substring(0, 3).Equals("./_"))
                 {
-                    page.content = IO.RenderPage(EarlyPageObject, DirectoryName.Substring(3), true);
+                    if(Path.GetExtension(PagePath).Equals(".md"))
+                    {
+                        page.content = IO.RenderPage(PageObject, DirectoryName.Substring(3), true, true);
+                    }
+                    else
+                    {
+                        page.content = IO.RenderPage(PageObject, DirectoryName.Substring(3), true, false);
+                    }
                 }
                 else
                 {
-                    page.content = IO.RenderPage(EarlyPageObject, "", true);
+                    if(Path.GetExtension(PagePath).Equals(".md"))
+                    {
+                        page.content = IO.RenderPage(PageObject, "", true, true);
+                    }
+                    else
+                    {
+                        page.content = IO.RenderPage(PageObject, "", true, false);
+                    }
                 }
             }
-            catch(ArgumentOutOfRangeException)
+            catch(ArgumentOutOfRangeException) // If not in root, but not in a collection
             {
-                page.content = IO.RenderPage(EarlyPageObject, "", true);
+                if(Path.GetExtension(PagePath).Equals(".md"))
+                {
+                    page.content = IO.RenderPage(PageObject, "", true, true);
+                }
+                else
+                {
+                    page.content = IO.RenderPage(PageObject, "", true, false);
+                }
             }
+
+            // Merge content back into JObject
+            PageObject.Merge(JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             
-            JObject PageObject = JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None));
-            PageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             return PageObject; // Return JObject of page
         }
         
@@ -173,7 +199,7 @@ namespace Pigmeat.Core
                 Permalink = "/{{ page.collection }}/{{ page.title }}.html";
             }
             var template = Template.ParseLiquid(Permalink);
-            return template.Render(new { page = PageObject, global =  IO.GetGlobal()});
+            return template.Render(new { page = PageObject, global = IO.GetGlobal()});
         }
         static string GetDayOfYear(DateTime date)
         {

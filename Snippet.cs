@@ -25,28 +25,28 @@ using Scriban;
 namespace Pigmeat.Core
 {
     /// <summary>
-    /// The <c>Include</c> class.
-    /// Contains all methods related to handling <c>{! inc !}</c> calls.
+    /// The <c>Snippet</c> class.
+    /// Contains all methods related to handling <c>{! snippet !}</c> calls.
     /// </summary>
-    class Include
+    class Snippet
     {
         public string Input { get; set; }
         public Dictionary<string, string> Variables { get; set; }
 
         /// <summary>
-        /// Parses through each <c>{! inc !}</c> call in a page and evaluates them
-        /// <para>See <see cref="Include.Render(string, JObject)"/></para>
+        /// Parses through each <c>{! snippet !}</c> call in a page and evaluates them
+        /// <para>See <see cref="Snippet.Render(string, JObject)"/></para>
         /// </summary>
         /// <returns>
-        /// Contents of a page with <c>Include</c>s evaluated
+        /// Contents of a page with <c>Snippet</c>s evaluated
         /// </returns>
         /// <param name="Contents">A <c>string</c> containing the contents of the page being parsed</param>
         /// <param name="PageObject">A <c>JObject</c> representing the page being parsed</param>
         public static string Parse(string Contents, JObject PageObject)
         {
-            if(Contents.Contains("{! inc "))
+            if(Contents.Contains("{! snippet "))
             {
-                List<string> IncludeCalls = new List<string>();
+                List<string> SnippetCalls = new List<string>();
                 string ReaderString = "";
                 Boolean HitFirstBrace = false;
                 foreach(var character in Contents)
@@ -61,9 +61,9 @@ namespace Pigmeat.Core
                     {
                         HitFirstBrace = false;
                         ReaderString += character;
-                        if(ReaderString.Contains("{! inc "))
+                        if(ReaderString.Contains("{! snippet "))
                         {
-                            IncludeCalls.Add(ReaderString);
+                            SnippetCalls.Add(ReaderString);
                         }
                         ReaderString = "";
                         continue;
@@ -74,25 +74,25 @@ namespace Pigmeat.Core
                         continue;
                     }
                 }
-                foreach(var includeCall in IncludeCalls)
+                foreach(var snippetCall in SnippetCalls)
                 {
-                    Include CurrentInclude = new Include { Input = includeCall };
-                    string IncludePath = "./includes/" + CurrentInclude.GetArguments()[2];
-                    Contents = Contents.Replace(includeCall, CurrentInclude.Render(IncludePath, PageObject));
+                    Snippet CurrentSnippet = new Snippet { Input = snippetCall };
+                    string SnippetPath = "./snippets/" + CurrentSnippet.GetArguments()[2];
+                    Contents = Contents.Replace(snippetCall, CurrentSnippet.Render(SnippetPath, PageObject));
                 }
             }
             return Contents;
         }
 
         /// <summary>
-        /// Renders <c>Include</c>s
+        /// Renders <c>Snippet</c>s
         /// </summary>
         /// <returns>
-        /// The evaluated <c>Include</c>
+        /// The evaluated <c>Snippet</c>
         /// </returns>
-        /// <param name="IncludePath">The path to the <c>Include</c> being rendered</param>
+        /// <param name="SnippetPath">The path to the <c>Snippet</c> being rendered</param>
         /// <param name="PageObject">A <c>JObject</c> representing the page being parsed</param>
-        string Render(string IncludePath, JObject PageObject)
+        string Render(string SnippetPath, JObject PageObject)
         {
             // Get outside data
             JObject Global = JObject.Parse(IO.GetGlobal());
@@ -100,16 +100,16 @@ namespace Pigmeat.Core
             JObject Pigmeat = IO.GetPigmeat();
 
             SetVariables();
-            JObject IncludeObject = JObject.Parse(JsonConvert.SerializeObject(Variables));
-            var template = Template.ParseLiquid(File.ReadAllText(IncludePath));
-            return template.Render(new { include = IncludeObject, page = PageObject, global = Global, pigmeat = Pigmeat });
+            JObject SnippetObject = JObject.Parse(JsonConvert.SerializeObject(Variables));
+            var template = Template.ParseLiquid(File.ReadAllText(SnippetPath));
+            return template.Render(new { snippet = SnippetObject, page = PageObject, global = Global, pigmeat = Pigmeat });
         }
 
         /// <summary>
-        /// Gets the arguments given in the <c>Include</c> call, to be parsed through later
+        /// Gets the arguments given in the <c>Snippet</c> call, to be parsed through later
         /// </summary>
         /// <returns>
-        /// Array of <c>string</c>s containing <c>Include</c> arguments
+        /// Array of <c>string</c>s containing <c>Snippet</c> arguments
         /// </returns>
         string[] GetArguments()
         {
@@ -133,7 +133,7 @@ namespace Pigmeat.Core
         }
 
         /// <summary>
-        /// Combines data from <see cref="Include.GetKeys()"/> and <see cref="Include.GetValues()"/>
+        /// Combines data from <see cref="Snippet.GetKeys()"/> and <see cref="Snippet.GetValues()"/>
         /// </summary>
         void SetVariables()
         {
@@ -146,8 +146,8 @@ namespace Pigmeat.Core
         }
 
         /// <summary>
-        /// Gets values of given arguments/variables when the <c>Include</c> was called
-        /// <para> See <see cref="Include.GetKeys()"/> </para>
+        /// Gets values of given arguments/variables when the <c>Snippet</c> was called
+        /// <para> See <see cref="Snippet.GetKeys()"/> </para>
         /// </summary>
         /// <returns>
         /// Array of <c>string</c>s containing values of given arguments
@@ -193,8 +193,8 @@ namespace Pigmeat.Core
         }
         
         /// <summary>
-        /// Gets the keys (names of variables) given when the Include was called
-        /// <para> See <see cref="Include.GetValues()"/> </para>
+        /// Gets the keys (names of variables) given when the Snippet was called
+        /// <para> See <see cref="Snippet.GetValues()"/> </para>
         /// </summary>
         /// <returns>
         /// Array of <c>string</c>s containing names of given arguments

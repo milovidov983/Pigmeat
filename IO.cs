@@ -77,7 +77,7 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Adds <c>JObject</c> representations of pages in a collection to the collection's <c>entries</c> field in its <c>collection.json</c> file
-        /// <para> See <see cref="IO.RenderPage(JObject, string, Boolean)"/> </para>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, Boolean, Boolean)"/> </para>
         /// </summary>
         /// <param name="Collection">The name of the collection the page is in</param>
         /// <param name="Entry">The <c>JObject</c> form of the page</param>
@@ -130,8 +130,8 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Create a <c>JObject</c> to merge with the <c>Global</c> context containing each collection's <c>collection.json</c> data
-        /// <para> See <see cref="IO.RenderPage(JObject, string, Boolean)"/></para>
-        /// <seealso cref="Include.Render(string, JObject)"/>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, Boolean, Boolean)"/></para>
+        /// <seealso cref="Snippet.Render(string, JObject)"/>
         /// <seealso cref="Page.GetPageObject(string)"/>
         /// </summary>
         /// <returns>
@@ -153,16 +153,20 @@ namespace Pigmeat.Core
         /// <param name="PageObject">The <c>JObject</c> representing the page being rendered</param>
         /// <param name="Collection">The name of the collection the page is in</param>
         /// <param name="RenderWithLayout">Whether or not to render it within its layout (for creating <c>{{ page.content }}</c>)</param>
+        /// <param name="isMarkdown">If the document being rendered is a Markdown file</param>
         /// <para> See <see cref="IO.AppendEntry(string, JObject)"/> </para>
         /// <seealso cref="IO.GetCollections"/>
-        public static string RenderPage(JObject PageObject, string Collection, Boolean RenderWithLayout)
+        public static string RenderPage(JObject PageObject, string Collection, bool RenderWithLayout, bool isMarkdown)
         {
             string PageContents = PageObject["content"].ToString();
-            // Turn Markdown into HTML
-            var builder = new MarkdownPipelineBuilder().UsePipeTables().UseEmphasisExtras().UseAutoLinks().UseTaskLists().UseListExtras().UseMediaLinks().UseMathematics().UseDiagrams();
-            builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
-            var pipeline = builder.Build();
-            PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { ExpandAutoLinks = true }, pipeline), pipeline);
+            if(isMarkdown)
+            {
+                // Turn Markdown into HTML
+                var builder = new MarkdownPipelineBuilder().UsePipeTables().UseEmphasisExtras().UseAutoLinks().UseTaskLists().UseListExtras().UseMediaLinks().UseMathematics().UseDiagrams();
+                builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
+                var pipeline = builder.Build();
+                PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { ExpandAutoLinks = true }, pipeline), pipeline);
+            }
             
             // Get outside data
             JObject Global = JObject.Parse(GetGlobal());
@@ -172,18 +176,17 @@ namespace Pigmeat.Core
             // If a page has a layout, use it
             if(PageObject.ContainsKey("layout") && RenderWithLayout)
             {
-                //PageContents = GetLayoutContents("./layouts/" + PageObject["layout"].ToString() + ".html", FilePath).Replace("{{ content }}", PageContents);
                 PageContents = Layouts[PageObject["layout"].ToString()].Replace("{{ content }}", PageContents);
             }
 
-            //Render with Scriban
-            PageContents = Include.Parse(PageContents, PageObject); // Parse for includes
+            // Render with Scriban
+            PageContents = Snippet.Parse(PageContents, PageObject); // Parse for snippets
             var template = Template.ParseLiquid(PageContents);
             PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat });
 
             if(!string.IsNullOrEmpty(Collection))
             {
-                PageObject["content"] = RenderPage(PageObject, "", false); // TODO: Figure out a way not to have to do this. Inefficient!
+                PageObject["content"] = RenderPage(PageObject, "", false, isMarkdown); // TODO: Figure out a way not to have to do this. Inefficient!
                 IO.AppendEntry(Collection, PageObject);
             }
             return PageContents;
@@ -196,7 +199,7 @@ namespace Pigmeat.Core
         /// The contents of the <c>Layout</c> given
         /// </returns>
         /// <param name="LayoutPath">The path to the <c>Layout</c></param>
-        /// <para>See <see cref="IO.RenderPage(JObject, string, Boolean)"/> </para>
+        /// <para>See <see cref="IO.RenderPage(JObject, string, Boolean, Boolean)"/> </para>
         public static string GetLayoutContents(string LayoutPath)
         {
             string PageFrontmatter = Page.GetFrontmatter(LayoutPath);
