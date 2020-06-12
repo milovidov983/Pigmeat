@@ -201,6 +201,7 @@ namespace Pigmeat.Core
         {
             string PageFrontmatter = Page.GetFrontmatter(LayoutPath);
             string LayoutContents = File.ReadAllText(LayoutPath).Replace(PageFrontmatter + "---", "");
+            string Layout = Path.GetFileNameWithoutExtension(LayoutPath);
             try
             {
                 string SubLayout = IO.GetYamlObject(PageFrontmatter)["layout"].ToString();
@@ -212,12 +213,18 @@ namespace Pigmeat.Core
                 {
                     LayoutContents = Layouts[SubLayout].Replace("{{ content }}", LayoutContents);
                 }
-                Layouts.Add(Path.GetFileNameWithoutExtension(LayoutPath), LayoutContents);
+                if(!Layouts.ContainsKey(Layout)) // Some systems may process layout files in an order which will cause an exception
+                {
+                    Layouts.Add(Layout, LayoutContents);
+                }
                 return LayoutContents;
             }
             catch(Exception)
             {
-                Layouts.Add(Path.GetFileNameWithoutExtension(LayoutPath), LayoutContents);
+                if(!Layouts.ContainsKey(Layout)) // See above
+                {
+                    Layouts.Add(Layout, LayoutContents);
+                }
                 return LayoutContents;
             }
         }
