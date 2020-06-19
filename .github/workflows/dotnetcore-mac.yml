@@ -12,7 +12,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.300
+        dotnet-version: 3.1.301
     - name: Build with dotnet
       run: |
         dotnet build --configuration Release --runtime osx-x64
@@ -22,4 +22,4 @@ jobs:
         # Artifact name
         name: pigmeat.mac
         # Directory containing files to upload
-        path: ./src/bin/Release/netcoreapp3.1/osx-x64
+        path: ./bin/Release/netcoreapp3.1/osx-x64

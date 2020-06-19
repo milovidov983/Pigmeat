@@ -35,7 +35,7 @@ namespace Pigmeat.Core
     /// </summary>
     class IO
     {
-        static string Release = typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        static string Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
         public static Dictionary<string, string> Layouts = new Dictionary<string, string>();
         public static bool Serving = false; // If tool is building multiple times, then we know it's serving
 

@@ -5,25 +5,27 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageIcon>128x128.png</PackageIcon>
     <ApplicationIcon>..//branding/Yellow/Pigmeat Yellow Square.ico</ApplicationIcon>
-    <PackageId>Pigmeat</PackageId>
-    <Version>2.1.0</Version>
+    <PackageId>Pigmeat.Core</PackageId>
+    <Version>2.1.1</Version>
     <Authors>Emil Sayahi</Authors>
-    <Product>Pigmeat</Product>
+    <Product>Pigmeat.Core</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-    <Description>A static content publishing tool for the modern web.</Description>
+    <Description>A static content publishing library for the modern web.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/MadeByEmil/Pigmeat</RepositoryUrl>
-    <PackAsTool>true</PackAsTool>
-    <ToolCommandName>pigmeat</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    <SelfContained>false</SelfContained>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="pigmeat.core.csproj" />
     <PackageReference Include="CS-Script.Core" Version="1.3.1" />
+    <PackageReference Include="Markdig" Version="0.20.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Packaging.Targets" Version="0.1.56" />
+    <PackageReference Include="Scriban" Version="2.1.3" />
     <PackageReference Include="SharpScss" Version="1.5.0" />
+    <PackageReference Include="YamlDotNet" Version="8.1.2" />
     <None Include="../branding/Yellow/128x128.png" Pack="true" PackagePath="" />
     <None Include="COPYING" Pack="true" PackagePath="" />
     <None Include="NOTICE.md" Pack="true" PackagePath="" />

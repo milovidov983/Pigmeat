@@ -12,16 +12,16 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.300
+        dotnet-version: 3.1.301
     - name: Build with dotnet
       run: |
         dotnet tool install --global dotnet-rpm
         dotnet rpm install
         dotnet restore
-        dotnet build src/pigmeat.csproj /t:CreateRpm --configuration Release
-        mv ./src/bin/Release/netcoreapp3.1/pigmeat.*.rpm ./src/bin/Release/netcoreapp3.1/pigmeat.rpm
+        dotnet build pigmeat.csproj /t:CreateRpm --configuration Release
+        mv ./bin/Release/netcoreapp3.1/pigmeat.*.rpm ./bin/Release/netcoreapp3.1/pigmeat.rpm
     - name: Upload artifact
       uses: actions/upload-artifact@v2-preview
       with:
         name: pigmeat.rpm
-        path: ./src/bin/Release/netcoreapp3.1/pigmeat.rpm
+        path: ./bin/Release/netcoreapp3.1/pigmeat.rpm
