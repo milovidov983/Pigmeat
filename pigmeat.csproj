@@ -6,7 +6,7 @@
     <PackageIcon>128x128.png</PackageIcon>
     <ApplicationIcon>branding/Yellow/Pigmeat Yellow Square.ico</ApplicationIcon>
     <PackageId>Pigmeat</PackageId>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
     <Authors>Emil Sayahi</Authors>
     <Product>Pigmeat</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
@@ -16,9 +16,6 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>pigmeat</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
-    <PublishTrimmed>true</PublishTrimmed>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
