@@ -22,4 +22,4 @@ jobs:
         # Artifact name
         name: pigmeat.mac
         # Directory containing files to upload
-        path: ./bin/Release/netcoreapp3.1/osx-x64
+        path: ./src/bin/Release/netcoreapp3.1/osx-x64

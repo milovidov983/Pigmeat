@@ -18,10 +18,10 @@ jobs:
         dotnet tool install --global dotnet-rpm
         dotnet rpm install
         dotnet restore
-        dotnet rpm --configuration Release --no-restore
-        mv ./bin/Release/netcoreapp3.1/pigmeat.*.rpm ./bin/Release/netcoreapp3.1/pigmeat.rpm
+        dotnet build src/pigmeat.csproj /t:CreateRPM --configuration Release
+        mv ./src/bin/Release/netcoreapp3.1/pigmeat.*.rpm ./src/bin/Release/netcoreapp3.1/pigmeat.rpm
     - name: Upload artifact
       uses: actions/upload-artifact@v2-preview
       with:
         name: pigmeat.rpm
-        path: ./bin/Release/netcoreapp3.1/pigmeat.rpm
+        path: ./src/bin/Release/netcoreapp3.1/pigmeat.rpm

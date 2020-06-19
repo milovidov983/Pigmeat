@@ -22,4 +22,4 @@ jobs:
         # Artifact name
         name: pigmeat.win
         # Directory containing files to upload
-        path: ./bin/Release/netcoreapp3.1/win-x64
+        path: ./src/bin/Release/netcoreapp3.1/win-x64
