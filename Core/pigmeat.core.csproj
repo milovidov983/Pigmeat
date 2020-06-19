@@ -27,8 +27,8 @@
     <PackageReference Include="SharpScss" Version="1.5.0" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
     <None Include="../branding/Yellow/128x128.png" Pack="true" PackagePath="" />
-    <None Include="COPYING" Pack="true" PackagePath="" />
-    <None Include="NOTICE.md" Pack="true" PackagePath="" />
+    <None Include="../COPYING" Pack="true" PackagePath="" />
+    <None Include="../NOTICE.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
