@@ -1,0 +1,27 @@
+digraph "Pigmeat.Core.IO.GetPigmeat"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node49 [label="Pigmeat.Core.IO.GetPigmeat",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node49 -> Node50 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node50 [label="Pigmeat.Core.Snippet.Render",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_snippet.html#af0fb8ee7a3dc0364d48433d429da920a",tooltip="Renders Snippets "];
+  Node50 -> Node51 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node51 [label="Pigmeat.Core.Snippet.Parse",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_snippet.html#a54ea5e1d3a8cd6308a1b1c9f01457146",tooltip="Parses through each {! snippet !} call in a page and evaluates them "];
+  Node51 -> Node52 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node52 [label="Pigmeat.Core.IO.RenderPage",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a000f595801bec338426974328b938e6c",tooltip="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ..."];
+  Node52 -> Node53 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node53 [label="Pigmeat.Core.Page.GetPage\lObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d",tooltip="Parses a given page into a JObject "];
+  Node53 -> Node54 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node54 [label="Pigmeat.Program.Build",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a878beaee804aea5645618e59b1a6d250",tooltip="The standard Pigmeat build process "];
+  Node54 -> Node55 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node55 [label="Pigmeat.Program.GetCommand",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a813269f3c9466bddfa561c72eb56de4f",tooltip="Perform actions specified by command calls "];
+  Node55 -> Node56 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node56 [label="Pigmeat.Program.Main",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a3b898a93d66f23079be04ac657013df3",tooltip="Handle primary tool information, such as command inputs and current directory "];
+  Node54 -> Node57 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node57 [label="Pigmeat.Program.ServeWatch",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a7fbef86d893429923099420b3748b826",tooltip="Watch the file system for changes (initial component of the serve command) "];
+  Node57 -> Node55 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node53 -> Node58 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node58 [label="Pigmeat.Program.ServeBuild",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a196f0e133927e9c381295c4915ebdfb2",tooltip="Rebuild changed files (final component of the serve command) "];
+  Node58 -> Node57 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}
