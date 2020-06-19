@@ -14,7 +14,7 @@
 
 * Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
 
-* Before submitting, please read the [contribution guidelines](https://github.com/MadeByEmil/Pigmeat/blob/master/CONTRIBUTING.md).
+* Before submitting, please read the [code of conduct](https://github.com/MadeByEmil/Pigmeat/blob/master/CODE_OF_CONDUCT.md).
 
 #### **Did you fix whitespace, format code, or make a purely cosmetic patch?**
 

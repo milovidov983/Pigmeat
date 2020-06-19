@@ -25,6 +25,10 @@ using Scriban;
 
 namespace Pigmeat.Core
 {
+    /// <summary>
+    /// The <c>Page</c> class.
+    /// Contains all methods related to handling <c>Page</c> objects.
+    /// </summary>
     class Page
     {
         public string year { get; set; }
@@ -72,23 +76,23 @@ namespace Pigmeat.Core
             JObject GlobalObject = JObject.Parse(IO.GetGlobal());
             GlobalObject.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             CultureInfo Culture = new CultureInfo(GlobalObject["culture"].ToString()); // Get 'culture' from Global
-            page.year = page.date.ToString("yyyy");
-            page.short_year = page.date.ToString("y");
-            page.month = page.date.ToString("MM");
-            page.i_month = page.date.ToString("M");
-            page.short_month = page.date.ToString("MMM");
-            page.long_month = page.date.ToString("MMMM");
-            page.day = page.date.ToString("dd");
-            page.i_day = page.date.ToString("d");
-            page.y_day = GetDayOfYear(page.date);
-            page.week = Culture.Calendar.GetWeekOfYear(page.date, Culture.DateTimeFormat.CalendarWeekRule, Culture.DateTimeFormat.FirstDayOfWeek).ToString();
+            page.year = page.date.ToString("yyyy", Culture);
+            page.short_year = page.date.ToString("y", Culture);
+            page.month = page.date.ToString("MM", Culture);
+            page.i_month = page.date.ToString("M", Culture);
+            page.short_month = page.date.ToString("MMM", Culture);
+            page.long_month = page.date.ToString("MMMM", Culture);
+            page.day = page.date.ToString("dd", Culture);
+            page.i_day = page.date.ToString("d", Culture);
+            page.y_day = GetDayOfYear(page.date, Culture);
+            page.week = Culture.Calendar.GetWeekOfYear(page.date, Culture.DateTimeFormat.CalendarWeekRule, Culture.DateTimeFormat.FirstDayOfWeek).ToString(Culture);
             page.w_day = (int) Culture.Calendar.GetDayOfWeek(page.date);
             page.w_year = ISOWeek.GetYear(page.date);
-            page.short_day = Culture.Calendar.GetDayOfWeek(page.date).ToString().Substring(0, 2);
-            page.long_day = Culture.Calendar.GetDayOfWeek(page.date).ToString();
-            page.hour = page.date.ToString("HH");
-            page.minute = page.date.ToString("mm");
-            page.second = page.date.ToString("ss");
+            page.short_day = Culture.DateTimeFormat.GetAbbreviatedDayName(Culture.Calendar.GetDayOfWeek(page.date));
+            page.long_day = Culture.DateTimeFormat.GetDayName(Culture.Calendar.GetDayOfWeek(page.date));
+            page.hour = page.date.ToString("HH", Culture);
+            page.minute = page.date.ToString("mm", Culture);
+            page.second = page.date.ToString("ss", Culture);
 
             JObject PageObject = JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None));
             PageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
@@ -143,13 +147,13 @@ namespace Pigmeat.Core
         
         /// <summary>
         /// Gets the YAML of the frontmatter for a given page
+        /// <para> See <see cref="IO.GetLayoutContents(string, bool)"/> </para>
+        /// <seealso cref="Page.GetPageObject(string)"/>
         /// </summary>
         /// <returns>
         /// The YAML <c>string</c> for a given page
         /// </returns>
         /// <param name="PagePath">The path of the page being parsed</param>
-        /// <para> See <see cref="IO.GetLayoutContents(string)"/> </para>
-        /// <seealso cref="Page.GetPageObject(string)"/>
         public static string GetFrontmatter(string PagePath)
         {
             string FrontMatter = "";
@@ -201,19 +205,19 @@ namespace Pigmeat.Core
             var template = Template.ParseLiquid(Permalink);
             return template.Render(new { page = PageObject, global = IO.GetGlobal()});
         }
-        static string GetDayOfYear(DateTime date)
+        static string GetDayOfYear(DateTime Date, CultureInfo Culture)
         {
-            if(date.DayOfYear.ToString().Length == 1)
+            if(Date.DayOfYear.ToString().Length == 1)
             {
-                return "00" + date.DayOfYear.ToString();
+                return "00" + Date.DayOfYear.ToString(Culture);
             }
-            else if(date.DayOfYear.ToString().Length == 2)
+            else if(Date.DayOfYear.ToString().Length == 2)
             {
-                return "0" + date.DayOfYear.ToString();
+                return "0" + Date.DayOfYear.ToString(Culture);
             }
             else
             {
-                return date.DayOfYear.ToString();
+                return Date.DayOfYear.ToString(Culture);
             }
         }
     }

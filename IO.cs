@@ -29,10 +29,15 @@ using YamlDotNet.Serialization;
 
 namespace Pigmeat.Core
 {
+    /// <summary>
+    /// The <c>IO</c> class.
+    /// Contains all methods related to handling Pigmeat's build process.
+    /// </summary>
     class IO
     {
         static string Release = typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         public static Dictionary<string, string> Layouts = new Dictionary<string, string>();
+        public static bool Serving = false; // If tool is building multiple times, then we know it's serving
 
         /// <summary>
         /// Convert YAML data into JObject
@@ -54,14 +59,8 @@ namespace Pigmeat.Core
         /// </returns>
         public static string GetGlobal()
         {
-            if(File.Exists("./_global.yml"))
-            {
-                return GetYamlObject(File.ReadAllText("./_global.yml")).ToString(Formatting.None);
-            }
-            else
-            {
-                return File.ReadAllText("./_global.json");
-            }
+
+            return GetYamlObject(File.ReadAllText("./_global.yml")).ToString(Formatting.None);
         }
 
         /// <summary>
@@ -77,7 +76,7 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Adds <c>JObject</c> representations of pages in a collection to the collection's <c>entries</c> field in its <c>collection.json</c> file
-        /// <para> See <see cref="IO.RenderPage(JObject, string, Boolean, Boolean)"/> </para>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, bool, bool)"/> </para>
         /// </summary>
         /// <param name="Collection">The name of the collection the page is in</param>
         /// <param name="Entry">The <c>JObject</c> form of the page</param>
@@ -130,7 +129,7 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Create a <c>JObject</c> to merge with the <c>Global</c> context containing each collection's <c>collection.json</c> data
-        /// <para> See <see cref="IO.RenderPage(JObject, string, Boolean, Boolean)"/></para>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, bool, bool)"/></para>
         /// <seealso cref="Snippet.Render(string, JObject)"/>
         /// <seealso cref="Page.GetPageObject(string)"/>
         /// </summary>
@@ -149,13 +148,13 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban
+        /// <para> See <see cref="IO.AppendEntry(string, JObject)"/> </para>
+        /// <seealso cref="IO.GetCollections"/>
         /// </summary>
         /// <param name="PageObject">The <c>JObject</c> representing the page being rendered</param>
         /// <param name="Collection">The name of the collection the page is in</param>
         /// <param name="RenderWithLayout">Whether or not to render it within its layout (for creating <c>{{ page.content }}</c>)</param>
         /// <param name="isMarkdown">If the document being rendered is a Markdown file</param>
-        /// <para> See <see cref="IO.AppendEntry(string, JObject)"/> </para>
-        /// <seealso cref="IO.GetCollections"/>
         public static string RenderPage(JObject PageObject, string Collection, bool RenderWithLayout, bool isMarkdown)
         {
             string PageContents = PageObject["content"].ToString();
@@ -187,7 +186,10 @@ namespace Pigmeat.Core
             if(!string.IsNullOrEmpty(Collection))
             {
                 PageObject["content"] = RenderPage(PageObject, "", false, isMarkdown); // TODO: Figure out a way not to have to do this. Inefficient!
-                IO.AppendEntry(Collection, PageObject);
+                if(!Serving)
+                {
+                    IO.AppendEntry(Collection, PageObject); // When serving we don't want to duplicate entries
+                }
             }
             return PageContents;
         }
@@ -199,8 +201,9 @@ namespace Pigmeat.Core
         /// The contents of the <c>Layout</c> given
         /// </returns>
         /// <param name="LayoutPath">The path to the <c>Layout</c></param>
-        /// <para>See <see cref="IO.RenderPage(JObject, string, Boolean, Boolean)"/> </para>
-        public static string GetLayoutContents(string LayoutPath)
+        /// <param name="Overwrite">Whether or not to overwrite a <c>Layout</c> if it's already been cached</param>
+        /// <para>See <see cref="IO.RenderPage(JObject, string, bool, bool)"/> </para>
+        public static string GetLayoutContents(string LayoutPath, bool Overwrite)
         {
             string PageFrontmatter = Page.GetFrontmatter(LayoutPath);
             string LayoutContents = File.ReadAllText(LayoutPath).Replace(PageFrontmatter + "---", "");
@@ -208,18 +211,25 @@ namespace Pigmeat.Core
             try
             {
                 string SubLayout = IO.GetYamlObject(PageFrontmatter)["layout"].ToString();
+
                 if(!Layouts.ContainsKey(SubLayout))
                 {
-                    LayoutContents = GetLayoutContents("./layouts/" + SubLayout + ".html").Replace("{{ content }}", LayoutContents);
+                    LayoutContents = GetLayoutContents(("./layouts/" + SubLayout + ".html").Replace("{{ content }}", LayoutContents), false);
                 }
                 else
                 {
                     LayoutContents = Layouts[SubLayout].Replace("{{ content }}", LayoutContents);
                 }
+
                 if(!Layouts.ContainsKey(Layout)) // Some systems may process layout files in an order which will cause an exception
                 {
                     Layouts.Add(Layout, LayoutContents);
                 }
+                else if(Overwrite == true) // For if a layout is changed during 'serve'
+                {
+                    Layouts[Layout] = LayoutContents;
+                }
+
                 return LayoutContents;
             }
             catch(Exception)

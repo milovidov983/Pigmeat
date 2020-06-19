@@ -48,7 +48,7 @@ namespace Pigmeat.Core
             {
                 List<string> SnippetCalls = new List<string>();
                 string ReaderString = "";
-                Boolean HitFirstBrace = false;
+                bool HitFirstBrace = false;
                 foreach(var character in Contents)
                 {
                     if(character.Equals('{') && !HitFirstBrace)
@@ -158,7 +158,7 @@ namespace Pigmeat.Core
             string CurrentValue = "";
             for(int i = 3; i < GetArguments().Length; i++)
             {
-                Boolean HitEquals = false; // Whether or not we've reached the equals sign yet
+                bool HitEquals = false; // Whether or not we've reached the equals sign yet
                 foreach(var character in GetArguments()[i])
                 {
                     if(character.Equals('='))
