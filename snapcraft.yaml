@@ -1,5 +1,5 @@
 name: pigmeat
-version: 2.1.2
+version: 2.1.3
 summary: A static content publishing tool for the modern web.
 description: |
   Pigmeat is a static content publishing tool for the modern web. It takes data in the form of JSON or YAML, plugs it into a Liquid context, wraps it up in some HTML & CSS, and spits out a website that can be hosted online. If you don't know what any of that means, it's OK. Point is, it's an easier way to publish on the internet, regardless of your skill level. Pigmeat is for corporations, organizations, friends, peers, bloggers, hobbyists, and everyone under the sun.

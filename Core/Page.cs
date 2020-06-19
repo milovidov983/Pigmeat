@@ -29,30 +29,53 @@ namespace Pigmeat.Core
     /// The <c>Page</c> class.
     /// Contains all methods related to handling <c>Page</c> objects.
     /// </summary>
-    class Page
+    public class Page
     {
+        /// <value>Year from page's date</value>
         public string year { get; set; }
+        /// <value>Year from page's date, without the century (00…99)</value>
         public string short_year { get; set; }
+        /// <value>Month from the page's date</value>
         public string month { get; set; }
+        /// <value>Alternate rendering of month, depending on <c>global</c> culture value</value>
         public string i_month { get; set; }
+        /// <value>Abbreviated month name</value>
         public string short_month { get; set; }
+        /// <value>Full month name</value>
         public string long_month { get; set; }
+        /// <value>Day of the month (01…31)</value>
         public string day { get; set; }
+        /// <value>Day of the month without leading zeroes (1…31)</value>
         public string i_day { get; set; }
+        /// <value>Ordinal day of the year, with leading zeroes (001…366)</value>
         public string y_day { get; set; }
+        /// <value>Business week year</value>
         public int w_year { get; set; }
+        /// <value>Week number of the year (01…53)</value>
         public string week { get; set; }
+        /// <value>Day of the week (1…7)</value>
         public int w_day { get; set; }
+        /// <value>Abbreviated name of the day</value>
         public string short_day { get; set; }
+        /// <value>Full name of the day</value>
         public string long_day { get; set; }
+        /// <value>Zero-padded hour of the day (00…24)</value>
         public string hour { get; set; }
+        /// <value>Minute of the hour from the page's date(00…59)</value>
         public string minute { get; set; }
+        /// <value>Second of the minute from the page's date(00…59)</value>
         public string second { get; set; }
+        /// <value>Page's date in the ISO 8601 format (YYYY-MM-DDTHH:MM:SS)</value>
         public DateTime date { get; set; }
+        /// <value>Path to page relative to source directory</value>
         public string dir { get; set; }
+        /// <value>Filename of page</value>
         public string name { get; set; }
+        /// <value>Unrendered Liquid string which will become <c>page.url</c></value>
         public string permalink { get; set; }
+        /// <value>Path to page relative to output directory/global URL</value>
         public string url { get; set; }
+        /// <value>Page's content</value>
         public string content { get; set; }
 
         /// <summary>

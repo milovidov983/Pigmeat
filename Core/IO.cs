@@ -33,10 +33,13 @@ namespace Pigmeat.Core
     /// The <c>IO</c> class.
     /// Contains all methods related to handling Pigmeat's build process.
     /// </summary>
-    class IO
+    public class IO
     {
+        /// <value>Pigmeat's current version number</value>
         static string Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+        /// <value>Cached layout data to be used during building</value>
         public static Dictionary<string, string> Layouts = new Dictionary<string, string>();
+        /// <value>Whether or not Pigmeat is currently serving</value>
         public static bool Serving = false; // If tool is building multiple times, then we know it's serving
 
         /// <summary>
