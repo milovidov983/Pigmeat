@@ -46,6 +46,7 @@ namespace Pigmeat
                     case "help":
                     case "h":
                         break;
+                    // For `run` and `install`, switch directories with three arguments (command, path, and something else)
                     case "run":
                     case "r":
                     case "install":
@@ -67,15 +68,23 @@ namespace Pigmeat
                                 break;
                         }
                         break;
+                    // Other commands will switch directories with two arguments (command & path)
                     default:
-                        try
+                        switch(args.Length)
                         {
-                            Directory.SetCurrentDirectory(args[args.Length - 1]);
-                        }
-                        catch (DirectoryNotFoundException e)
-                        {
-                            Console.WriteLine("The specified directory does not exist: " + args[args.Length - 1] + "\n" + e);
-                            Environment.Exit(128); // Invalid argument
+                            case 2:
+                                try
+                                {
+                                    Directory.SetCurrentDirectory(args[1]);
+                                }
+                                catch (DirectoryNotFoundException e)
+                                {
+                                    Console.WriteLine("The specified directory does not exist: " + args[1] + "\n" + e);
+                                    Environment.Exit(128); // Invalid argument
+                                }
+                                break;
+                            default:
+                                break;
                         }
                         break;
                 }
@@ -488,7 +497,7 @@ namespace Pigmeat
             var PresentPath = Path.GetFullPath(".");
             var SplitRepositoryCall = args[args.Length - 1].Split(':', StringSplitOptions.RemoveEmptyEntries);
             string OwnerName, RepositoryName;
-            switch(args.Length)
+            switch(SplitRepositoryCall.Length)
             {
                 case 2:
                     OwnerName = SplitRepositoryCall[0];
@@ -526,10 +535,9 @@ namespace Pigmeat
         /// </summary>
         static void Help(string[] args)
         {
-            switch (args.Length)
+            if(args.Length <= 1)
             {
-                case 0:
-                    Console.WriteLine(
+                Console.WriteLine(
                     "Pigmeat has the following commands:\n" +
                     "    pigmeat new <path:optional> - Creates an empty Pigmeat project.\n" +
                     "    pigmeat build <path:optional> - Outputs a publishable Pigmeat project.\n" +
@@ -539,52 +547,50 @@ namespace Pigmeat
                     "    pigmeat clean <path:optional> - Deletes all generated data that results from the build process.\n" +
                     "    pigmeat help <command:optional> - Displays an informational message regarding the usage of Pigmeat."
                     );
+                Environment.Exit(0);
+            }
+            switch (args[1]) {
+                case "new":
+                case "n":
+                    Console.WriteLine("Creates an empty Pigmeat project. A path may be specified, otherwise a project will be created where Pigmeat is running.");
+                    break;
+                case "build":
+                case "b":
+                    Console.WriteLine("Outputs a publishable Pigmeat project. A path may be specified, otherwise a project will be built where Pigmeat is running.");
+                    break;
+                case "serve":
+                case "s":
+                    Console.WriteLine("Continuously rebuilds a Pigmeat project when file changes are made. Intended for previewing changes during development.");
+                    break;
+                case "run":
+                case "r":
+                    Console.WriteLine("Run a Pigmeat plugin from your project's 'plugins' directory (e.g. 'pigmeat run MyPlugin.cs').");
+                    break;
+                case "install":
+                case "i":
+                    Console.WriteLine("Installs a Pigmeat theme from GitHub. This command takes the name of the theme's repository, along with the account that owns it (e.g. 'pigmeat install MadeByEmil:pigmeat-basic').");
+                    break;
+                case "clean":
+                case "c":
+                    Console.WriteLine("Deletes all generated data that results from the build process.");
+                    break;
+                case "help":
+                case "h":
+                    Console.WriteLine("Prints a message outlining Pigmeat's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'pigmeat help serve').");
+                    break;
+                case "about":
+                    About();
+                    break;
+                case "warranty":
+                case "w":
+                    Warranty();
+                    break;
+                case "terms":
+                case "t":
+                    Terms();
                     break;
                 default:
-                    switch (args[1]) {
-                        case "new":
-                        case "n":
-                            Console.WriteLine("Creates an empty Pigmeat project. A path may be specified, otherwise a project will be created where Pigmeat is running.");
-                            break;
-                        case "build":
-                        case "b":
-                            Console.WriteLine("Outputs a publishable Pigmeat project. A path may be specified, otherwise a project will be built where Pigmeat is running.");
-                            break;
-                        case "serve":
-                        case "s":
-                            Console.WriteLine("Continuously rebuilds a Pigmeat project when file changes are made. Intended for previewing changes during development.");
-                            break;
-                        case "run":
-                        case "r":
-                            Console.WriteLine("Run a Pigmeat plugin from your project's 'plugins' directory (e.g. 'pigmeat run MyPlugin.cs').");
-                            break;
-                        case "install":
-                        case "i":
-                            Console.WriteLine("Installs a Pigmeat theme from GitHub. This command takes the name of the theme's repository, along with the account that owns it (e.g. 'pigmeat install MadeByEmil:pigmeat-basic').");
-                            break;
-                        case "clean":
-                        case "c":
-                            Console.WriteLine("Deletes all generated data that results from the build process.");
-                            break;
-                        case "help":
-                        case "h":
-                            Console.WriteLine("Prints a message outlining Pigmeat's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'pigmeat help serve').");
-                            break;
-                        case "about":
-                            About();
-                            break;
-                        case "warranty":
-                        case "w":
-                            Warranty();
-                            break;
-                        case "terms":
-                        case "t":
-                            Terms();
-                            break;
-                        default:
-                            Console.WriteLine("Please specify a parameter (e.g. 'pigmeat help new,' 'pigmeat help build,' 'pigmeat help serve,' 'pigmeat help clean').");
-                            break;
-                    }
+                    Console.WriteLine("Please specify a parameter (e.g. 'pigmeat help new,' 'pigmeat help build,' 'pigmeat help serve,' 'pigmeat help clean').");
                     break;
             }
         }
