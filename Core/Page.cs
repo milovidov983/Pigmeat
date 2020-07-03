@@ -19,6 +19,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Scriban;
@@ -88,13 +89,16 @@ namespace Pigmeat.Core
         /// <para> See <see cref="IO.GetCollections"/> </para>
         public static JObject GetPageObject(string PagePath)
         {
-            string PageFrontmatter = GetFrontmatter(PagePath);
+            var SplitPage = Page.SplitFrontmatter(File.ReadAllText(PagePath));
+            string PageFrontmatter = SplitPage[0];
+
             JObject FrontmatterObject = IO.GetYamlObject(PageFrontmatter);
             Page page = JsonConvert.DeserializeObject<Page>(FrontmatterObject.ToString(Formatting.None));
 
             page.name = Path.GetFileNameWithoutExtension(PagePath);
             page.dir = Path.GetDirectoryName(PagePath);
-            page.content = string.Join(Environment.NewLine, File.ReadAllText(PagePath).Replace(PageFrontmatter, "").Split(Environment.NewLine.ToCharArray()).Skip(1).ToArray());
+            page.content = SplitPage[1];
+            //page.content = string.Join(Environment.NewLine, File.ReadAllText(PagePath).Replace(PageFrontmatter, "").Split(Environment.NewLine.ToCharArray()).Skip(1).ToArray());
 
             JObject GlobalObject = JObject.Parse(IO.GetGlobal());
             GlobalObject.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
@@ -176,22 +180,19 @@ namespace Pigmeat.Core
         /// <returns>
         /// The YAML <c>string</c> for a given page
         /// </returns>
-        /// <param name="PagePath">The path of the page being parsed</param>
-        public static string GetFrontmatter(string PagePath)
+        /// <param name="PageContents">The contents of the page being parsed</param>
+        public static string[] SplitFrontmatter(string PageContents)
         {
-            string FrontMatter = "";
-            foreach(var line in File.ReadAllLines(PagePath))
+            Regex FrontmatterSplit = new Regex("(.*)---");
+            var Split = FrontmatterSplit.Split(PageContents).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            if(Split.Length == 1)
             {
-                if(!line.Equals("---"))
-                {
-                    FrontMatter += line + "\n";
-                }
-                else
-                {
-                    break;
-                }
+                return new string[] { "", PageContents };
             }
-            return FrontMatter;
+            else
+            {
+                return Split;
+            }
         }
         
         /// <summary>

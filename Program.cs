@@ -83,75 +83,53 @@ namespace Pigmeat
         /// </summary>
         static void GetCommand(string[] args)
         {
-            if(args.Length == 0)
+            switch (args.Length)
             {
-                Console.WriteLine("Pigmeat  Copyright (C) 2020  Emil Sayahi\n    This program comes with ABSOLUTELY NO WARRANTY; for details type `pigmeat w'.\n    This is free software, and you are welcome to redistribute it\n    under certain conditions; type `pigmeat t' for details.\n");
-                Help(args);
-            }
-            else if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
-            {
-                New();
-            }
-            else if (args[0].Equals("n", StringComparison.OrdinalIgnoreCase))
-            {
-                New();
-            }
-            else if (args[0].Equals("build", StringComparison.OrdinalIgnoreCase))
-            {
-                Build(true);
-            }
-            else if (args[0].Equals("b", StringComparison.OrdinalIgnoreCase))
-            {
-                Build(true);
-            }
-            else if (args[0].Equals("serve", StringComparison.OrdinalIgnoreCase))
-            {
-                ServeWatch();
-            }
-            else if (args[0].Equals("s", StringComparison.OrdinalIgnoreCase))
-            {
-                ServeWatch();
-            }
-            else if (args[0].Equals("run", StringComparison.OrdinalIgnoreCase))
-            {
-                Run(args);
-            }
-            else if (args[0].Equals("r", StringComparison.OrdinalIgnoreCase))
-            {
-                Run(args);
-            }
-            else if (args[0].Equals("clean", StringComparison.OrdinalIgnoreCase))
-            {
-                Clean();
-            }
-            else if (args[0].Equals("c", StringComparison.OrdinalIgnoreCase))
-            {
-                Clean();
-            }
-            else if (args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
-            {
-                Help(args);
-            }
-            else if (args[0].Equals("h", StringComparison.OrdinalIgnoreCase))
-            {
-                Help(args);
-            }
-            else if (args[0].Equals("about", StringComparison.OrdinalIgnoreCase))
-            {
-                About();
-            }
-            else if (args[0].Equals("w", StringComparison.OrdinalIgnoreCase))
-            {
-                Warranty();
-            }
-            else if (args[0].Equals("t", StringComparison.OrdinalIgnoreCase))
-            {
-                Terms();
-            }
-            else
-            {
-                Help(args);
-                Environment.Exit(127); // Command not found
+                case 0:
+                    Console.WriteLine("Pigmeat  Copyright (C) 2020  Emil Sayahi\n    This program comes with ABSOLUTELY NO WARRANTY; for details type `pigmeat w'.\n    This is free software, and you are welcome to redistribute it\n    under certain conditions; type `pigmeat t' for details.\n");
+                    Help(args);
+                    break;
+                default:
+                    switch (args[0]) {
+                        case "new":
+                        case "n":
+                            New();
+                            break;
+                        case "build":
+                        case "b":
+                            Build(true);
+                            break;
+                        case "serve":
+                        case "s":
+                            ServeWatch();
+                            break;
+                        case "run":
+                        case "r":
+                            Run(args);
+                            break;
+                        case "clean":
+                        case "c":
+                            Clean();
+                            break;
+                        case "help":
+                        case "h":
+                            Help(args);
+                            break;
+                        case "about":
+                            About();
+                            break;
+                        case "w":
+                            Warranty();
+                            break;
+                        case "t":
+                            Terms();
+                            break;
+                        default:
+                            Help(args);
+                            Environment.Exit(127); // Command not found
+                            break;
+                    }
+                    break;
             }
         }
 

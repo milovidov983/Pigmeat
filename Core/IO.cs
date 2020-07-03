@@ -167,7 +167,7 @@ namespace Pigmeat.Core
                 var builder = new MarkdownPipelineBuilder().UsePipeTables().UseEmphasisExtras().UseAutoLinks().UseTaskLists().UseListExtras().UseMediaLinks().UseMathematics().UseDiagrams();
                 builder.BlockParsers.TryRemove<IndentedCodeBlockParser>();
                 var pipeline = builder.Build();
-                PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { ExpandAutoLinks = true }, pipeline), pipeline);
+                PageContents = Markdown.ToHtml(Markdown.Normalize(PageContents, new NormalizeOptions() { }, pipeline), pipeline);
             }
             
             // Get outside data
@@ -194,6 +194,7 @@ namespace Pigmeat.Core
                     IO.AppendEntry(Collection, PageObject); // When serving we don't want to duplicate entries
                 }
             }
+
             return PageContents;
         }
 
@@ -208,8 +209,9 @@ namespace Pigmeat.Core
         /// <para>See <see cref="IO.RenderPage(JObject, string, bool, bool)"/> </para>
         public static string GetLayoutContents(string LayoutPath, bool Overwrite)
         {
-            string PageFrontmatter = Page.GetFrontmatter(LayoutPath);
-            string LayoutContents = File.ReadAllText(LayoutPath).Replace(PageFrontmatter + "---", "");
+            var SplitPage = Page.SplitFrontmatter(File.ReadAllText(LayoutPath));
+            string PageFrontmatter = SplitPage[0];
+            string LayoutContents = SplitPage[1];
             string Layout = Path.GetFileNameWithoutExtension(LayoutPath);
             try
             {
