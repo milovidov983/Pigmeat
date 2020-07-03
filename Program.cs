@@ -30,7 +30,7 @@ namespace Pigmeat
     /// Connects user inputs via command calls to the <c>Pigmeat.Core</c> library.
     /// The vanilla Pigmeat tool and standard implementation.
     /// </summary>
-    class Program
+    static class Program
     {
         static DateTime LastFileWatcherEvent { get; set; }
         /// <summary>

@@ -33,7 +33,7 @@ namespace Pigmeat.Core
     /// The <c>IO</c> class.
     /// Contains all methods related to handling Pigmeat's build process.
     /// </summary>
-    public class IO
+    public static class IO
     {
         /// <value>Pigmeat's current version number</value>
         static string Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
@@ -121,7 +121,6 @@ namespace Pigmeat.Core
                 string Collection = directory.Substring(3);
                 // Get Collection data, deserialize entries into List of JObjects
                 JObject CollectionObject = JObject.Parse(File.ReadAllText("./_" + Collection + "/collection.json"));
-                object[] Entries = new object[0];
 
                 var DeserializedCollection = JsonConvert.DeserializeObject<Dictionary<string, object>>(CollectionObject.ToString(Formatting.Indented));
                 DeserializedCollection["entries"] = new int[] { }; // Add empty List into JSON
