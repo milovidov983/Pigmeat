@@ -1,9 +1,9 @@
 var class_pigmeat_1_1_core_1_1_page =
 [
     [ "GetDayOfYear", "class_pigmeat_1_1_core_1_1_page.html#af8f17dadbdb6b16f1bb3dba08e2e8f68", null ],
-    [ "GetFrontmatter", "class_pigmeat_1_1_core_1_1_page.html#af83021e4ff76e210047635cd27e27d16", null ],
     [ "GetPageObject", "class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d", null ],
     [ "GetPermalink", "class_pigmeat_1_1_core_1_1_page.html#a934121eea134b779d5f83b0febd36e91", null ],
+    [ "SplitFrontmatter", "class_pigmeat_1_1_core_1_1_page.html#adeeba3432008a2b7718ad52c2e0ae058", null ],
     [ "content", "class_pigmeat_1_1_core_1_1_page.html#a93247903c067a1c1ed0cebe20990c6f0", null ],
     [ "date", "class_pigmeat_1_1_core_1_1_page.html#ab1a73426fbf1b1af2f2881bbbb057b4d", null ],
     [ "day", "class_pigmeat_1_1_core_1_1_page.html#ab175c687adb2607ee27b22f40306b93d", null ],

@@ -101,9 +101,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a3a2dee942bb7b2f763ce5d1caba4163d"><td class="memItemLeft" align="right" valign="top">static JObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d">GetPageObject</a> (string PagePath)</td></tr>
 <tr class="memdesc:a3a2dee942bb7b2f763ce5d1caba4163d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses a given page into a <code>JObject</code>  <a href="#a3a2dee942bb7b2f763ce5d1caba4163d">More...</a><br /></td></tr>
 <tr class="separator:a3a2dee942bb7b2f763ce5d1caba4163d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af83021e4ff76e210047635cd27e27d16"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#af83021e4ff76e210047635cd27e27d16">GetFrontmatter</a> (string PagePath)</td></tr>
-<tr class="memdesc:af83021e4ff76e210047635cd27e27d16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the YAML of the frontmatter for a given page  <a href="#af83021e4ff76e210047635cd27e27d16">More...</a><br /></td></tr>
-<tr class="separator:af83021e4ff76e210047635cd27e27d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adeeba3432008a2b7718ad52c2e0ae058"><td class="memItemLeft" align="right" valign="top">static string []&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#adeeba3432008a2b7718ad52c2e0ae058">SplitFrontmatter</a> (string PageContents)</td></tr>
+<tr class="memdesc:adeeba3432008a2b7718ad52c2e0ae058"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the YAML of the frontmatter for a given page  <a href="#adeeba3432008a2b7718ad52c2e0ae058">More...</a><br /></td></tr>
+<tr class="separator:adeeba3432008a2b7718ad52c2e0ae058"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
 Properties</h2></td></tr>
@@ -188,7 +188,7 @@ Static Private Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <code><a class="el" href="class_pigmeat_1_1_core_1_1_page.html" title="The Page class. Contains all methods related to handling Page objects. ">Page</a></code> class. Contains all methods related to handling <code><a class="el" href="class_pigmeat_1_1_core_1_1_page.html" title="The Page class. Contains all methods related to handling Page objects. ">Page</a></code> objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00032">32</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00033">33</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="af8f17dadbdb6b16f1bb3dba08e2e8f68"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af8f17dadbdb6b16f1bb3dba08e2e8f68">&#9670;&nbsp;</a></span>GetDayOfYear()</h2>
@@ -224,52 +224,7 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00231">231</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
-
-</div>
-</div>
-<a id="af83021e4ff76e210047635cd27e27d16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af83021e4ff76e210047635cd27e27d16">&#9670;&nbsp;</a></span>GetFrontmatter()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static string Pigmeat.Core.Page.GetFrontmatter </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>PagePath</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the YAML of the frontmatter for a given page </p>
-<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#ae9cd73892daa23bdf19c9a229fe62b7b" title="Get the contents of Layouts recursively ">IO.GetLayoutContents(string, bool)</a> </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>The YAML <code>string</code> for a given page </dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">PagePath</td><td>The path of the page being parsed</td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00180">180</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="class_pigmeat_1_1_core_1_1_page_af83021e4ff76e210047635cd27e27d16_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_af83021e4ff76e210047635cd27e27d16_icgraph" alt=""/></div>
-<!-- MAP 0 -->
-</div>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00232">232</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -307,18 +262,18 @@ Here is the caller graph for this function:</div>
 </dl>
 <p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4" title="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data ">IO.GetCollections</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00089">89</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00090">90</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_page_a3a2dee942bb7b2f763ce5d1caba4163d_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_a3a2dee942bb7b2f763ce5d1caba4163d_cgraph" alt=""/></div>
-<!-- MAP 1 -->
+<!-- MAP 0 -->
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_page_a3a2dee942bb7b2f763ce5d1caba4163d_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_a3a2dee942bb7b2f763ce5d1caba4163d_icgraph" alt=""/></div>
-<!-- MAP 2 -->
+<!-- MAP 1 -->
 </div>
 
 </div>
@@ -357,11 +312,56 @@ Here is the caller graph for this function:</div>
 </dl>
 <p>See <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00205">205</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00206">206</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_page_a934121eea134b779d5f83b0febd36e91_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_a934121eea134b779d5f83b0febd36e91_cgraph" alt=""/></div>
+<!-- MAP 2 -->
+</div>
+
+</div>
+</div>
+<a id="adeeba3432008a2b7718ad52c2e0ae058"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adeeba3432008a2b7718ad52c2e0ae058">&#9670;&nbsp;</a></span>SplitFrontmatter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static string [] Pigmeat.Core.Page.SplitFrontmatter </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>PageContents</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the YAML of the frontmatter for a given page </p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#ae9cd73892daa23bdf19c9a229fe62b7b" title="Get the contents of Layouts recursively ">IO.GetLayoutContents(string, bool)</a> </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The YAML <code>string</code> for a given page </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">PageContents</td><td>The contents of the page being parsed</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00184">184</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_page_adeeba3432008a2b7718ad52c2e0ae058_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_adeeba3432008a2b7718ad52c2e0ae058_icgraph" alt=""/></div>
 <!-- MAP 3 -->
 </div>
 
@@ -390,7 +390,7 @@ Here is the call graph for this function:</div>
 
 <p><a class="el" href="class_pigmeat_1_1_core_1_1_page.html" title="The Page class. Contains all methods related to handling Page objects. ">Page</a>'s content</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00079">79</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00080">80</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -416,7 +416,7 @@ Here is the call graph for this function:</div>
 
 <p><a class="el" href="class_pigmeat_1_1_core_1_1_page.html" title="The Page class. Contains all methods related to handling Page objects. ">Page</a>'s date in the ISO 8601 format (YYYY-MM-DDTHH:MM:SS)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00069">69</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00070">70</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -442,7 +442,7 @@ Here is the call graph for this function:</div>
 
 <p>Day of the month (01…31)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00047">47</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00048">48</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -468,7 +468,7 @@ Here is the call graph for this function:</div>
 
 <p>Path to page relative to source directory</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00071">71</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00072">72</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -494,7 +494,7 @@ Here is the call graph for this function:</div>
 
 <p>Zero-padded hour of the day (00…24)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00063">63</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00064">64</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -520,7 +520,7 @@ Here is the call graph for this function:</div>
 
 <p>Day of the month without leading zeroes (1…31)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00049">49</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00050">50</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -546,7 +546,7 @@ Here is the call graph for this function:</div>
 
 <p>Alternate rendering of month, depending on <code>global</code> culture value</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00041">41</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00042">42</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -572,7 +572,7 @@ Here is the call graph for this function:</div>
 
 <p>Full name of the day</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00061">61</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00062">62</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -598,7 +598,7 @@ Here is the call graph for this function:</div>
 
 <p>Full month name</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00045">45</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00046">46</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -624,7 +624,7 @@ Here is the call graph for this function:</div>
 
 <p>Minute of the hour from the page's date(00…59)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00065">65</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00066">66</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -650,7 +650,7 @@ Here is the call graph for this function:</div>
 
 <p>Month from the page's date</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00039">39</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00040">40</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -676,7 +676,7 @@ Here is the call graph for this function:</div>
 
 <p>Filename of page</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00073">73</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00074">74</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -702,7 +702,7 @@ Here is the call graph for this function:</div>
 
 <p>Unrendered Liquid string which will become <code>page.url</code></p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00075">75</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00076">76</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -728,7 +728,7 @@ Here is the call graph for this function:</div>
 
 <p>Second of the minute from the page's date(00…59)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00067">67</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00068">68</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -754,7 +754,7 @@ Here is the call graph for this function:</div>
 
 <p>Abbreviated name of the day</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00059">59</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00060">60</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -780,7 +780,7 @@ Here is the call graph for this function:</div>
 
 <p>Abbreviated month name</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00043">43</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00044">44</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -806,7 +806,7 @@ Here is the call graph for this function:</div>
 
 <p>Year from page's date, without the century (00…99)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00037">37</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00038">38</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -832,7 +832,7 @@ Here is the call graph for this function:</div>
 
 <p>Path to page relative to output directory/global URL</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00077">77</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00078">78</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -858,7 +858,7 @@ Here is the call graph for this function:</div>
 
 <p>Day of the week (1…7)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00057">57</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00058">58</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -884,7 +884,7 @@ Here is the call graph for this function:</div>
 
 <p>Business week year</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00053">53</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00054">54</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -910,7 +910,7 @@ Here is the call graph for this function:</div>
 
 <p>Week number of the year (01…53)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00055">55</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00056">56</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -936,7 +936,7 @@ Here is the call graph for this function:</div>
 
 <p>Ordinal day of the year, with leading zeroes (001…366)</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00051">51</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00052">52</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -962,7 +962,7 @@ Here is the call graph for this function:</div>
 
 <p>Year from page's date</p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00035">35</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00036">36</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>

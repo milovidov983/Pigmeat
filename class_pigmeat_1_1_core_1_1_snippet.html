@@ -86,7 +86,7 @@ $(document).ready(function(){initNavTree('class_pigmeat_1_1_core_1_1_snippet.htm
   <div class="summary">
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#properties">Properties</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="class_pigmeat_1_1_core_1_1_snippet-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Pigmeat.Core.Snippet Class Reference</div>  </div>
@@ -106,130 +106,20 @@ Static Public Member Functions</h2></td></tr>
 Properties</h2></td></tr>
 <tr class="memitem:aee52278a8fcfccb9c2fa86450c2ff5d6"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#aee52278a8fcfccb9c2fa86450c2ff5d6">Input</a><code> [get, set]</code></td></tr>
 <tr class="separator:aee52278a8fcfccb9c2fa86450c2ff5d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66010995ab03ad7e67083a5c54998b87"><td class="memItemLeft" align="right" valign="top">Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#a66010995ab03ad7e67083a5c54998b87">Variables</a><code> [get, set]</code></td></tr>
+<tr class="memitem:a66010995ab03ad7e67083a5c54998b87"><td class="memItemLeft" align="right" valign="top">static Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#a66010995ab03ad7e67083a5c54998b87">Variables</a><code> [get, set]</code></td></tr>
 <tr class="separator:a66010995ab03ad7e67083a5c54998b87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:af0fb8ee7a3dc0364d48433d429da920a"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#af0fb8ee7a3dc0364d48433d429da920a">Render</a> (string SnippetPath, JObject PageObject)</td></tr>
-<tr class="memdesc:af0fb8ee7a3dc0364d48433d429da920a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renders <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code>s  <a href="#af0fb8ee7a3dc0364d48433d429da920a">More...</a><br /></td></tr>
-<tr class="separator:af0fb8ee7a3dc0364d48433d429da920a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa38c844e4b96a534fcb78ca5c00ffd8e"><td class="memItemLeft" align="right" valign="top">string []&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#aa38c844e4b96a534fcb78ca5c00ffd8e">GetArguments</a> ()</td></tr>
-<tr class="memdesc:aa38c844e4b96a534fcb78ca5c00ffd8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the arguments given in the <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code> call, to be parsed through later  <a href="#aa38c844e4b96a534fcb78ca5c00ffd8e">More...</a><br /></td></tr>
-<tr class="separator:aa38c844e4b96a534fcb78ca5c00ffd8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d46d6ef2688d08341dc65bd9c5e44db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#a5d46d6ef2688d08341dc65bd9c5e44db">SetVariables</a> ()</td></tr>
-<tr class="memdesc:a5d46d6ef2688d08341dc65bd9c5e44db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines data from <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#aa69d54adf4ea3d1033900e034569bdd6" title="Gets the keys (names of variables) given when the Snippet was called ">Snippet.GetKeys()</a> and <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#a1a22354383cd069899f14e86c93ccd55" title="Gets values of given arguments/variables when the Snippet was called ">Snippet.GetValues()</a>  <a href="#a5d46d6ef2688d08341dc65bd9c5e44db">More...</a><br /></td></tr>
-<tr class="separator:a5d46d6ef2688d08341dc65bd9c5e44db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a22354383cd069899f14e86c93ccd55"><td class="memItemLeft" align="right" valign="top">string []&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#a1a22354383cd069899f14e86c93ccd55">GetValues</a> ()</td></tr>
-<tr class="memdesc:a1a22354383cd069899f14e86c93ccd55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets values of given arguments/variables when the <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code> was called  <a href="#a1a22354383cd069899f14e86c93ccd55">More...</a><br /></td></tr>
-<tr class="separator:a1a22354383cd069899f14e86c93ccd55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa69d54adf4ea3d1033900e034569bdd6"><td class="memItemLeft" align="right" valign="top">string []&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#aa69d54adf4ea3d1033900e034569bdd6">GetKeys</a> ()</td></tr>
-<tr class="memdesc:aa69d54adf4ea3d1033900e034569bdd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the keys (names of variables) given when the <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a> was called  <a href="#aa69d54adf4ea3d1033900e034569bdd6">More...</a><br /></td></tr>
-<tr class="separator:aa69d54adf4ea3d1033900e034569bdd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:ac3dd182d3699b9997372e1baa768de2b"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b">Render</a> (string SnippetPath, JObject PageObject)</td></tr>
+<tr class="memdesc:ac3dd182d3699b9997372e1baa768de2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renders <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code>s  <a href="#ac3dd182d3699b9997372e1baa768de2b">More...</a><br /></td></tr>
+<tr class="separator:ac3dd182d3699b9997372e1baa768de2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code> class. Contains all methods related to handling <code>{! snippet !}</code> calls. </p>
 
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00031">31</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00034">34</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa38c844e4b96a534fcb78ca5c00ffd8e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa38c844e4b96a534fcb78ca5c00ffd8e">&#9670;&nbsp;</a></span>GetArguments()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">string [] Pigmeat.Core.Snippet.GetArguments </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the arguments given in the <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code> call, to be parsed through later </p>
-<dl class="section return"><dt>Returns</dt><dd>Array of <code>string</code>s containing <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code> arguments </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00114">114</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="class_pigmeat_1_1_core_1_1_snippet_aa38c844e4b96a534fcb78ca5c00ffd8e_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_snippet_aa38c844e4b96a534fcb78ca5c00ffd8e_icgraph" alt=""/></div>
-<!-- MAP 0 -->
-</div>
-
-</div>
-</div>
-<a id="aa69d54adf4ea3d1033900e034569bdd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa69d54adf4ea3d1033900e034569bdd6">&#9670;&nbsp;</a></span>GetKeys()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">string [] Pigmeat.Core.Snippet.GetKeys </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the keys (names of variables) given when the <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a> was called </p>
-<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#a1a22354383cd069899f14e86c93ccd55" title="Gets values of given arguments/variables when the Snippet was called ">Snippet.GetValues()</a> </p>
-<dl class="section return"><dt>Returns</dt><dd>Array of <code>string</code>s containing names of given arguments </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00202">202</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
-
-</div>
-</div>
-<a id="a1a22354383cd069899f14e86c93ccd55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a22354383cd069899f14e86c93ccd55">&#9670;&nbsp;</a></span>GetValues()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">string [] Pigmeat.Core.Snippet.GetValues </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets values of given arguments/variables when the <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code> was called </p>
-<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#aa69d54adf4ea3d1033900e034569bdd6" title="Gets the keys (names of variables) given when the Snippet was called ">Snippet.GetKeys()</a> </p>
-<dl class="section return"><dt>Returns</dt><dd>Array of <code>string</code>s containing values of given arguments </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00155">155</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
-
-</div>
-</div>
 <a id="a54ea5e1d3a8cd6308a1b1c9f01457146"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a54ea5e1d3a8cd6308a1b1c9f01457146">&#9670;&nbsp;</a></span>Parse()</h2>
 
@@ -265,7 +155,7 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Parses through each <code>{! snippet !}</code> call in a page and evaluates them </p>
-<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#af0fb8ee7a3dc0364d48433d429da920a" title="Renders Snippets ">Snippet.Render(string, JObject)</a></p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b" title="Renders Snippets ">Snippet.Render(string, JObject)</a></p>
 <dl class="section return"><dt>Returns</dt><dd>Contents of a page with <code><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html" title="The Snippet class. Contains all methods related to handling {! snippet !} calls. ">Snippet</a></code>s evaluated </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -275,24 +165,24 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00045">45</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00048">48</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_snippet_a54ea5e1d3a8cd6308a1b1c9f01457146_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_snippet_a54ea5e1d3a8cd6308a1b1c9f01457146_cgraph" alt=""/></div>
-<!-- MAP 1 -->
+<!-- MAP 0 -->
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_snippet_a54ea5e1d3a8cd6308a1b1c9f01457146_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_snippet_a54ea5e1d3a8cd6308a1b1c9f01457146_icgraph" alt=""/></div>
-<!-- MAP 2 -->
+<!-- MAP 1 -->
 </div>
 
 </div>
 </div>
-<a id="af0fb8ee7a3dc0364d48433d429da920a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0fb8ee7a3dc0364d48433d429da920a">&#9670;&nbsp;</a></span>Render()</h2>
+<a id="ac3dd182d3699b9997372e1baa768de2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3dd182d3699b9997372e1baa768de2b">&#9670;&nbsp;</a></span>Render()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -301,7 +191,7 @@ Here is the caller graph for this function:</div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">string Pigmeat.Core.Snippet.Render </td>
+          <td class="memname">static string Pigmeat.Core.Snippet.Render </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
           <td class="paramname"><em>SnippetPath</em>, </td>
@@ -320,7 +210,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -335,48 +225,19 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00095">95</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00119">119</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_pigmeat_1_1_core_1_1_snippet_af0fb8ee7a3dc0364d48433d429da920a_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_snippet_af0fb8ee7a3dc0364d48433d429da920a_cgraph" alt=""/></div>
-<!-- MAP 3 -->
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_snippet_ac3dd182d3699b9997372e1baa768de2b_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_snippet_ac3dd182d3699b9997372e1baa768de2b_cgraph" alt=""/></div>
+<!-- MAP 2 -->
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_pigmeat_1_1_core_1_1_snippet_af0fb8ee7a3dc0364d48433d429da920a_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_snippet_af0fb8ee7a3dc0364d48433d429da920a_icgraph" alt=""/></div>
-<!-- MAP 4 -->
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_snippet_ac3dd182d3699b9997372e1baa768de2b_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_snippet_ac3dd182d3699b9997372e1baa768de2b_icgraph" alt=""/></div>
+<!-- MAP 3 -->
 </div>
-
-</div>
-</div>
-<a id="a5d46d6ef2688d08341dc65bd9c5e44db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d46d6ef2688d08341dc65bd9c5e44db">&#9670;&nbsp;</a></span>SetVariables()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Pigmeat.Core.Snippet.SetVariables </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Combines data from <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#aa69d54adf4ea3d1033900e034569bdd6" title="Gets the keys (names of variables) given when the Snippet was called ">Snippet.GetKeys()</a> and <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#a1a22354383cd069899f14e86c93ccd55" title="Gets values of given arguments/variables when the Snippet was called ">Snippet.GetValues()</a> </p>
-
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00138">138</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
 
 </div>
 </div>
@@ -401,7 +262,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00033">33</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00036">36</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
 
 </div>
 </div>
@@ -420,12 +281,12 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00034">34</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_snippet_8cs_source.html#l00037">37</a> of file <a class="el" href="_snippet_8cs_source.html">Snippet.cs</a>.</p>
 
 </div>
 </div>
