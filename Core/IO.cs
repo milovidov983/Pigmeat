@@ -33,7 +33,7 @@ namespace Pigmeat.Core
     /// The <c>IO</c> class.
     /// Contains all methods related to handling Pigmeat's build process.
     /// </summary>
-    public class IO
+    public static class IO
     {
         /// <value>Pigmeat's current version number</value>
         static string Release = Assembly.GetEntryAssembly().GetName().Version.ToString();

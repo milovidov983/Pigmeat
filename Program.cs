@@ -18,6 +18,7 @@ This file is part of Pigmeat.
 using System;
 using System.IO;
 using CSScriptLib;
+using LibGit2Sharp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pigmeat.Core;
@@ -40,30 +41,44 @@ namespace Pigmeat
         {
             try
             {
-                try
+                switch(args[0])
                 {
-                    if (!args[0].Equals("help", StringComparison.OrdinalIgnoreCase) && args.Length > 1)
-                    {
+                    case "help":
+                    case "h":
+                        break;
+                    case "run":
+                    case "r":
+                    case "install":
+                    case "i":
+                        switch(args.Length)
+                        {
+                            case 3:
+                                try
+                                {
+                                    Directory.SetCurrentDirectory(args[1]);
+                                }
+                                catch (DirectoryNotFoundException e)
+                                {
+                                    Console.WriteLine("The specified directory does not exist: " + args[1] + "\n" + e);
+                                    Environment.Exit(128); // Invalid argument
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
                         try
                         {
                             Directory.SetCurrentDirectory(args[args.Length - 1]);
                         }
                         catch (DirectoryNotFoundException e)
                         {
-                            if (!args[0].Equals("run", StringComparison.OrdinalIgnoreCase) && !args[0].Equals("r", StringComparison.OrdinalIgnoreCase))
-                            {
-                                Console.WriteLine("The specified directory does not exist: " + args[args.Length - 1] + "\n" + e);
-                                Environment.Exit(128); // Invalid argument
-                            }
+                            Console.WriteLine("The specified directory does not exist: " + args[args.Length - 1] + "\n" + e);
+                            Environment.Exit(128); // Invalid argument
                         }
-                    }
+                        break;
                 }
-                catch (DirectoryNotFoundException e)
-                {
-                    Console.WriteLine("The specified directory does not exist.\n" + e);
-                    Environment.Exit(128); // Invalid argument
-                }
-
                 GetCommand(args);
             }
             catch(IndexOutOfRangeException)
@@ -107,6 +122,10 @@ namespace Pigmeat
                         case "r":
                             Run(args);
                             break;
+                        case "install":
+                        case "i":
+                            Install(args);
+                            break;
                         case "clean":
                         case "c":
                             Clean();
@@ -118,9 +137,11 @@ namespace Pigmeat
                         case "about":
                             About();
                             break;
+                        case "warranty":
                         case "w":
                             Warranty();
                             break;
+                        case "terms":
                         case "t":
                             Terms();
                             break;
@@ -171,7 +192,6 @@ namespace Pigmeat
             JObject Global = JObject.Parse(IO.GetGlobal());
             string[] IncludedFiles = JsonConvert.DeserializeObject<string[]>(Global["included-files"].ToString());
             string[] IncludedPages = JsonConvert.DeserializeObject<string[]>(Global["included-pages"].ToString());
-            //string[] IncludedFilesRaw = JsonConvert.DeserializeObject<string[]>(Global["include-raw"].ToString());
             foreach(var layout in Directory.GetFiles("./layouts", "*", SearchOption.TopDirectoryOnly))
             {
                 IO.GetLayoutContents(layout, false);
@@ -184,7 +204,6 @@ namespace Pigmeat
                     {
                         JObject PageObject = Page.GetPageObject(file);
                         Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
-                        //File.WriteAllText("./output/" + PageObject["url"].ToString(), IO.RenderPage(PageObject, directory.Substring(3)));
                         File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
                         //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
                         i++;
@@ -461,77 +480,112 @@ namespace Pigmeat
         }
 
         /// <summary>
+        /// Install a Pigmeat theme
+        /// <para> See <see cref="GetCommand(string[])"/> </para>
+        /// </summary>
+        static void Install(string[] args)
+        {
+            var PresentPath = Path.GetFullPath(".");
+            var SplitRepositoryCall = args[args.Length - 1].Split(':', StringSplitOptions.RemoveEmptyEntries);
+            string OwnerName, RepositoryName;
+            switch(args.Length)
+            {
+                case 2:
+                    OwnerName = SplitRepositoryCall[0];
+                    RepositoryName = SplitRepositoryCall[1];
+                    break;
+                default:
+                    OwnerName = "MadeByEmil";
+                    RepositoryName = SplitRepositoryCall[0];
+                    break;
+            }
+            var GitUrl = "https://github.com/" + OwnerName + "/" + RepositoryName + ".git";
+            try
+            {
+                Repository.Clone(GitUrl, "./");
+                Console.WriteLine("Cloned " + GitUrl + " to " + PresentPath);
+            }
+            catch(NameConflictException)
+            {
+                Console.WriteLine("Everything in " + PresentPath + " will be overwritten. Continue? ");
+                var Answer = Console.ReadKey(true).Key;
+                
+                if(Answer == ConsoleKey.Y || Answer == ConsoleKey.Enter)
+                {
+                    Directory.Delete("./", true);
+                    Directory.CreateDirectory(PresentPath);
+                    Repository.Clone(GitUrl, PresentPath);
+                    Console.WriteLine("Cloned " + GitUrl + " to " + PresentPath);
+                }
+            }
+        }
+
+        /// <summary>
         /// Show how to use the Pigmeat tool
         /// <para> See <see cref="GetCommand(string[])"/> </para>
         /// </summary>
         static void Help(string[] args)
         {
-            try
+            switch (args.Length)
             {
-                if (args[1].Equals("new", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Creates an empty Pigmeat project. A path may be specified, otherwise a project will be created where Pigmeat is running.");
-                }
-                else if (args[1].Equals("n", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Creates an empty Pigmeat project. A path may be specified, otherwise a project will be created where Pigmeat is running.");
-                }
-                else if (args[1].Equals("build", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Outputs a publishable Pigmeat project. A path may be specified, otherwise a project will be built where Pigmeat is running.");
-                }
-                else if (args[1].Equals("b", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Outputs a publishable Pigmeat project. A path may be specified, otherwise a project will be built where Pigmeat is running.");
-                }
-                else if (args[1].Equals("serve", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Continuously rebuilds a Pigmeat project when file changes are made. Intended for previewing changes during development.");
-                }
-                else if (args[1].Equals("s", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Continuously rebuilds a Pigmeat project when file changes are made. Intended for previewing changes during development.");
-                }
-                else if (args[1].Equals("run", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Run a Pigmeat plugin from your project's 'plugins' directory (e.g. 'pigmeat run MyPlugin.cs')");
-                }
-                else if (args[1].Equals("r", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Run a Pigmeat plugin from your project's 'plugins' directory (e.g. 'pigmeat run MyPlugin.cs')");
-                }
-                else if (args[1].Equals("clean", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Deletes all generated data that results from the build process.");
-                }
-                else if (args[1].Equals("c", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Deletes all generated data that results from the build process.");
-                }
-                else if (args[1].Equals("help", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Prints a message outlining Pigmeat's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'pigmeat help serve').");
-                }
-                else if (args[1].Equals("h", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Prints a message outlining Pigmeat's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'pigmeat help serve').");
-                }
-                else
-                {
-                    Console.WriteLine("Please specify a parameter (e.g. 'pigmeat help new,' 'pigmeat help build,' 'pigmeat help serve,' 'pigmeat help clean').");
-                }
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Console.WriteLine(
+                case 0:
+                    Console.WriteLine(
                     "Pigmeat has the following commands:\n" +
                     "    pigmeat new <path:optional> - Creates an empty Pigmeat project.\n" +
                     "    pigmeat build <path:optional> - Outputs a publishable Pigmeat project.\n" +
                     "    pigmeat serve <path:optional> - Continuously rebuilds a Pigmeat project when file changes are made.\n" +
                     "    pigmeat run <path:optional> <plugin:required> - Run a Pigmeat plugin from your project's 'plugins' directory.\n" +
+                    "    pigmeat install <path:optional> <owner:optional>:<repo:required> - Installs a Pigmeat theme from GitHub.\n" +
                     "    pigmeat clean <path:optional> - Deletes all generated data that results from the build process.\n" +
                     "    pigmeat help <command:optional> - Displays an informational message regarding the usage of Pigmeat."
                     );
+                    break;
+                default:
+                    switch (args[1]) {
+                        case "new":
+                        case "n":
+                            Console.WriteLine("Creates an empty Pigmeat project. A path may be specified, otherwise a project will be created where Pigmeat is running.");
+                            break;
+                        case "build":
+                        case "b":
+                            Console.WriteLine("Outputs a publishable Pigmeat project. A path may be specified, otherwise a project will be built where Pigmeat is running.");
+                            break;
+                        case "serve":
+                        case "s":
+                            Console.WriteLine("Continuously rebuilds a Pigmeat project when file changes are made. Intended for previewing changes during development.");
+                            break;
+                        case "run":
+                        case "r":
+                            Console.WriteLine("Run a Pigmeat plugin from your project's 'plugins' directory (e.g. 'pigmeat run MyPlugin.cs').");
+                            break;
+                        case "install":
+                        case "i":
+                            Console.WriteLine("Installs a Pigmeat theme from GitHub. This command takes the name of the theme's repository, along with the account that owns it (e.g. 'pigmeat install MadeByEmil:pigmeat-basic').");
+                            break;
+                        case "clean":
+                        case "c":
+                            Console.WriteLine("Deletes all generated data that results from the build process.");
+                            break;
+                        case "help":
+                        case "h":
+                            Console.WriteLine("Prints a message outlining Pigmeat's commands. A subparameter may be specified, displaying a message outlining the usage of the given parameter (e.g. 'pigmeat help serve').");
+                            break;
+                        case "about":
+                            About();
+                            break;
+                        case "warranty":
+                        case "w":
+                            Warranty();
+                            break;
+                        case "terms":
+                        case "t":
+                            Terms();
+                            break;
+                        default:
+                            Console.WriteLine("Please specify a parameter (e.g. 'pigmeat help new,' 'pigmeat help build,' 'pigmeat help serve,' 'pigmeat help clean').");
+                            break;
+                    }
+                    break;
             }
         }
     }
