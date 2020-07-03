@@ -33,14 +33,24 @@ namespace Pigmeat.Core
     /// The <c>IO</c> class.
     /// Contains all methods related to handling Pigmeat's build process.
     /// </summary>
-    public static class IO
+    public class IO
     {
         /// <value>Pigmeat's current version number</value>
         static string Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
         /// <value>Cached layout data to be used during building</value>
-        public static Dictionary<string, string> Layouts = new Dictionary<string, string>();
+        private static Dictionary<string, string> layouts = new Dictionary<string, string>();
+        /// <value>Cached layout data to be used during building</value>
+        public static Dictionary<string, string> Layouts
+        {
+            get { return layouts; } set { layouts = value; }
+        }
         /// <value>Whether or not Pigmeat is currently serving</value>
-        public static bool Serving = false; // If tool is building multiple times, then we know it's serving
+        private static bool serving = false; // If tool is building multiple times, then we know it's serving
+        /// <value>Whether or not Pigmeat is currently serving</value>
+        public static bool Serving
+        {
+            get { return serving; } set { serving = value; }
+        }
 
         /// <summary>
         /// Convert YAML data into JObject
@@ -102,7 +112,7 @@ namespace Pigmeat.Core
             }
             catch(InvalidOperationException)
             {
-
+                // If page is missing both `date` and `title`
             }
 
             var DeserializedCollection = JsonConvert.DeserializeObject<Dictionary<string, object>>(CollectionObject.ToString(Formatting.Indented));

@@ -98,7 +98,6 @@ namespace Pigmeat.Core
             page.name = Path.GetFileNameWithoutExtension(PagePath);
             page.dir = Path.GetDirectoryName(PagePath);
             page.content = SplitPage[1];
-            //page.content = string.Join(Environment.NewLine, File.ReadAllText(PagePath).Replace(PageFrontmatter, "").Split(Environment.NewLine.ToCharArray()).Skip(1).ToArray());
 
             JObject GlobalObject = JObject.Parse(IO.GetGlobal());
             GlobalObject.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });

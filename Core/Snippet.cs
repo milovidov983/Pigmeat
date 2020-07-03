@@ -15,11 +15,11 @@ This file is part of Pigmeat.
     You should have received a copy of the GNU General Public License
     along with Pigmeat.  If not, see <https://www.gnu.org/licenses/>.
 */
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -50,30 +50,31 @@ namespace Pigmeat.Core
             if(Contents.Contains("{! snippet "))
             {
                 List<string> SnippetCalls = new List<string>();
-                string ReaderString = "";
+                StringBuilder Reader = new StringBuilder();
                 int BraceCount = 0;
                 foreach(var character in Contents)
                 {
                     if(character.Equals('{') && BraceCount == 0)
                     {
                         BraceCount++;
-                        ReaderString += character;
+                        Reader.Append(character);
                         continue;
                     }
                     if(character.Equals('}') && BraceCount == 1)
                     {
                         BraceCount = 0;
-                        ReaderString += character;
+                        Reader.Append(character);
+                        var ReaderString = Reader.ToString();
                         if(ReaderString.Contains("{! snippet ") || ReaderString.Contains("{!snippet "))
                         {
                             SnippetCalls.Add(WebUtility.HtmlDecode(ReaderString));
                         }
-                        ReaderString = "";
+                        Reader = new StringBuilder();
                         continue;
                     }
                     if(BraceCount == 1)
                     {
-                        ReaderString += character;
+                        Reader.Append(character);
                         continue;
                     }
                 }
