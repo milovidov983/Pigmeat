@@ -36,7 +36,7 @@ namespace Pigmeat.Core
     public static class IO
     {
         /// <value>Pigmeat's current version number</value>
-        static string Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+        static string Release = typeof(IO).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         /// <value>Cached layout data to be used during building</value>
         private static Dictionary<string, string> layouts = new Dictionary<string, string>();
         /// <value>Cached layout data to be used during building</value>
@@ -173,7 +173,7 @@ namespace Pigmeat.Core
         /// <para> See <see cref="IO.AppendEntry(string, JObject)"/> </para>
         /// <seealso cref="IO.GetCollections"/>
         /// <seealso cref="Page.GetPageObject(string)"/>
-        /// <seealso cref="Paginator.RenderPaginated(string, string)"/>
+        /// <seealso cref="Paginator.RenderPaginated(string)"/>
         /// </summary>
         /// <param name="PageObject">The <c>JObject</c> representing the page being rendered</param>
         /// <param name="Collection">The name of the collection the page is in</param>
