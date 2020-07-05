@@ -137,7 +137,7 @@ Properties</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:a1e39f020f8a72008d79040d3fdeb3325"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a1e39f020f8a72008d79040d3fdeb3325">Release</a> = Assembly.GetEntryAssembly().GetName().Version.ToString()</td></tr>
+<tr class="memitem:a1e39f020f8a72008d79040d3fdeb3325"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a1e39f020f8a72008d79040d3fdeb3325">Release</a> = typeof(<a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html">IO</a>).GetTypeInfo().Assembly.GetCustomAttribute&lt;AssemblyInformationalVersionAttribute&gt;().InformationalVersion</td></tr>
 <tr class="memdesc:a1e39f020f8a72008d79040d3fdeb3325"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespace_pigmeat.html">Pigmeat</a>'s current version number <a href="#a1e39f020f8a72008d79040d3fdeb3325">More...</a><br /></td></tr>
 <tr class="separator:a1e39f020f8a72008d79040d3fdeb3325"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abff2633073c696c699d2033aa94480db"><td class="memItemLeft" align="right" valign="top">static Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#abff2633073c696c699d2033aa94480db">layouts</a> = new Dictionary&lt;string, string&gt;()</td></tr>
@@ -568,7 +568,7 @@ Here is the caller graph for this function:</div>
 
 <p>Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban </p>
 <p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a513be40f796bdadd8f6eb31f2446716a" title="Adds JObject representations of pages in a collection to the collection&#39;s entries field in its collec...">IO.AppendEntry(string, JObject)</a> </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4" title="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data ">IO.GetCollections</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a>, Paginator.RenderPaginated(string, string)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4" title="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data ">IO.GetCollections</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_paginator.html#a38c0bfdf8bfe439eb2a3e58a638c823a" title="Outputs a paginated version of a page (requires {{ page.paginate }} and {{ page.collection }}) ...">Paginator.RenderPaginated(string)</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">PageObject</td><td>The <code>JObject</code> representing the page being rendered</td></tr>
@@ -633,7 +633,7 @@ Here is the caller graph for this function:</div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">string Pigmeat.Core.IO.Release = Assembly.GetEntryAssembly().GetName().Version.ToString()</td>
+          <td class="memname">string Pigmeat.Core.IO.Release = typeof(<a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html">IO</a>).GetTypeInfo().Assembly.GetCustomAttribute&lt;AssemblyInformationalVersionAttribute&gt;().InformationalVersion</td>
         </tr>
       </table>
   </td>
