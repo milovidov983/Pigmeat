@@ -3,12 +3,12 @@ digraph "Pigmeat.Program.Terms"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node138 [label="Pigmeat.Program.Terms",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
-  Node138 -> Node139 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node139 [label="Pigmeat.Program.GetCommand",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a813269f3c9466bddfa561c72eb56de4f",tooltip="Perform actions specified by command calls "];
-  Node139 -> Node140 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node140 [label="Pigmeat.Program.Main",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a3b898a93d66f23079be04ac657013df3",tooltip="Handle primary tool information, such as command inputs and current directory "];
-  Node138 -> Node141 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node141 [label="Pigmeat.Program.Help",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a5ba96e069c0192950fa044954bca4647",tooltip="Show how to use the Pigmeat tool "];
-  Node141 -> Node139 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node146 [label="Pigmeat.Program.Terms",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node146 -> Node147 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node147 [label="Pigmeat.Program.GetCommand",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a813269f3c9466bddfa561c72eb56de4f",tooltip="Perform actions specified by command calls "];
+  Node147 -> Node148 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node148 [label="Pigmeat.Program.Main",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a3b898a93d66f23079be04ac657013df3",tooltip="Handle primary tool information, such as command inputs and current directory "];
+  Node146 -> Node149 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node149 [label="Pigmeat.Program.Help",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a5ba96e069c0192950fa044954bca4647",tooltip="Show how to use the Pigmeat tool "];
+  Node149 -> Node147 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }

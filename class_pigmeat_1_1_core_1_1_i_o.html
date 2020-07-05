@@ -116,9 +116,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a95f27be3fb9f5fd7e668f903c4e1cfb4"><td class="memItemLeft" align="right" valign="top">static JObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4">GetCollections</a> ()</td></tr>
 <tr class="memdesc:a95f27be3fb9f5fd7e668f903c4e1cfb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <code>JObject</code> to merge with the <code>Global</code> context containing each collection's <code>collection.json</code> data  <a href="#a95f27be3fb9f5fd7e668f903c4e1cfb4">More...</a><br /></td></tr>
 <tr class="separator:a95f27be3fb9f5fd7e668f903c4e1cfb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a000f595801bec338426974328b938e6c"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a000f595801bec338426974328b938e6c">RenderPage</a> (JObject PageObject, string Collection, bool RenderWithLayout, bool isMarkdown)</td></tr>
-<tr class="memdesc:a000f595801bec338426974328b938e6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban  <a href="#a000f595801bec338426974328b938e6c">More...</a><br /></td></tr>
-<tr class="separator:a000f595801bec338426974328b938e6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60f49d31957620c308423cad19dbf5f6"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6">RenderPage</a> (JObject PageObject, string Collection, bool RenderWithLayout, bool isMarkdown, JObject PaginatorObject)</td></tr>
+<tr class="memdesc:a60f49d31957620c308423cad19dbf5f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban  <a href="#a60f49d31957620c308423cad19dbf5f6">More...</a><br /></td></tr>
+<tr class="separator:a60f49d31957620c308423cad19dbf5f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9cd73892daa23bdf19c9a229fe62b7b"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#ae9cd73892daa23bdf19c9a229fe62b7b">GetLayoutContents</a> (string LayoutPath, bool Overwrite)</td></tr>
 <tr class="memdesc:ae9cd73892daa23bdf19c9a229fe62b7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the contents of <code>Layout</code>s recursively  <a href="#ae9cd73892daa23bdf19c9a229fe62b7b">More...</a><br /></td></tr>
 <tr class="separator:ae9cd73892daa23bdf19c9a229fe62b7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -187,7 +187,7 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Adds <code>JObject</code> representations of pages in a collection to the collection's <code>entries</code> field in its <code>collection.json</code> file </p>
-<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a000f595801bec338426974328b938e6c" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool)</a> </p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool, JObject)</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">Collection</td><td>The name of the collection the page is in</td></tr>
@@ -196,7 +196,7 @@ Static Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00096">96</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00106">106</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -231,7 +231,7 @@ Here is the caller graph for this function:</div>
 
 <p>Clean out the <code>entries</code> field in every <code>collection.json</code> file </p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00127">127</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00137">137</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -265,11 +265,11 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Create a <code>JObject</code> to merge with the <code>Global</code> context containing each collection's <code>collection.json</code> data </p>
-<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a000f595801bec338426974328b938e6c" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool)</a></p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool, JObject)</a></p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b" title="Renders Snippets ">Snippet.Render(string, JObject)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>A <code>JObject</code> containing collections as keys and their data as values </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00151">151</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00161">161</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -303,9 +303,11 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Get file representing project's <code>Global</code> context </p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a65785eb7263115da1c592b06597727f5" title="Convert YAML data into JObject ">IO.GetYamlObject(string)</a></p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool, JObject)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a22b69a07b899c8d9825fb388357ce3b7" title="Parses the permalink using given metadata to generate an output path ">Page.GetPermalink(JObject, JObject)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b" title="Renders Snippets ">Snippet.Render(string, JObject)</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>File contents of <code>./_global.yml</code> as a <code>string</code> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00073">73</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00081">81</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -358,9 +360,9 @@ Here is the caller graph for this function:</div>
   </table>
   </dd>
 </dl>
-<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a000f595801bec338426974328b938e6c" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool)</a> </p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool, JObject)</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00219">219</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00231">231</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -400,9 +402,11 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Get <code>JObject</code> representing project's <code><a class="el" href="namespace_pigmeat.html">Pigmeat</a></code> context </p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool, JObject)</a></p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a22b69a07b899c8d9825fb388357ce3b7" title="Parses the permalink using given metadata to generate an output path ">Page.GetPermalink(JObject, JObject)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b" title="Renders Snippets ">Snippet.Render(string, JObject)</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>JSON representation of <a class="el" href="namespace_pigmeat.html">Pigmeat</a>'s internal Liquid context </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00085">85</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00095">95</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -437,6 +441,8 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Convert YAML data into JObject </p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a8f84ec34a489ed4c83089b16308ddc7f" title="Get file representing project&#39;s Global context ">IO.GetGlobal</a></p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#ae9cd73892daa23bdf19c9a229fe62b7b" title="Get the contents of Layouts recursively ">IO.GetLayoutContents(string, bool)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>JObject form of given YAML data </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -445,7 +451,7 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00062">62</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00065">65</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -498,7 +504,7 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00264">264</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00276">276</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -508,8 +514,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a000f595801bec338426974328b938e6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a000f595801bec338426974328b938e6c">&#9670;&nbsp;</a></span>RenderPage()</h2>
+<a id="a60f49d31957620c308423cad19dbf5f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60f49d31957620c308423cad19dbf5f6">&#9670;&nbsp;</a></span>RenderPage()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -539,7 +545,13 @@ Here is the caller graph for this function:</div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>isMarkdown</em>&#160;</td>
+          <td class="paramname"><em>isMarkdown</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">JObject&#160;</td>
+          <td class="paramname"><em>PaginatorObject</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -556,28 +568,29 @@ Here is the caller graph for this function:</div>
 
 <p>Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban </p>
 <p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a513be40f796bdadd8f6eb31f2446716a" title="Adds JObject representations of pages in a collection to the collection&#39;s entries field in its collec...">IO.AppendEntry(string, JObject)</a> </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4" title="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data ">IO.GetCollections</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4" title="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data ">IO.GetCollections</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a>, Paginator.RenderPaginated(string, string)</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">PageObject</td><td>The <code>JObject</code> representing the page being rendered</td></tr>
     <tr><td class="paramname">Collection</td><td>The name of the collection the page is in</td></tr>
     <tr><td class="paramname">RenderWithLayout</td><td>Whether or not to render it within its layout (for creating <code>{{ page.content }}</code>)</td></tr>
     <tr><td class="paramname">isMarkdown</td><td>If the document being rendered is a Markdown file</td></tr>
+    <tr><td class="paramname">PaginatorObject</td><td>The <code>JObject</code> representing the page's paginator</td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00170">170</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00183">183</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a000f595801bec338426974328b938e6c_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a000f595801bec338426974328b938e6c_cgraph" alt=""/></div>
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a60f49d31957620c308423cad19dbf5f6_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a60f49d31957620c308423cad19dbf5f6_cgraph" alt=""/></div>
 <!-- MAP 9 -->
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a000f595801bec338426974328b938e6c_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a000f595801bec338426974328b938e6c_icgraph" alt=""/></div>
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a60f49d31957620c308423cad19dbf5f6_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a60f49d31957620c308423cad19dbf5f6_icgraph" alt=""/></div>
 <!-- MAP 10 -->
 </div>
 

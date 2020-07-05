@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['url',['url',['../class_pigmeat_1_1_core_1_1_page.html#a91cf6590d3c677be780451d5feafa471',1,'Pigmeat::Core::Page']]]
+  ['total_5fpages',['total_pages',['../class_pigmeat_1_1_core_1_1_paginator.html#a853f2427bbca67f26f748247ed318f60',1,'Pigmeat::Core::Paginator']]],
+  ['total_5fposts',['total_posts',['../class_pigmeat_1_1_core_1_1_paginator.html#affb04ca360706c0cd15127a7adad5d5d',1,'Pigmeat::Core::Paginator']]]
 ];

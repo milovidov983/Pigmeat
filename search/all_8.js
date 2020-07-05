@@ -7,7 +7,7 @@ var searchData=
   ['getglobal',['GetGlobal',['../class_pigmeat_1_1_core_1_1_i_o.html#a8f84ec34a489ed4c83089b16308ddc7f',1,'Pigmeat::Core::IO']]],
   ['getlayoutcontents',['GetLayoutContents',['../class_pigmeat_1_1_core_1_1_i_o.html#ae9cd73892daa23bdf19c9a229fe62b7b',1,'Pigmeat::Core::IO']]],
   ['getpageobject',['GetPageObject',['../class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d',1,'Pigmeat::Core::Page']]],
-  ['getpermalink',['GetPermalink',['../class_pigmeat_1_1_core_1_1_page.html#a934121eea134b779d5f83b0febd36e91',1,'Pigmeat::Core::Page']]],
+  ['getpermalink',['GetPermalink',['../class_pigmeat_1_1_core_1_1_page.html#a22b69a07b899c8d9825fb388357ce3b7',1,'Pigmeat::Core::Page']]],
   ['getpigmeat',['GetPigmeat',['../class_pigmeat_1_1_core_1_1_i_o.html#ab52a010415630b7063180fd58759eab3',1,'Pigmeat::Core::IO']]],
   ['getyamlobject',['GetYamlObject',['../class_pigmeat_1_1_core_1_1_i_o.html#a65785eb7263115da1c592b06597727f5',1,'Pigmeat::Core::IO']]]
 ];

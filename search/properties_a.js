@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variables',['Variables',['../class_pigmeat_1_1_core_1_1_snippet.html#a66010995ab03ad7e67083a5c54998b87',1,'Pigmeat::Core::Snippet']]]
+  ['url',['url',['../class_pigmeat_1_1_core_1_1_page.html#a91cf6590d3c677be780451d5feafa471',1,'Pigmeat::Core::Page']]]
 ];

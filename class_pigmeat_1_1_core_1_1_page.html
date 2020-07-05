@@ -104,6 +104,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:adeeba3432008a2b7718ad52c2e0ae058"><td class="memItemLeft" align="right" valign="top">static string []&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#adeeba3432008a2b7718ad52c2e0ae058">SplitFrontmatter</a> (string PageContents)</td></tr>
 <tr class="memdesc:adeeba3432008a2b7718ad52c2e0ae058"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the YAML of the frontmatter for a given page  <a href="#adeeba3432008a2b7718ad52c2e0ae058">More...</a><br /></td></tr>
 <tr class="separator:adeeba3432008a2b7718ad52c2e0ae058"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22b69a07b899c8d9825fb388357ce3b7"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a22b69a07b899c8d9825fb388357ce3b7">GetPermalink</a> (JObject PageObject, JObject PaginatorObject)</td></tr>
+<tr class="memdesc:a22b69a07b899c8d9825fb388357ce3b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the permalink using given metadata to generate an output path  <a href="#a22b69a07b899c8d9825fb388357ce3b7">More...</a><br /></td></tr>
+<tr class="separator:a22b69a07b899c8d9825fb388357ce3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
 Properties</h2></td></tr>
@@ -179,9 +182,6 @@ Properties</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
-<tr class="memitem:a934121eea134b779d5f83b0febd36e91"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a934121eea134b779d5f83b0febd36e91">GetPermalink</a> (JObject PageObject)</td></tr>
-<tr class="memdesc:a934121eea134b779d5f83b0febd36e91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the permalink using given metadata to generate an output path  <a href="#a934121eea134b779d5f83b0febd36e91">More...</a><br /></td></tr>
-<tr class="separator:a934121eea134b779d5f83b0febd36e91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8f17dadbdb6b16f1bb3dba08e2e8f68"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#af8f17dadbdb6b16f1bb3dba08e2e8f68">GetDayOfYear</a> (DateTime Date, CultureInfo Culture)</td></tr>
 <tr class="separator:af8f17dadbdb6b16f1bb3dba08e2e8f68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -224,7 +224,7 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00231">231</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00213">213</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 
 </div>
 </div>
@@ -278,8 +278,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a934121eea134b779d5f83b0febd36e91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a934121eea134b779d5f83b0febd36e91">&#9670;&nbsp;</a></span>GetPermalink()</h2>
+<a id="a22b69a07b899c8d9825fb388357ce3b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22b69a07b899c8d9825fb388357ce3b7">&#9670;&nbsp;</a></span>GetPermalink()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -291,13 +291,23 @@ Here is the caller graph for this function:</div>
           <td class="memname">static string Pigmeat.Core.Page.GetPermalink </td>
           <td>(</td>
           <td class="paramtype">JObject&#160;</td>
-          <td class="paramname"><em>PageObject</em></td><td>)</td>
+          <td class="paramname"><em>PageObject</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">JObject&#160;</td>
+          <td class="paramname"><em>PaginatorObject</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -307,17 +317,24 @@ Here is the caller graph for this function:</div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">PageObject</td><td>The <code>JObject</code> holding the page's metadata</td></tr>
+    <tr><td class="paramname">PaginatorObject</td><td>The <code>JObject</code> representing the page's paginator values</td></tr>
   </table>
   </dd>
 </dl>
 <p>See <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00205">205</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00187">187</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="class_pigmeat_1_1_core_1_1_page_a934121eea134b779d5f83b0febd36e91_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_a934121eea134b779d5f83b0febd36e91_cgraph" alt=""/></div>
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_page_a22b69a07b899c8d9825fb388357ce3b7_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_a22b69a07b899c8d9825fb388357ce3b7_cgraph" alt=""/></div>
 <!-- MAP 2 -->
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_page_a22b69a07b899c8d9825fb388357ce3b7_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_a22b69a07b899c8d9825fb388357ce3b7_icgraph" alt=""/></div>
+<!-- MAP 3 -->
 </div>
 
 </div>
@@ -357,12 +374,12 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00183">183</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_page_8cs_source.html#l00164">164</a> of file <a class="el" href="_page_8cs_source.html">Page.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_page_adeeba3432008a2b7718ad52c2e0ae058_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_page_adeeba3432008a2b7718ad52c2e0ae058_icgraph" alt=""/></div>
-<!-- MAP 3 -->
+<!-- MAP 4 -->
 </div>
 
 </div>

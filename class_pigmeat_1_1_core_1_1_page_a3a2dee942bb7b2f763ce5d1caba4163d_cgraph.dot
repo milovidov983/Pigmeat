@@ -13,7 +13,7 @@ digraph "Pigmeat.Core.Page.GetPageObject"
   Node2 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node6 [label="Pigmeat.Core.IO.GetCollections",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4",tooltip="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data "];
   Node2 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node7 [label="Pigmeat.Core.IO.RenderPage",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a000f595801bec338426974328b938e6c",tooltip="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ..."];
+  Node7 [label="Pigmeat.Core.IO.RenderPage",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6",tooltip="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ..."];
   Node7 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node8 [label="Pigmeat.Core.Snippet.Parse",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_snippet.html#a54ea5e1d3a8cd6308a1b1c9f01457146",tooltip="Parses through each {! snippet !} call in a page and evaluates them "];
   Node8 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];

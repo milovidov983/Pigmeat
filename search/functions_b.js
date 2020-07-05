@@ -1,6 +1,7 @@
 var searchData=
 [
   ['render',['Render',['../class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b',1,'Pigmeat::Core::Snippet']]],
-  ['renderpage',['RenderPage',['../class_pigmeat_1_1_core_1_1_i_o.html#a000f595801bec338426974328b938e6c',1,'Pigmeat::Core::IO']]],
+  ['renderpage',['RenderPage',['../class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6',1,'Pigmeat::Core::IO']]],
+  ['renderpaginated',['RenderPaginated',['../class_pigmeat_1_1_core_1_1_paginator.html#a38c0bfdf8bfe439eb2a3e58a638c823a',1,'Pigmeat::Core::Paginator']]],
   ['run',['Run',['../class_pigmeat_1_1_program.html#a5d464c8f6b120a3c279d587c61d18df4',1,'Pigmeat::Program']]]
 ];

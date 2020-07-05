@@ -5,6 +5,7 @@ var hierarchy =
     ] ],
     [ "Pigmeat.Core.IO", "class_pigmeat_1_1_core_1_1_i_o.html", null ],
     [ "Pigmeat.Core.Page", "class_pigmeat_1_1_core_1_1_page.html", null ],
+    [ "Pigmeat.Core.Paginator", "class_pigmeat_1_1_core_1_1_paginator.html", null ],
     [ "Pigmeat.Program", "class_pigmeat_1_1_program.html", null ],
     [ "SnapcraftError", null, [
       [ "dotnet3.DotNetBadArchitectureError", "classdotnet3_1_1_dot_net_bad_architecture_error.html", null ],
