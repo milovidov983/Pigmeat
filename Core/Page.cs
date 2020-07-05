@@ -124,45 +124,26 @@ namespace Pigmeat.Core
             PageObject.Merge(JObject.Parse(FrontmatterObject.ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             
             // Get URL from collected page data, merge back into JObject
-            page.url = GetPermalink(PageObject); // Generate output path based on other variables
+            page.url = GetPermalink(PageObject, new JObject {}); // Generate output path based on other variables
             PageObject.Merge(JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
 
             try
             {
                 string DirectoryName = Path.GetDirectoryName(PagePath);
+                bool isMarkdown = Path.GetExtension(PagePath).Equals(".md");
                 if(!DirectoryName.Equals(".") && DirectoryName.Substring(0, 3).Equals("./_"))
                 {
-                    if(Path.GetExtension(PagePath).Equals(".md"))
-                    {
-                        page.content = IO.RenderPage(PageObject, DirectoryName.Substring(3), true, true);
-                    }
-                    else
-                    {
-                        page.content = IO.RenderPage(PageObject, DirectoryName.Substring(3), true, false);
-                    }
+                    page.content = IO.RenderPage(PageObject, DirectoryName.Substring(3), true, isMarkdown, new JObject {});
                 }
                 else
                 {
-                    if(Path.GetExtension(PagePath).Equals(".md"))
-                    {
-                        page.content = IO.RenderPage(PageObject, "", true, true);
-                    }
-                    else
-                    {
-                        page.content = IO.RenderPage(PageObject, "", true, false);
-                    }
+                    page.content = IO.RenderPage(PageObject, "", true, isMarkdown, new JObject {});
                 }
             }
             catch(ArgumentOutOfRangeException) // If not in root, but not in a collection
             {
-                if(Path.GetExtension(PagePath).Equals(".md"))
-                {
-                    page.content = IO.RenderPage(PageObject, "", true, true);
-                }
-                else
-                {
-                    page.content = IO.RenderPage(PageObject, "", true, false);
-                }
+                bool isMarkdown = Path.GetExtension(PagePath).Equals(".md");
+                page.content = IO.RenderPage(PageObject, "", true, isMarkdown, new JObject {});
             }
 
             // Merge content back into JObject
@@ -201,32 +182,33 @@ namespace Pigmeat.Core
         /// A <c>string</c> pointing to the page's output path
         /// </returns>
         /// <param name="PageObject">The <c>JObject</c> holding the page's metadata</param>
+        /// <param name="PaginatorObject">The <c>JObject</c> representing the page's paginator values</param>
         /// <para> See <see cref="Page.GetPageObject(string)"/> </para>
-        static string GetPermalink(JObject PageObject)
+        public static string GetPermalink(JObject PageObject, JObject PaginatorObject)
         {
             string Permalink = PageObject["permalink"].ToString();
-            if(Permalink.Equals("date", StringComparison.OrdinalIgnoreCase))
+            switch(Permalink)
             {
-                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.month }}/{{ page.day }}/{{ page.title }}.html";
-            }
-            else if(Permalink.Equals("pretty", StringComparison.OrdinalIgnoreCase))
-            {
-                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.month }}/{{ page.day }}/{{ page.title }}.html";
-            }
-            else if(Permalink.Equals("ordinal", StringComparison.OrdinalIgnoreCase))
-            {
-                Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.y_day }}/{{ page.title }}.html";
-            }
-            else if(Permalink.Equals("weekdate", StringComparison.OrdinalIgnoreCase))
-            {
-                Permalink = "/{{ page.collection }}/{{ page.year }}/W{{ page.week }}/{{ page.short_day }}/{{ page.title }}.html";
-            }
-            else if(Permalink.Equals("none", StringComparison.OrdinalIgnoreCase))
-            {
-                Permalink = "/{{ page.collection }}/{{ page.title }}.html";
+                case "date":
+                    Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.month }}/{{ page.day }}/{{ page.title }}.html";
+                    break;
+                case "pretty":
+                    Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.month }}/{{ page.day }}/{{ page.title }}.html";
+                    break;
+                case "ordinal":
+                    Permalink = "/{{ page.collection }}/{{ page.year }}/{{ page.y_day }}/{{ page.title }}.html";
+                    break;
+                case "weekdate":
+                    Permalink = "/{{ page.collection }}/{{ page.year }}/W{{ page.week }}/{{ page.short_day }}/{{ page.title }}.html";
+                    break;
+                case "none":
+                    Permalink = "/{{ page.collection }}/{{ page.title }}.html";
+                    break;
+                default:
+                    break;
             }
             var template = Template.ParseLiquid(Permalink);
-            return template.Render(new { page = PageObject, global = IO.GetGlobal()});
+            return template.Render(new { page = PageObject, global = IO.GetGlobal(), pigmeat = IO.GetPigmeat(), paginator = PaginatorObject });
         }
         static string GetDayOfYear(DateTime Date, CultureInfo Culture)
         {

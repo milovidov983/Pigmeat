@@ -213,7 +213,14 @@ namespace Pigmeat
                     {
                         JObject PageObject = Page.GetPageObject(file);
                         Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
-                        File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
+                        if(PageObject.ContainsKey("paginate"))
+                        {
+                            Paginator.RenderPaginated(file); // Output multiple pages
+                        }
+                        else
+                        {
+                            File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
+                        }
                         //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
                         i++;
                     }
@@ -221,7 +228,7 @@ namespace Pigmeat
                     {
                         Directory.CreateDirectory("./output/" + Path.GetDirectoryName(file));
                         File.WriteAllText("./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css", Scss.ConvertToCss(File.ReadAllText(file)).Css);
-                        //Console.WriteLine(file + " → " + "./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css");
+                        //Console.WriteLine(file + " → " + "./output/" + Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + ".css";
                         i++;
                     }
                     else if(!Path.GetExtension(file).Equals(".json") && !Path.GetExtension(file).Equals(".yml"))
@@ -261,9 +268,16 @@ namespace Pigmeat
                 foreach(var file in IncludedPages)
                 {
                     JObject PageObject = Page.GetPageObject(file);
-                    Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
-                    //File.WriteAllText("./output/" + PageObject["url"].ToString(), IO.RenderPage(PageObject, ""));
-                    File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
+                    
+                    if(PageObject.ContainsKey("paginate"))
+                    {
+                        Paginator.RenderPaginated(file);
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName("./output/" + PageObject["url"].ToString()));
+                        File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
+                    }
                     //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
                     i++;
                 }

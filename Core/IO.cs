@@ -54,6 +54,9 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Convert YAML data into JObject
+        /// <para>See <see cref="IO.GetGlobal"/></para>
+        /// <seealso cref="IO.GetLayoutContents(string, bool)"/>
+        /// <seealso cref="Page.GetPageObject(string)"/>
         /// </summary>
         /// <returns>
         /// JObject form of given YAML data
@@ -66,18 +69,25 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Get file representing project's <c>Global</c> context
+        /// <para>See <see cref="IO.GetYamlObject(string)"/></para>
+        /// <seealso cref="IO.RenderPage(JObject, string, bool, bool, JObject)"/>
+        /// <seealso cref="Page.GetPageObject(string)"/>
+        /// <seealso cref="Page.GetPermalink(JObject, JObject)"/>
+        /// <seealso cref="Snippet.Render(string, JObject)"/>
         /// </summary>
         /// <returns>
         /// File contents of <c>./_global.yml</c> as a <c>string</c>
         /// </returns>
         public static string GetGlobal()
         {
-
             return GetYamlObject(File.ReadAllText("./_global.yml")).ToString(Formatting.None);
         }
 
         /// <summary>
         /// Get <c>JObject</c> representing project's <c>Pigmeat</c> context
+        /// <para>See <see cref="IO.RenderPage(JObject, string, bool, bool, JObject)"/></para>
+        /// <seealso cref="Page.GetPermalink(JObject, JObject)"/>
+        /// <seealso cref="Snippet.Render(string, JObject)"/>
         /// </summary>
         /// <returns>
         /// JSON representation of Pigmeat's internal Liquid context
@@ -89,7 +99,7 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Adds <c>JObject</c> representations of pages in a collection to the collection's <c>entries</c> field in its <c>collection.json</c> file
-        /// <para> See <see cref="IO.RenderPage(JObject, string, bool, bool)"/> </para>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, bool, bool, JObject)"/> </para>
         /// </summary>
         /// <param name="Collection">The name of the collection the page is in</param>
         /// <param name="Entry">The <c>JObject</c> form of the page</param>
@@ -97,7 +107,7 @@ namespace Pigmeat.Core
         {
             // Get Collection data, deserialize entries into List of JObjects
             JObject CollectionObject = JObject.Parse(File.ReadAllText("./_" + Collection + "/collection.json"));
-            List<JObject> Entries = JsonConvert.DeserializeObject<List<JObject>>(CollectionObject["entries"].ToString(Formatting.Indented));
+            List<JObject> Entries = JsonConvert.DeserializeObject<List<JObject>>(CollectionObject["entries"].ToString(Formatting.None));
             Entries.Add(Entry); // Add current entry to List
 
             try
@@ -115,10 +125,10 @@ namespace Pigmeat.Core
                 // If page is missing both `date` and `title`
             }
 
-            var DeserializedCollection = JsonConvert.DeserializeObject<Dictionary<string, object>>(CollectionObject.ToString(Formatting.Indented));
+            var DeserializedCollection = JsonConvert.DeserializeObject<Dictionary<string, object>>(CollectionObject.ToString(Formatting.None));
             DeserializedCollection["entries"] = Entries.ToArray(); // Add List into JSON
 
-            File.WriteAllText("./_" + Collection + "/collection.json", JsonConvert.SerializeObject(DeserializedCollection, Formatting.Indented));
+            File.WriteAllText("./_" + Collection + "/collection.json", JsonConvert.SerializeObject(DeserializedCollection));
         }
 
         /// <summary>
@@ -132,7 +142,7 @@ namespace Pigmeat.Core
                 // Get Collection data, deserialize entries into List of JObjects
                 JObject CollectionObject = JObject.Parse(File.ReadAllText("./_" + Collection + "/collection.json"));
 
-                var DeserializedCollection = JsonConvert.DeserializeObject<Dictionary<string, object>>(CollectionObject.ToString(Formatting.Indented));
+                var DeserializedCollection = JsonConvert.DeserializeObject<Dictionary<string, object>>(CollectionObject.ToString(Formatting.None));
                 DeserializedCollection["entries"] = new int[] { }; // Add empty List into JSON
 
                 File.WriteAllText("./_" + Collection + "/collection.json", JsonConvert.SerializeObject(DeserializedCollection, Formatting.Indented));
@@ -141,7 +151,7 @@ namespace Pigmeat.Core
 
         /// <summary>
         /// Create a <c>JObject</c> to merge with the <c>Global</c> context containing each collection's <c>collection.json</c> data
-        /// <para> See <see cref="IO.RenderPage(JObject, string, bool, bool)"/></para>
+        /// <para> See <see cref="IO.RenderPage(JObject, string, bool, bool, JObject)"/></para>
         /// <seealso cref="Snippet.Render(string, JObject)"/>
         /// <seealso cref="Page.GetPageObject(string)"/>
         /// </summary>
@@ -162,12 +172,15 @@ namespace Pigmeat.Core
         /// Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban
         /// <para> See <see cref="IO.AppendEntry(string, JObject)"/> </para>
         /// <seealso cref="IO.GetCollections"/>
+        /// <seealso cref="Page.GetPageObject(string)"/>
+        /// <seealso cref="Paginator.RenderPaginated(string, string)"/>
         /// </summary>
         /// <param name="PageObject">The <c>JObject</c> representing the page being rendered</param>
         /// <param name="Collection">The name of the collection the page is in</param>
         /// <param name="RenderWithLayout">Whether or not to render it within its layout (for creating <c>{{ page.content }}</c>)</param>
         /// <param name="isMarkdown">If the document being rendered is a Markdown file</param>
-        public static string RenderPage(JObject PageObject, string Collection, bool RenderWithLayout, bool isMarkdown)
+        /// <param name="PaginatorObject">The <c>JObject</c> representing the page's paginator</param>
+        public static string RenderPage(JObject PageObject, string Collection, bool RenderWithLayout, bool isMarkdown, JObject PaginatorObject)
         {
             string PageContents = PageObject["content"].ToString();
             if(isMarkdown)
@@ -181,8 +194,7 @@ namespace Pigmeat.Core
             
             // Get outside data
             JObject Global = JObject.Parse(GetGlobal());
-            Global.Merge(JObject.Parse(GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-            JObject Pigmeat = GetPigmeat();
+            Global.Merge(GetCollections(), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
 
             // If a page has a layout, use it
             if(PageObject.ContainsKey("layout") && RenderWithLayout)
@@ -191,13 +203,13 @@ namespace Pigmeat.Core
             }
 
             // Render with Scriban
-            PageContents = Snippet.Parse(PageContents, PageObject); // Parse for snippets
             var template = Template.ParseLiquid(PageContents);
-            PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = Pigmeat });
+            PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = GetPigmeat(), paginator = PaginatorObject });
+            PageContents = Snippet.Parse(PageContents, PageObject); // Parse for snippets
 
             if(!string.IsNullOrEmpty(Collection))
             {
-                PageObject["content"] = RenderPage(PageObject, "", false, isMarkdown); // TODO: Figure out a way not to have to do this. Inefficient!
+                PageObject["content"] = RenderPage(PageObject, "", false, isMarkdown, new JObject {}); // TODO: Figure out a way not to have to do this. Inefficient!
                 if(!Serving)
                 {
                     IO.AppendEntry(Collection, PageObject); // When serving we don't want to duplicate entries
@@ -215,7 +227,7 @@ namespace Pigmeat.Core
         /// </returns>
         /// <param name="LayoutPath">The path to the <c>Layout</c></param>
         /// <param name="Overwrite">Whether or not to overwrite a <c>Layout</c> if it's already been cached</param>
-        /// <para>See <see cref="IO.RenderPage(JObject, string, bool, bool)"/> </para>
+        /// <para>See <see cref="IO.RenderPage(JObject, string, bool, bool, JObject)"/> </para>
         public static string GetLayoutContents(string LayoutPath, bool Overwrite)
         {
             var SplitPage = Page.SplitFrontmatter(File.ReadAllText(LayoutPath));

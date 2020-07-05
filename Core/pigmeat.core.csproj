@@ -6,7 +6,7 @@
     <PackageIcon>128x128.png</PackageIcon>
     <ApplicationIcon>..//branding/Yellow/Pigmeat Yellow Square.ico</ApplicationIcon>
     <PackageId>Pigmeat.Core</PackageId>
-    <Version>2.1.5</Version>
+    <Version>2.1.6</Version>
     <Authors>Emil Sayahi</Authors>
     <Product>Pigmeat.Core</Product>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>

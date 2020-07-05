@@ -39,6 +39,7 @@ namespace Pigmeat.Core
         /// <summary>
         /// Parses through each <c>{! snippet !}</c> call in a page and evaluates them
         /// <para>See <see cref="Snippet.Render(string, JObject)"/></para>
+        /// <seealso cref="IO.RenderPage(JObject, string, bool, bool, JObject)"/>
         /// </summary>
         /// <returns>
         /// Contents of a page with <c>Snippet</c>s evaluated
@@ -122,7 +123,6 @@ namespace Pigmeat.Core
             // Get outside data
             JObject Global = JObject.Parse(IO.GetGlobal());
             Global.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-            JObject Pigmeat = IO.GetPigmeat();
             JObject SnippetObject = JObject.Parse("{\n\t\"exists\": true\n}");
             
             if(Variables != null)
@@ -130,7 +130,7 @@ namespace Pigmeat.Core
                 SnippetObject = JObject.Parse(JsonConvert.SerializeObject(Variables, Formatting.None));
             }
             var template = Template.ParseLiquid(File.ReadAllText(SnippetPath));
-            return template.Render(new { snippet = SnippetObject, page = PageObject, global = Global, pigmeat = Pigmeat });
+            return template.Render(new { snippet = SnippetObject, page = PageObject, global = Global, pigmeat = IO.GetPigmeat() });
         }
     }
 }
