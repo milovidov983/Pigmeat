@@ -27,7 +27,7 @@ jobs:
       # Publish library
       - name: Library - Publish to Chocolatey
         run: |
-          rmdir /s /q nupkg
+          Remove-Item ./nupkg -Recurse -Force
           cd ./Core
           dotnet restore
           dotnet pack
