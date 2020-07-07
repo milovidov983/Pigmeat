@@ -29,6 +29,7 @@ digraph "Pigmeat.Program.ServeBuild"
   Node116 -> Node113 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node116 -> Node117 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node117 [label="Pigmeat.Core.IO.GetPigmeat",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#ab52a010415630b7063180fd58759eab3",tooltip="Get JObject representing project&#39;s Pigmeat context "];
+  Node116 -> Node115 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node114 -> Node118 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node118 [label="Pigmeat.Core.IO.AppendEntry",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a513be40f796bdadd8f6eb31f2446716a",tooltip="Adds JObject representations of pages in a collection to the collection&#39;s entries field in its collec..."];
   Node107 -> Node119 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];

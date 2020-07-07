@@ -3,11 +3,14 @@ digraph "Pigmeat.Core.Snippet.Render"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node14 [label="Pigmeat.Core.Snippet.Render",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
-  Node14 -> Node15 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node15 [label="Pigmeat.Core.IO.GetGlobal",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a8f84ec34a489ed4c83089b16308ddc7f",tooltip="Get file representing project&#39;s Global context "];
-  Node14 -> Node16 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node16 [label="Pigmeat.Core.IO.GetCollections",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4",tooltip="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data "];
-  Node14 -> Node17 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node17 [label="Pigmeat.Core.IO.GetPigmeat",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#ab52a010415630b7063180fd58759eab3",tooltip="Get JObject representing project&#39;s Pigmeat context "];
+  Node15 [label="Pigmeat.Core.Snippet.Render",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node15 -> Node16 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="Pigmeat.Core.IO.GetGlobal",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a8f84ec34a489ed4c83089b16308ddc7f",tooltip="Get file representing project&#39;s Global context "];
+  Node15 -> Node17 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node17 [label="Pigmeat.Core.IO.GetCollections",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4",tooltip="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data "];
+  Node15 -> Node18 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node18 [label="Pigmeat.Core.IO.GetPigmeat",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#ab52a010415630b7063180fd58759eab3",tooltip="Get JObject representing project&#39;s Pigmeat context "];
+  Node15 -> Node19 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node19 [label="Pigmeat.Core.Snippet.Parse",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_snippet.html#a54ea5e1d3a8cd6308a1b1c9f01457146",tooltip="Parses through each {! snippet !} call in a page and evaluates them "];
+  Node19 -> Node15 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }

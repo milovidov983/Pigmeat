@@ -29,4 +29,5 @@ digraph "Pigmeat.Core.IO.GetCollections"
   Node28 [label="Pigmeat.Core.IO.RenderPage",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6",tooltip="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ..."];
   Node28 -> Node19 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node28 -> Node20 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node27 -> Node26 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }

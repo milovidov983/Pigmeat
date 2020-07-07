@@ -12,4 +12,5 @@ digraph "Pigmeat.Core.Snippet.Parse"
   Node3 [label="Pigmeat.Core.IO.GetCollections",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a95f27be3fb9f5fd7e668f903c4e1cfb4",tooltip="Create a JObject to merge with the Global context containing each collection&#39;s collection.json data "];
   Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node4 [label="Pigmeat.Core.IO.GetPigmeat",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#ab52a010415630b7063180fd58759eab3",tooltip="Get JObject representing project&#39;s Pigmeat context "];
+  Node1 -> Node0 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }
