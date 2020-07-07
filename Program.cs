@@ -53,7 +53,7 @@ namespace Pigmeat
                     case "i":
                         switch(args.Length)
                         {
-                            case 3:
+                            case var expression when (args.Length >= 3):
                                 try
                                 {
                                     Directory.SetCurrentDirectory(args[1]);
@@ -491,14 +491,19 @@ namespace Pigmeat
         {
             try
             {
-                Console.WriteLine("Loading plugin: " + args[args.Length - 1]);
-                CSScript.EvaluatorConfig.Engine = EvaluatorEngine.CodeDom;
+                Console.WriteLine("Loading plugin: " + Path.GetFullPath("./plugins/" + args[args.Length - 1]));
                 dynamic script = CSScript.Evaluator.LoadCode(File.ReadAllText("./plugins/" + args[args.Length - 1]));
                 script.Main(args);
             }
-            catch
+            catch(FileNotFoundException)
             {
+                Console.WriteLine(Path.GetFullPath("./plugins/" + args[args.Length - 1]) + " could not be found.");
                 Environment.Exit(128); // Invalid argument
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                Environment.Exit(1); // General error
             }
         }
 

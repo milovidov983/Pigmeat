@@ -44,7 +44,11 @@ namespace Pigmeat.Core
 
             // (total_posts ÷ paginate) + (total_posts % paginate) → total_pages
             paginator.per_page = int.Parse(PageObject["paginate"].ToString());
-            paginator.total_pages = (paginator.total_posts / paginator.per_page) + (paginator.total_posts % paginator.per_page);
+            paginator.total_pages = ((int) paginator.total_posts / paginator.per_page) + (paginator.total_posts % 2);
+            if(paginator.total_pages == 0)
+            {
+                paginator.total_pages = 1;
+            }
 
             // Store pages w/ calculated paginator values in List of JSON
             List<JObject> PaginatorArray = new List<JObject>();
@@ -52,15 +56,15 @@ namespace Pigmeat.Core
             {
                 // Figure out paginator's page numbers
                 object next_page, previous_page;
-                if(i == 1)
-                {
-                    previous_page = null;
-                    next_page = 2;
-                }
-                else if(i == paginator.total_pages)
+                if(i == paginator.total_pages)
                 {
                     previous_page = paginator.total_pages - 1;
                     next_page = null;
+                }
+                else if(i == 1)
+                {
+                    previous_page = null;
+                    next_page = 2;
                 }
                 else
                 {
@@ -76,7 +80,7 @@ namespace Pigmeat.Core
                 var startIndex = ((i - 1) * paginator.per_page);
                 for(int j = startIndex; j < (startIndex + paginator.per_page); j++)
                 {
-                    if(j == paginator.total_posts) // Sometimes the total number of posts doesn't divide evenly with the amount per page
+                    if(j >= paginator.total_posts) // Sometimes the total number of posts doesn't divide evenly with the amount per page
                     {
                         break;
                     }
@@ -87,7 +91,12 @@ namespace Pigmeat.Core
                 }
                 paginator.posts = CurrentPosts.ToArray();
 
-                PaginatorArray.Add(JObject.Parse(JsonConvert.SerializeObject(paginator))); // Save the paginator values for current page
+                // If the amount per page is too large, empty extra pages will be generated
+                if(paginator.posts.Length != 0)
+                {
+                    PaginatorArray.Add(JObject.Parse(JsonConvert.SerializeObject(paginator))); // Save the paginator values for current page
+
+                }
             }
             foreach(var page in PaginatorArray)
             {

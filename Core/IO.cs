@@ -195,6 +195,13 @@ namespace Pigmeat.Core
             // Get outside data
             JObject Global = JObject.Parse(GetGlobal());
             Global.Merge(GetCollections(), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            JObject CollectionObject = new JObject {};
+            if(PageObject.ContainsKey("collection"))
+            {
+                // Can't use `Collection` parameter, as sometimes we don't want the output filed as an entry for said collection
+                CollectionObject = JObject.Parse(File.ReadAllText("./_" + PageObject["collection"].ToString() + "/collection.json"));
+
+            }
 
             // If a page has a layout, use it
             if(PageObject.ContainsKey("layout") && RenderWithLayout)
@@ -204,7 +211,7 @@ namespace Pigmeat.Core
 
             // Render with Scriban
             var template = Template.ParseLiquid(PageContents);
-            PageContents = template.Render(new { page = PageObject, global = Global, pigmeat = GetPigmeat(), paginator = PaginatorObject });
+            PageContents = template.Render(new { page = PageObject, collection = CollectionObject, global = Global, pigmeat = GetPigmeat(), paginator = PaginatorObject });
             PageContents = Snippet.Parse(PageContents, PageObject); // Parse for snippets
 
             if(!string.IsNullOrEmpty(Collection))

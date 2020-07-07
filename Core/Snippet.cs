@@ -123,6 +123,13 @@ namespace Pigmeat.Core
             // Get outside data
             JObject Global = JObject.Parse(IO.GetGlobal());
             Global.Merge(JObject.Parse(IO.GetCollections().ToString(Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            JObject CollectionObject = new JObject {};
+            if(PageObject.ContainsKey("collection"))
+            {
+                // Can't use `Collection` parameter, as sometimes we don't want the output filed as an entry for said collection
+                CollectionObject = JObject.Parse(File.ReadAllText("./_" + PageObject["collection"].ToString() + "/collection.json"));
+
+            }
             JObject SnippetObject = JObject.Parse("{\n\t\"exists\": true\n}");
             
             if(Variables != null)
@@ -130,7 +137,9 @@ namespace Pigmeat.Core
                 SnippetObject = JObject.Parse(JsonConvert.SerializeObject(Variables, Formatting.None));
             }
             var template = Template.ParseLiquid(File.ReadAllText(SnippetPath));
-            return template.Render(new { snippet = SnippetObject, page = PageObject, global = Global, pigmeat = IO.GetPigmeat() });
+            var SnippetContents = template.Render(new { snippet = SnippetObject, page = PageObject, collection = CollectionObject, global = Global, pigmeat = IO.GetPigmeat() });
+            SnippetContents = Snippet.Parse(SnippetContents, PageObject); // Parse for snippets
+            return SnippetContents;
         }
     }
 }
