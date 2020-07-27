@@ -137,7 +137,7 @@ namespace Pigmeat.Core
                 SnippetObject = JObject.Parse(JsonConvert.SerializeObject(Variables, Formatting.None));
             }
             var template = Template.ParseLiquid(File.ReadAllText(SnippetPath));
-            var SnippetContents = template.Render(new { snippet = SnippetObject, page = PageObject, collection = CollectionObject, global = Global, pigmeat = IO.GetPigmeat() });
+            var SnippetContents = template.Render(new { snippet = IO.ConvertFromJson(SnippetObject), page = IO.ConvertFromJson(PageObject), collection = IO.ConvertFromJson(CollectionObject), global = IO.ConvertFromJson(Global), pigmeat = IO.ConvertFromJson(IO.GetPigmeat()) });
             SnippetContents = Snippet.Parse(SnippetContents, PageObject); // Parse for snippets
             return SnippetContents;
         }

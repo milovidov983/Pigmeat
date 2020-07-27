@@ -26,6 +26,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Scriban;
 using YamlDotNet.Serialization;
+using Pigmeat.Core.Plugins;
+using Scriban.Runtime;
 
 namespace Pigmeat.Core
 {
@@ -39,6 +41,8 @@ namespace Pigmeat.Core
         static string Release = typeof(IO).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         /// <value>Cached layout data to be used during building</value>
         private static Dictionary<string, string> layouts = new Dictionary<string, string>();
+        /// <value>Hooks to be overridden in plugins</value>
+        static Pigmeat.Core.Plugins.Hooks Hooks = new Pigmeat.Core.Plugins.Hooks();
         /// <value>Cached layout data to be used during building</value>
         public static Dictionary<string, string> Layouts
         {
@@ -50,6 +54,73 @@ namespace Pigmeat.Core
         public static bool Serving
         {
             get { return serving; } set { serving = value; }
+        }
+
+        // See: https://github.com/lunet-io/scriban/issues/246
+        /// <summary>
+        /// Convert JObject to Scriban objects
+        /// <para>See <see cref="IO.RenderPage"/></para>
+        /// <seealso cref="Snippet.Render(string, JObject)"/>
+        /// </summary>
+        public static object ConvertFromJson(JObject element)
+        {
+            switch (element.Type)
+            {
+                case JTokenType.Array:
+                    var array = new ScriptArray();
+                    foreach (var nestedElement in element.Descendants())
+                    {
+                        array.Add(element.ToObject<object>());
+                    }
+                    return array;
+                case JTokenType.String:
+                    return element.ToString();
+                case JTokenType.Integer:
+                    return element.ToObject<int>();
+                case JTokenType.Float:
+                    return element.ToObject<double>();
+                case JTokenType.Boolean:
+                    return element.ToObject<bool>();
+                case JTokenType.Object:
+                    var obj = new ScriptObject();
+                    foreach (var prop in element.Properties())
+                    {
+                        var Value = prop.Value.ToObject<object>();
+                        
+                        try
+                        {
+                            Value.ToString(); // If an object is null, a NullReferenceException occurs
+                        }
+                        catch(NullReferenceException)
+                        {
+                            Value = "null"; // Turn it into a real object
+                        }
+                        
+                        if(Value.GetType() == typeof(JArray)) // For when an array appears
+                        {
+                            var JsonArray = new ScriptArray();
+                            foreach(var subElement in prop.Value.ToObject<List<object>>())
+                            {
+                                if(subElement.GetType() == typeof(JObject)) // JSON within JSON fails to convert to C# object using ToObject<object>, must be done explicitly
+                                {
+                                    JsonArray.Add(JObject.Parse(subElement.ToString()).ToObject<Dictionary<string, object>>()); // Convert JObject in JSON to C# Dictionary
+                                }
+                                else
+                                {
+                                    JsonArray.Add(subElement);
+                                }
+                            }
+                            obj[prop.Name] = JsonArray;
+                        }
+                        else
+                        {
+                            obj[prop.Name] = Value;
+                        }
+                    }
+                    return obj;
+                default:
+                    return null;
+            }
         }
 
         /// <summary>
@@ -80,7 +151,9 @@ namespace Pigmeat.Core
         /// </returns>
         public static string GetGlobal()
         {
-            return GetYamlObject(File.ReadAllText("./_global.yml")).ToString(Formatting.None);
+            var Global = GetYamlObject(File.ReadAllText("./_global.yml")).ToString(Formatting.None);
+            Hooks.GlobalAfterInitialization();
+            return Global;
         }
 
         /// <summary>
@@ -182,6 +255,7 @@ namespace Pigmeat.Core
         /// <param name="PaginatorObject">The <c>JObject</c> representing the page's paginator</param>
         public static string RenderPage(JObject PageObject, string Collection, bool RenderWithLayout, bool isMarkdown, JObject PaginatorObject)
         {
+            Hooks.PagePreRender();
             string PageContents = PageObject["content"].ToString();
             if(isMarkdown)
             {
@@ -200,7 +274,6 @@ namespace Pigmeat.Core
             {
                 // Can't use `Collection` parameter, as sometimes we don't want the output filed as an entry for said collection
                 CollectionObject = JObject.Parse(File.ReadAllText("./_" + PageObject["collection"].ToString() + "/collection.json"));
-
             }
 
             // If a page has a layout, use it
@@ -211,7 +284,7 @@ namespace Pigmeat.Core
 
             // Render with Scriban
             var template = Template.ParseLiquid(PageContents);
-            PageContents = template.Render(new { page = PageObject, collection = CollectionObject, global = Global, pigmeat = GetPigmeat(), paginator = PaginatorObject });
+            PageContents = template.Render(new { page = ConvertFromJson(PageObject), collection = ConvertFromJson(CollectionObject), global = ConvertFromJson(Global), pigmeat = ConvertFromJson(GetPigmeat()), paginator = ConvertFromJson(PaginatorObject) });
             PageContents = Snippet.Parse(PageContents, PageObject); // Parse for snippets
 
             if(!string.IsNullOrEmpty(Collection))
@@ -222,7 +295,7 @@ namespace Pigmeat.Core
                     IO.AppendEntry(Collection, PageObject); // When serving we don't want to duplicate entries
                 }
             }
-
+            Hooks.PagePostRender();
             return PageContents;
         }
 

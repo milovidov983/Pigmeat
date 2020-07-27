@@ -32,6 +32,8 @@ namespace Pigmeat.Core
     /// </summary>
     public class Page
     {
+        /// <value>Hooks to be overridden in plugins</value>
+        static Pigmeat.Core.Plugins.Hooks Hooks = new Pigmeat.Core.Plugins.Hooks();
         /// <value>Year from page's date</value>
         public string year { get; set; }
         /// <value>Year from page's date, without the century (00…99)</value>
@@ -148,7 +150,7 @@ namespace Pigmeat.Core
 
             // Merge content back into JObject
             PageObject.Merge(JObject.Parse(JsonConvert.SerializeObject(page, Formatting.None)), new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-            
+            Hooks.PagePostInitialization();
             return PageObject; // Return JObject of page
         }
         
@@ -171,7 +173,8 @@ namespace Pigmeat.Core
             }
             else
             {
-                return Split;
+                var lines = Regex.Split(Split[1], "\r\n|\r|\n").Skip(1); // Remove initial blank line created by the split
+                return new string[] { Split[0], string.Join(Environment.NewLine, lines.ToArray()) };
             }
         }
         

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageIcon>128x128.png</PackageIcon>
+    <ApplicationIcon>../../branding/Yellow/Pigmeat Yellow Square.ico</ApplicationIcon>
+    <PackageId>Pigmeat.Core.Plugins</PackageId>
+    <Version>2.1.6</Version>
+    <Authors>Emil Sayahi</Authors>
+    <Product>Pigmeat.Core.Plugins</Product>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <Description>Plugin support for Pigmeat, a static content publishing library for the modern web.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/MadeByEmil/Pigmeat</RepositoryUrl>
+    <PackageOutputPath>../../nupkg</PackageOutputPath>
+    <SelfContained>false</SelfContained>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../branding/Yellow/128x128.png" Pack="true" PackagePath="" />
+    <None Include="../../COPYING" Pack="true" PackagePath="" />
+    <None Include="../../NOTICE.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

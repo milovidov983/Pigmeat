@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using CSScriptLib;
 using LibGit2Sharp;
+using McMaster.NETCore.Plugins;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pigmeat.Core;
@@ -34,9 +35,28 @@ namespace Pigmeat
     static class Program
     {
         static DateTime LastFileWatcherEvent { get; set; }
+        static Pigmeat.Core.Plugins.Hooks Hooks = new Pigmeat.Core.Plugins.Hooks();
         /// <summary>
         /// Handle primary tool information, such as command inputs and current directory
         /// </summary>
+        static void GetPlugins()
+        {
+            try
+            {
+                foreach(var file in Directory.GetFiles("./plugins/", "*.ham"))
+                {
+                    PluginLoader.CreateFromAssemblyFile(
+                        assemblyFile: file,
+                        sharedTypes: new [] { typeof(Pigmeat.Core.Plugins.ICommand), typeof(Pigmeat.Core.Plugins.IGenerator), typeof(Pigmeat.Core.Plugins.Hooks) },
+                        isUnloadable: true);
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
         static void Main(string[] args)
         {
             try
@@ -90,6 +110,10 @@ namespace Pigmeat
                 }
                 GetCommand(args);
             }
+            catch(NotImplementedException)
+            {
+                
+            }
             catch(IndexOutOfRangeException)
             {
                 GetCommand(args);
@@ -114,6 +138,7 @@ namespace Pigmeat
                     Help(args);
                     break;
                 default:
+                    GetPlugins(); // Load in plugins, so long as some input is given
                     switch (args[0]) {
                         case "new":
                         case "n":
@@ -197,7 +222,7 @@ namespace Pigmeat
         /// </summary>
         static void Build(bool CleanCollections)
         {
-            int i = 0;
+            int i = 0; // Keep track of files rendered
             JObject Global = JObject.Parse(IO.GetGlobal());
             string[] IncludedFiles = JsonConvert.DeserializeObject<string[]>(Global["included-files"].ToString());
             string[] IncludedPages = JsonConvert.DeserializeObject<string[]>(Global["included-pages"].ToString());
@@ -205,6 +230,7 @@ namespace Pigmeat
             {
                 IO.GetLayoutContents(layout, false);
             }
+            Hooks.GlobalPreRender();
             foreach(var directory in Directory.GetDirectories("./", "_*", SearchOption.TopDirectoryOnly))
             {
                 foreach(var file in Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly))
@@ -222,6 +248,7 @@ namespace Pigmeat
                             File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
                         }
                         //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
+                        Hooks.PagePostWrite();
                         i++;
                     }
                     else if(Path.GetExtension(file).Equals(".scss") || Path.GetExtension(file).Equals(".sass"))
@@ -279,6 +306,7 @@ namespace Pigmeat
                         File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
                     }
                     //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
+                    Hooks.PagePostWrite();
                     i++;
                 }
             }
@@ -294,6 +322,7 @@ namespace Pigmeat
                 // Cannot make this check with IO.Serving as then we'd end up with wiped collections regardless (wipe happens before IO.Serving is set)
             }
             IO.Serving = true;
+            Hooks.GlobalPostWrite();
         }
 
         /// <summary>
@@ -303,24 +332,22 @@ namespace Pigmeat
         static void New()
         {
             Directory.CreateDirectory("./_posts");
-            Directory.CreateDirectory("./_pages");
-            Directory.CreateDirectory("./_files");
             Directory.CreateDirectory("./drafts");
             Directory.CreateDirectory("./layouts");
-            Directory.CreateDirectory("./includes");
+            Directory.CreateDirectory("./snippets");
             Directory.CreateDirectory("./sass");
+            Directory.CreateDirectory("./plugins");
+            Directory.CreateDirectory("./scripts");
 
             File.WriteAllText("./_posts/collection.json", "{\n\t\"name\": \"posts\",\n\t\"entries\": []\n}");
-            File.WriteAllText("./_pages/collection.json", "{\n\t\"name\": \"pages\",\n\t\"entries\": []\n}");
-            File.WriteAllText("./_files/collection.json", "{\n\t\"name\": \"files\",\n\t\"entries\": []\n}");
-            File.WriteAllText("./_posts/README", "This is where your posts should go.");
-            File.WriteAllText("./_pages/README", "This is where your pages should go.");
-            File.WriteAllText("./_files/README", "This is where your loose files (data, media, stylesheets, etc.) should go.");
-            File.WriteAllText("./_global.yml", "title: Pigmeat Project\nculture: \"en-US\"\ninclude:\nincluded-files:\nincluded-pages:");
+            File.WriteAllText("./_posts/README.md", "---\r\ntitle: \"A post\"\r\npermalink: \"index.html\"\r\n---\r\nThis is a post, generated from `README.md` in the `posts` folder.");
+            File.WriteAllText("./_global.yml", "title: Pigmeat Project\nculture: \"en-US\"\nincluded-files: []\nincluded-pages: []");
             File.WriteAllText("./drafts/README", "This is where your Markdown and HTML documents should go if you don't want them to be published.");
             File.WriteAllText("./layouts/README", "This is where your HTML page templates go.");
-            File.WriteAllText("./includes/README", "This is where your HTML snippets go.");
+            File.WriteAllText("./snippets/README", "This is where your HTML snippets go.");
             File.WriteAllText("./sass/README", "This is where your Sass stylesheet dependencies go.");
+            File.WriteAllText("./plugins/README", "This is where your '.ham,' compiled plugins go, along with their dependencies.");
+            File.WriteAllText("./scripts/README", "This is where your '.cs' scripts, along with their dependencies, go.");
         }
 
         /// <summary>
@@ -340,6 +367,7 @@ namespace Pigmeat
                 // This is expected if there is no directory to clean.
                 Console.WriteLine("Nothing to clean … ");
             }
+            Hooks.CleanOnObsolete();
         }
 
         /// <summary>
@@ -491,13 +519,13 @@ namespace Pigmeat
         {
             try
             {
-                Console.WriteLine("Loading plugin: " + Path.GetFullPath("./plugins/" + args[args.Length - 1]));
-                dynamic script = CSScript.Evaluator.LoadCode(File.ReadAllText("./plugins/" + args[args.Length - 1]));
+                Console.WriteLine("Loading script: " + Path.GetFullPath("./scripts/" + args[args.Length - 1]));
+                dynamic script = CSScript.Evaluator.LoadCode(File.ReadAllText("./scripts/" + args[args.Length - 1]));
                 script.Main(args);
             }
             catch(FileNotFoundException)
             {
-                Console.WriteLine(Path.GetFullPath("./plugins/" + args[args.Length - 1]) + " could not be found.");
+                Console.WriteLine(Path.GetFullPath("./scripts/" + args[args.Length - 1]) + " could not be found.");
                 Environment.Exit(128); // Invalid argument
             }
             catch(Exception e)
@@ -561,7 +589,7 @@ namespace Pigmeat
                     "    pigmeat new <path:optional> - Creates an empty Pigmeat project.\n" +
                     "    pigmeat build <path:optional> - Outputs a publishable Pigmeat project.\n" +
                     "    pigmeat serve <path:optional> - Continuously rebuilds a Pigmeat project when file changes are made.\n" +
-                    "    pigmeat run <path:optional> <plugin:required> - Run a Pigmeat plugin from your project's 'plugins' directory.\n" +
+                    "    pigmeat run <path:optional> <plugin:required> - Run a Pigmeat script from your project's 'scripts' directory.\n" +
                     "    pigmeat install <path:optional> <owner:optional>:<repo:required> - Installs a Pigmeat theme from GitHub.\n" +
                     "    pigmeat clean <path:optional> - Deletes all generated data that results from the build process.\n" +
                     "    pigmeat help <command:optional> - Displays an informational message regarding the usage of Pigmeat."
@@ -583,7 +611,7 @@ namespace Pigmeat
                     break;
                 case "run":
                 case "r":
-                    Console.WriteLine("Run a Pigmeat plugin from your project's 'plugins' directory (e.g. 'pigmeat run MyPlugin.cs').");
+                    Console.WriteLine("Run a Pigmeat script from your project's 'scripts' directory (e.g. 'pigmeat run MyScript.cs').");
                     break;
                 case "install":
                 case "i":
