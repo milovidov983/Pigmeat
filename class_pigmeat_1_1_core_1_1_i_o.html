@@ -95,9 +95,18 @@ $(document).ready(function(){initNavTree('class_pigmeat_1_1_core_1_1_i_o.html','
 
 <p>The <code><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html" title="The IO class. Contains all methods related to handling Pigmeat&#39;s build process. ">IO</a></code> class. Contains all methods related to handling <a class="el" href="namespace_pigmeat.html">Pigmeat</a>'s build process.  
  <a href="class_pigmeat_1_1_core_1_1_i_o.html#details">More...</a></p>
+<div class="dynheader">
+Collaboration diagram for Pigmeat.Core.IO:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o__coll__graph.png" border="0" usemap="#_pigmeat_8_core_8_i_o_coll__map" alt="Collaboration graph"/></div>
+<!-- MAP 0 -->
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a821d02a0d3f636011b2dc0f8e8703e18"><td class="memItemLeft" align="right" valign="top">static object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a821d02a0d3f636011b2dc0f8e8703e18">ConvertFromJson</a> (JObject element)</td></tr>
+<tr class="memdesc:a821d02a0d3f636011b2dc0f8e8703e18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert JObject to Scriban objects  <a href="#a821d02a0d3f636011b2dc0f8e8703e18">More...</a><br /></td></tr>
+<tr class="separator:a821d02a0d3f636011b2dc0f8e8703e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65785eb7263115da1c592b06597727f5"><td class="memItemLeft" align="right" valign="top">static JObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a65785eb7263115da1c592b06597727f5">GetYamlObject</a> (string YamlString)</td></tr>
 <tr class="memdesc:a65785eb7263115da1c592b06597727f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert YAML data into JObject  <a href="#a65785eb7263115da1c592b06597727f5">More...</a><br /></td></tr>
 <tr class="separator:a65785eb7263115da1c592b06597727f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,6 +152,9 @@ Static Private Attributes</h2></td></tr>
 <tr class="memitem:abff2633073c696c699d2033aa94480db"><td class="memItemLeft" align="right" valign="top">static Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#abff2633073c696c699d2033aa94480db">layouts</a> = new Dictionary&lt;string, string&gt;()</td></tr>
 <tr class="memdesc:abff2633073c696c699d2033aa94480db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cached layout data to be used during building <a href="#abff2633073c696c699d2033aa94480db">More...</a><br /></td></tr>
 <tr class="separator:abff2633073c696c699d2033aa94480db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abae57de6ee9c286a6e639f7756c5aabf"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_pigmeat_1_1_core_1_1_plugins_1_1_hooks.html">Pigmeat.Core.Plugins.Hooks</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#abae57de6ee9c286a6e639f7756c5aabf">Hooks</a> = new <a class="el" href="class_pigmeat_1_1_core_1_1_plugins_1_1_hooks.html">Pigmeat.Core.Plugins.Hooks</a>()</td></tr>
+<tr class="memdesc:abae57de6ee9c286a6e639f7756c5aabf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hooks to be overridden in plugins <a href="#abae57de6ee9c286a6e639f7756c5aabf">More...</a><br /></td></tr>
+<tr class="separator:abae57de6ee9c286a6e639f7756c5aabf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa856562481c94e0bc6729e23b3927df5"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#aa856562481c94e0bc6729e23b3927df5">serving</a> = false</td></tr>
 <tr class="memdesc:aa856562481c94e0bc6729e23b3927df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not <a class="el" href="namespace_pigmeat.html">Pigmeat</a> is currently serving <a href="#aa856562481c94e0bc6729e23b3927df5">More...</a><br /></td></tr>
 <tr class="separator:aa856562481c94e0bc6729e23b3927df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,7 +162,7 @@ Static Private Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <code><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html" title="The IO class. Contains all methods related to handling Pigmeat&#39;s build process. ">IO</a></code> class. Contains all methods related to handling <a class="el" href="namespace_pigmeat.html">Pigmeat</a>'s build process. </p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00036">36</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00038">38</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a513be40f796bdadd8f6eb31f2446716a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a513be40f796bdadd8f6eb31f2446716a">&#9670;&nbsp;</a></span>AppendEntry()</h2>
@@ -196,12 +208,12 @@ Static Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00106">106</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00179">179</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a513be40f796bdadd8f6eb31f2446716a_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a513be40f796bdadd8f6eb31f2446716a_icgraph" alt=""/></div>
-<!-- MAP 0 -->
+<!-- MAP 1 -->
 </div>
 
 </div>
@@ -231,12 +243,50 @@ Here is the caller graph for this function:</div>
 
 <p>Clean out the <code>entries</code> field in every <code>collection.json</code> file </p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00137">137</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00210">210</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a0c35ca471821347e16cd0d36a4af6c2f_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a0c35ca471821347e16cd0d36a4af6c2f_icgraph" alt=""/></div>
-<!-- MAP 1 -->
+<!-- MAP 2 -->
+</div>
+
+</div>
+</div>
+<a id="a821d02a0d3f636011b2dc0f8e8703e18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a821d02a0d3f636011b2dc0f8e8703e18">&#9670;&nbsp;</a></span>ConvertFromJson()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static object Pigmeat.Core.IO.ConvertFromJson </td>
+          <td>(</td>
+          <td class="paramtype">JObject&#160;</td>
+          <td class="paramname"><em>element</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convert JObject to Scriban objects </p>
+<p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage</a></p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b" title="Renders Snippets ">Snippet.Render(string, JObject)</a></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00065">65</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a821d02a0d3f636011b2dc0f8e8703e18_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a821d02a0d3f636011b2dc0f8e8703e18_icgraph" alt=""/></div>
+<!-- MAP 3 -->
 </div>
 
 </div>
@@ -269,12 +319,12 @@ Here is the caller graph for this function:</div>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b" title="Renders Snippets ">Snippet.Render(string, JObject)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>A <code>JObject</code> containing collections as keys and their data as values </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00161">161</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00234">234</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a95f27be3fb9f5fd7e668f903c4e1cfb4_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a95f27be3fb9f5fd7e668f903c4e1cfb4_icgraph" alt=""/></div>
-<!-- MAP 2 -->
+<!-- MAP 4 -->
 </div>
 
 </div>
@@ -307,12 +357,18 @@ Here is the caller graph for this function:</div>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool, JObject)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a3a2dee942bb7b2f763ce5d1caba4163d" title="Parses a given page into a JObject ">Page.GetPageObject(string)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a22b69a07b899c8d9825fb388357ce3b7" title="Parses the permalink using given metadata to generate an output path ">Page.GetPermalink(JObject, JObject)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b" title="Renders Snippets ">Snippet.Render(string, JObject)</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>File contents of <code>./_global.yml</code> as a <code>string</code> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00081">81</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00152">152</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a8f84ec34a489ed4c83089b16308ddc7f_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a8f84ec34a489ed4c83089b16308ddc7f_cgraph" alt=""/></div>
+<!-- MAP 5 -->
+</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a8f84ec34a489ed4c83089b16308ddc7f_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a8f84ec34a489ed4c83089b16308ddc7f_icgraph" alt=""/></div>
-<!-- MAP 3 -->
+<!-- MAP 6 -->
 </div>
 
 </div>
@@ -362,18 +418,18 @@ Here is the caller graph for this function:</div>
 </dl>
 <p>See <a class="el" href="class_pigmeat_1_1_core_1_1_i_o.html#a60f49d31957620c308423cad19dbf5f6" title="Take layout, place Markdig-parsed content in layout, evaluate includes, render with Scriban ...">IO.RenderPage(JObject, string, bool, bool, JObject)</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00238">238</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00311">311</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_ae9cd73892daa23bdf19c9a229fe62b7b_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_ae9cd73892daa23bdf19c9a229fe62b7b_cgraph" alt=""/></div>
-<!-- MAP 4 -->
+<!-- MAP 7 -->
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_ae9cd73892daa23bdf19c9a229fe62b7b_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_ae9cd73892daa23bdf19c9a229fe62b7b_icgraph" alt=""/></div>
-<!-- MAP 5 -->
+<!-- MAP 8 -->
 </div>
 
 </div>
@@ -406,12 +462,12 @@ Here is the caller graph for this function:</div>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_pigmeat_1_1_core_1_1_page.html#a22b69a07b899c8d9825fb388357ce3b7" title="Parses the permalink using given metadata to generate an output path ">Page.GetPermalink(JObject, JObject)</a>, <a class="el" href="class_pigmeat_1_1_core_1_1_snippet.html#ac3dd182d3699b9997372e1baa768de2b" title="Renders Snippets ">Snippet.Render(string, JObject)</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>JSON representation of <a class="el" href="namespace_pigmeat.html">Pigmeat</a>'s internal Liquid context </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00095">95</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00168">168</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_ab52a010415630b7063180fd58759eab3_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_ab52a010415630b7063180fd58759eab3_icgraph" alt=""/></div>
-<!-- MAP 6 -->
+<!-- MAP 9 -->
 </div>
 
 </div>
@@ -451,12 +507,12 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00065">65</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00136">136</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a65785eb7263115da1c592b06597727f5_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a65785eb7263115da1c592b06597727f5_icgraph" alt=""/></div>
-<!-- MAP 7 -->
+<!-- MAP 10 -->
 </div>
 
 </div>
@@ -504,12 +560,12 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00283">283</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00356">356</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_ab8a3a50a1c1ae3b1183e298846b77abd_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_ab8a3a50a1c1ae3b1183e298846b77abd_icgraph" alt=""/></div>
-<!-- MAP 8 -->
+<!-- MAP 11 -->
 </div>
 
 </div>
@@ -580,23 +636,49 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00183">183</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00256">256</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a60f49d31957620c308423cad19dbf5f6_cgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a60f49d31957620c308423cad19dbf5f6_cgraph" alt=""/></div>
-<!-- MAP 9 -->
+<!-- MAP 12 -->
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_pigmeat_1_1_core_1_1_i_o_a60f49d31957620c308423cad19dbf5f6_icgraph.png" border="0" usemap="#class_pigmeat_1_1_core_1_1_i_o_a60f49d31957620c308423cad19dbf5f6_icgraph" alt=""/></div>
-<!-- MAP 10 -->
+<!-- MAP 13 -->
 </div>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="abae57de6ee9c286a6e639f7756c5aabf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abae57de6ee9c286a6e639f7756c5aabf">&#9670;&nbsp;</a></span>Hooks</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_pigmeat_1_1_core_1_1_plugins_1_1_hooks.html">Pigmeat.Core.Plugins.Hooks</a> Pigmeat.Core.IO.Hooks = new <a class="el" href="class_pigmeat_1_1_core_1_1_plugins_1_1_hooks.html">Pigmeat.Core.Plugins.Hooks</a>()</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hooks to be overridden in plugins</p>
+
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00045">45</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+
+</div>
+</div>
 <a id="abff2633073c696c699d2033aa94480db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abff2633073c696c699d2033aa94480db">&#9670;&nbsp;</a></span>layouts</h2>
 
@@ -619,7 +701,7 @@ Here is the caller graph for this function:</div>
 
 <p>Cached layout data to be used during building</p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00041">41</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00043">43</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 
 </div>
 </div>
@@ -645,7 +727,7 @@ Here is the caller graph for this function:</div>
 
 <p><a class="el" href="namespace_pigmeat.html">Pigmeat</a>'s current version number</p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00039">39</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00041">41</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 
 </div>
 </div>
@@ -671,7 +753,7 @@ Here is the caller graph for this function:</div>
 
 <p>Whether or not <a class="el" href="namespace_pigmeat.html">Pigmeat</a> is currently serving</p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00048">48</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00052">52</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 
 </div>
 </div>
@@ -698,7 +780,7 @@ Here is the caller graph for this function:</div>
 
 <p>Cached layout data to be used during building</p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00044">44</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00048">48</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 
 </div>
 </div>
@@ -724,7 +806,7 @@ Here is the caller graph for this function:</div>
 
 <p>Whether or not <a class="el" href="namespace_pigmeat.html">Pigmeat</a> is currently serving</p>
 
-<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00051">51</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_i_o_8cs_source.html#l00055">55</a> of file <a class="el" href="_i_o_8cs_source.html">IO.cs</a>.</p>
 
 </div>
 </div>

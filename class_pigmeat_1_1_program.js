@@ -4,6 +4,7 @@ var class_pigmeat_1_1_program =
     [ "Build", "class_pigmeat_1_1_program.html#a878beaee804aea5645618e59b1a6d250", null ],
     [ "Clean", "class_pigmeat_1_1_program.html#aee7bf660974463ceba948a73238f6cbc", null ],
     [ "GetCommand", "class_pigmeat_1_1_program.html#a813269f3c9466bddfa561c72eb56de4f", null ],
+    [ "GetPlugins", "class_pigmeat_1_1_program.html#a5a045d65f937ae2f74232f2f9ac5a0bb", null ],
     [ "Help", "class_pigmeat_1_1_program.html#a5ba96e069c0192950fa044954bca4647", null ],
     [ "Install", "class_pigmeat_1_1_program.html#a48e58e60d726bd462ea0d01e075fc3f1", null ],
     [ "Main", "class_pigmeat_1_1_program.html#a3b898a93d66f23079be04ac657013df3", null ],
@@ -13,5 +14,6 @@ var class_pigmeat_1_1_program =
     [ "ServeWatch", "class_pigmeat_1_1_program.html#a7fbef86d893429923099420b3748b826", null ],
     [ "Terms", "class_pigmeat_1_1_program.html#a8ef23dc63330befdb247d0ceac11f600", null ],
     [ "Warranty", "class_pigmeat_1_1_program.html#a1dcbceceda4d4e696d8dbd07aa1bb036", null ],
+    [ "Hooks", "class_pigmeat_1_1_program.html#adb5d61e43f6739396114c9bd5af98a7c", null ],
     [ "LastFileWatcherEvent", "class_pigmeat_1_1_program.html#ab4819678210df941c6a5abc0b2e0b46f", null ]
 ];

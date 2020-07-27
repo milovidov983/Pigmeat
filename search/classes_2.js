@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['page',['Page',['../class_pigmeat_1_1_core_1_1_page.html',1,'Pigmeat::Core']]],
-  ['paginator',['Paginator',['../class_pigmeat_1_1_core_1_1_paginator.html',1,'Pigmeat::Core']]],
-  ['program',['Program',['../class_pigmeat_1_1_program.html',1,'Pigmeat']]]
+  ['icommand',['ICommand',['../interface_pigmeat_1_1_core_1_1_plugins_1_1_i_command.html',1,'Pigmeat::Core::Plugins']]],
+  ['igenerator',['IGenerator',['../interface_pigmeat_1_1_core_1_1_plugins_1_1_i_generator.html',1,'Pigmeat::Core::Plugins']]],
+  ['io',['IO',['../class_pigmeat_1_1_core_1_1_i_o.html',1,'Pigmeat::Core']]]
 ];
