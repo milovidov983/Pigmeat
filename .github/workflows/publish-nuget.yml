@@ -52,7 +52,7 @@ jobs:
 
       # Publish library
       - name: Library - Publish on version change
-        id: publish_nuget
+        id: publish_nuget_library
         uses: rohith/publish-nuget@v2
         with:
           # Filepath of the project to be packaged, relative to root of repository
@@ -87,7 +87,7 @@ jobs:
 
       # Publish plugin system
       - name: Plugins - Publish on version change
-        id: publish_nuget
+        id: publish_nuget_plugins
         uses: rohith/publish-nuget@v2
         with:
           # Filepath of the project to be packaged, relative to root of repository
