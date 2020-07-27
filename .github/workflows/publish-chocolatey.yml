@@ -23,14 +23,3 @@ jobs:
           cd ./nupkg
           choco apikey --key ${{secrets.CHOCOLATEY_API_KEY}} --source https://push.chocolatey.org/
           choco push --source https://push.chocolatey.org/ -y
-      
-      # Publish library
-      - name: Library - Publish to Chocolatey
-        run: |
-          Remove-Item ./nupkg -Recurse -Force
-          cd ./Core
-          dotnet restore
-          dotnet pack
-          cd ../nupkg
-          choco apikey --key ${{secrets.CHOCOLATEY_API_KEY}} --source https://push.chocolatey.org/
-          choco push --source https://push.chocolatey.org/ -y
