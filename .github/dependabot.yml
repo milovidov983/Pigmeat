@@ -13,3 +13,7 @@ updates:
     directory: "/Core" # Location of package manifests
     schedule:
       interval: "daily"
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/Core/Plugins" # Location of package manifests
+    schedule:
+      interval: "daily"
