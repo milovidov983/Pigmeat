@@ -21,7 +21,7 @@ jobs:
         dotnet build pigmeat.csproj /t:CreateDeb --configuration Release
         mv ./bin/Release/netcoreapp3.1/pigmeat.*.deb ./bin/Release/netcoreapp3.1/pigmeat.deb
     - name: Upload artifact
-      uses: actions/upload-artifact@v2-preview
+      uses: actions/upload-artifact@v2
       with:
         name: pigmeat.deb
         path: ./bin/Release/netcoreapp3.1/pigmeat.deb
