@@ -17,6 +17,7 @@ This file is part of Pigmeat.
 */
 using System;
 using System.IO;
+using System.Net;
 using CSScriptLib;
 using LibGit2Sharp;
 using McMaster.NETCore.Plugins;
@@ -51,9 +52,9 @@ namespace Pigmeat
                         isUnloadable: true);
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                Console.WriteLine(e);
+
             }
         }
 
@@ -555,11 +556,33 @@ namespace Pigmeat
                     RepositoryName = SplitRepositoryCall[0];
                     break;
             }
+
             var GitUrl = "https://github.com/" + OwnerName + "/" + RepositoryName + ".git";
+
+            using(WebClient client = new WebClient())
+            {
+                try
+                {
+                    var PackageObject = IO.GetYamlObject(client.DownloadString("https://raw.githubusercontent.com/" + OwnerName + "/" + RepositoryName + "/master/.hampkg"));
+                    Console.WriteLine(PackageObject["name"].ToString() + "\n" + PackageObject["description"].ToString() + "\nAuthor(s): " + PackageObject["author"].ToString() + "\nLicense: " + PackageObject["license"].ToString());
+                    Console.WriteLine("\nInstall " + PackageObject["type"].ToString() + "?");
+                    var Answer = Console.ReadKey(true).Key;
+                    if(Answer != ConsoleKey.Y && Answer != ConsoleKey.Enter)
+                    {
+                        Environment.Exit(77); // Permission denied
+                    }
+                }
+                catch(Exception)
+                {
+                    Console.WriteLine("Could not retrieve package at " + GitUrl + ". Ensure the package has a '.hampkg' file with required values.");
+                    Environment.Exit(66); // Cannot open input
+                }
+            }
+            
             try
             {
                 Repository.Clone(GitUrl, "./");
-                Console.WriteLine("Cloned " + GitUrl + " to " + PresentPath);
+                Console.WriteLine("Installed " + RepositoryName + " to " + PresentPath);
             }
             catch(NameConflictException)
             {
@@ -571,9 +594,11 @@ namespace Pigmeat
                     Directory.Delete("./", true);
                     Directory.CreateDirectory(PresentPath);
                     Repository.Clone(GitUrl, PresentPath);
-                    Console.WriteLine("Cloned " + GitUrl + " to " + PresentPath);
+                    Console.WriteLine("Installed " + RepositoryName + " to " + PresentPath);
                 }
             }
+            
+            File.Delete(PresentPath + "/.hampkg"); // Remove '.hampkg' file from the downloaded package
         }
 
         /// <summary>
@@ -590,7 +615,7 @@ namespace Pigmeat
                     "    pigmeat build <path:optional> - Outputs a publishable Pigmeat project.\n" +
                     "    pigmeat serve <path:optional> - Continuously rebuilds a Pigmeat project when file changes are made.\n" +
                     "    pigmeat run <path:optional> <plugin:required> - Run a Pigmeat script from your project's 'scripts' directory.\n" +
-                    "    pigmeat install <path:optional> <owner:optional>:<repo:required> - Installs a Pigmeat theme from GitHub.\n" +
+                    "    pigmeat install <path:optional> <owner:optional>:<repo:required> - Installs a Pigmeat package from GitHub.\n" +
                     "    pigmeat clean <path:optional> - Deletes all generated data that results from the build process.\n" +
                     "    pigmeat help <command:optional> - Displays an informational message regarding the usage of Pigmeat."
                     );
@@ -615,7 +640,7 @@ namespace Pigmeat
                     break;
                 case "install":
                 case "i":
-                    Console.WriteLine("Installs a Pigmeat theme from GitHub. This command takes the name of the theme's repository, along with the account that owns it (e.g. 'pigmeat install MadeByEmil:pigmeat-basic').");
+                    Console.WriteLine("Installs a Pigmeat package from GitHub. This command takes the name of the package's repository, along with the account that owns it (e.g. 'pigmeat install MadeByEmil:pigmeat-basic').");
                     break;
                 case "clean":
                 case "c":
