@@ -64,9 +64,9 @@ namespace Pigmeat.Core
         public string long_day { get; set; }
         /// <value>Zero-padded hour of the day (00…24)</value>
         public string hour { get; set; }
-        /// <value>Minute of the hour from the page's date(00…59)</value>
+        /// <value>Minute of the hour from the page's date (00…59)</value>
         public string minute { get; set; }
-        /// <value>Second of the minute from the page's date(00…59)</value>
+        /// <value>Second of the minute from the page's date (00…59)</value>
         public string second { get; set; }
         /// <value>Page's date in the ISO 8601 format (YYYY-MM-DDTHH:MM:SS)</value>
         public DateTime date { get; set; }
