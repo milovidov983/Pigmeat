@@ -11,7 +11,6 @@ var searchData=
   ['paginator',['Paginator',['../class_pigmeat_1_1_core_1_1_paginator.html',1,'Pigmeat::Core']]],
   ['paginator_2ecs',['Paginator.cs',['../_paginator_8cs.html',1,'']]],
   ['parse',['Parse',['../class_pigmeat_1_1_core_1_1_snippet.html#a54ea5e1d3a8cd6308a1b1c9f01457146',1,'Pigmeat::Core::Snippet']]],
-  ['parsing_2ecs',['Parsing.cs',['../_parsing_8cs.html',1,'']]],
   ['per_5fpage',['per_page',['../class_pigmeat_1_1_core_1_1_paginator.html#a91fca9f3ef76eb728bdcfe6f61548b48',1,'Pigmeat::Core::Paginator']]],
   ['permalink',['permalink',['../class_pigmeat_1_1_core_1_1_page.html#a052c44c8627645787968e27841b97064',1,'Pigmeat::Core::Page']]],
   ['pigmeat',['Pigmeat',['../namespace_pigmeat.html',1,'']]],
