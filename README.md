@@ -33,7 +33,7 @@ Pigmeat is a static content publishing tool for the modern web. It takes data in
  If you're in need of assistance, you can reach code contributors on our GitHub repository.
  Check our [issues](https://github.com/MadeByEmil/Pigmeat/issues) page to see if your problem has already been resolved. If not, [raise a new issue](https://github.com/MadeByEmil/Pigmeat/issues/new/choose).
  
- [![Generate documentation](https://github.com/MadeByEmil/Pigmeat/workflows/Generate%20documentation/badge.svg)](https://MadeByEmil.github.io/Pigmeat)
+ [![Maintained code documentation](https://github.com/MadeByEmil/Pigmeat/workflows/Maintained%20code%20documentation/badge.svg)](https://MadeByEmil.github.io/Pigmeat)
 
 ## Building from source
   Pre-requisites:

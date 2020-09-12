@@ -1,4 +1,4 @@
-name: Generate documentation
+name: Maintained code documentation
 on:
   push:
     branches:

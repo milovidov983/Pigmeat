@@ -17,6 +17,11 @@
     <ToolCommandName>pigmeat</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <DefaultItemExcludes>$(DefaultItemExcludes);Core\**</DefaultItemExcludes>
+    <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+    <IlcDisableUnhandledExceptionExperience>true</IlcDisableUnhandledExceptionExperience>
+    <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
   </PropertyGroup>
 
   <ItemGroup>
