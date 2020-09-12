@@ -15,6 +15,7 @@ jobs:
         dotnet-version: 3.1.402
     - name: Build with dotnet
       run: |
+        sudo apt install libkrb5-dev -y
         dotnet tool install --global dotnet-deb
         dotnet deb install
         dotnet restore
