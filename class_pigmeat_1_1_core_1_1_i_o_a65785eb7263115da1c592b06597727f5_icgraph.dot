@@ -25,7 +25,4 @@ digraph "Pigmeat.Core.IO.GetYamlObject"
   Node85 -> Node79 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node84 -> Node79 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node84 -> Node83 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node77 -> Node86 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node86 [label="Pigmeat.Program.Install",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_program.html#a48e58e60d726bd462ea0d01e075fc3f1",tooltip="Install a Pigmeat theme "];
-  Node86 -> Node80 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
 }
