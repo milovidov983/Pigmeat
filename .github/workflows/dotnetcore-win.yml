@@ -15,12 +15,11 @@ jobs:
         dotnet-version: 3.1.402
     - name: Build with dotnet
       run: |
-        dotnet tool install --global dotnet-warp
-        dotnet build --configuration Release --runtime win-x64
+        dotnet publish -r win-x64 -c Release
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
         name: pigmeat.win
         # Directory containing files to upload
-        path: ./bin/Release/netcoreapp3.1/win-x64
+        path: ./bin/Release/netcoreapp3.1/win-x64/native/pigmeat.exe

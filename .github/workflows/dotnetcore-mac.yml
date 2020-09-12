@@ -15,11 +15,14 @@ jobs:
         dotnet-version: 3.1.402
     - name: Build with dotnet
       run: |
-        dotnet build --configuration Release --runtime osx-x64
+        dotnet publish -r osx-x64 -c Release
+        chmod +x ./bin/Release/netcoreapp3.1/osx-x64/native/pigmeat
+        strip --strip-all ./bin/Release/netcoreapp3.1/osx-x64/native/pigmeat
+        tar -cvf pigmeat.tar ./bin/Release/netcoreapp3.1/osx-x64/native/pigmeat
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
         name: pigmeat.mac
         # Directory containing files to upload
-        path: ./bin/Release/netcoreapp3.1/osx-x64
+        path: ./pigmeat.tar
