@@ -101,7 +101,7 @@ namespace Pigmeat.Core
             foreach(var page in PaginatorArray)
             {
                 var CurrentPageObject = PageObject;
-                CurrentPageObject["content"] = Page.SplitFrontmatter(File.ReadAllText(PagePath))[1]; // Reset page's contents to re-render
+                CurrentPageObject["content"] = Page.SplitFrontmatter(File.ReadAllLines(PagePath))[1]; // Reset page's contents to re-render
                 CurrentPageObject["url"] = Page.GetPermalink(CurrentPageObject, page); // Update output path
                 CurrentPageObject["content"] = IO.RenderPage(CurrentPageObject, "", true, isMarkdown, page);
 

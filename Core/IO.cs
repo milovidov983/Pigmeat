@@ -39,9 +39,9 @@ namespace Pigmeat.Core
         /// <value>Pigmeat's current version number</value>
         static string Release = typeof(IO).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         /// <value>Cached layout data to be used during building</value>
-        private static Dictionary<string, string> layouts = new Dictionary<string, string>();
+        private static SortedDictionary<string, string> layouts = new SortedDictionary<string, string>();
         /// <value>Cached layout data to be used during building</value>
-        public static Dictionary<string, string> Layouts
+        public static SortedDictionary<string, string> Layouts
         {
             get { return layouts; } set { layouts = value; }
         }
@@ -303,7 +303,7 @@ namespace Pigmeat.Core
         /// <para>See <see cref="IO.RenderPage(JObject, string, bool, bool, JObject)"/> </para>
         public static string GetLayoutContents(string LayoutPath, bool Overwrite)
         {
-            var SplitPage = Page.SplitFrontmatter(File.ReadAllText(LayoutPath));
+            var SplitPage = Page.SplitFrontmatter(File.ReadAllLines(LayoutPath));
             string PageFrontmatter = SplitPage[0];
             string LayoutContents = SplitPage[1];
             string Layout = Path.GetFileNameWithoutExtension(LayoutPath);

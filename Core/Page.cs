@@ -18,8 +18,7 @@ This file is part of Pigmeat.
 using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Scriban;
@@ -89,7 +88,7 @@ namespace Pigmeat.Core
         /// <para> See <see cref="IO.GetCollections"/> </para>
         public static JObject GetPageObject(string PagePath)
         {
-            var SplitPage = Page.SplitFrontmatter(File.ReadAllText(PagePath));
+            var SplitPage = Page.SplitFrontmatter(File.ReadAllLines(PagePath));
             string PageFrontmatter = SplitPage[0];
 
             JObject FrontmatterObject = IO.GetYamlObject(PageFrontmatter);
@@ -159,20 +158,36 @@ namespace Pigmeat.Core
         /// <returns>
         /// The YAML <c>string</c> for a given page
         /// </returns>
-        /// <param name="PageContents">The contents of the page being parsed</param>
-        public static string[] SplitFrontmatter(string PageContents)
+        /// <param name="PageLines">The file contents of the page being parsed</param>
+        public static string[] SplitFrontmatter(string[] PageLines)
         {
-            Regex FrontmatterSplit = new Regex("(.*)---");
-            var Split = FrontmatterSplit.Split(PageContents).Where(x => !string.IsNullOrEmpty(x)).ToArray();
-            if(Split.Length == 1)
+            bool BeginFrontmatter = false;
+            bool EndFrontmatter = false;
+            StringBuilder Frontmatter = new StringBuilder();
+            StringBuilder Contents = new StringBuilder();
+
+            foreach(var line in PageLines)
             {
-                return new string[] { "", PageContents };
+                var CurrentLine = line;
+                if(!BeginFrontmatter && CurrentLine.Equals("---"))
+                {
+                    BeginFrontmatter = true;
+                }
+                else if(BeginFrontmatter && CurrentLine.Equals("---") && !EndFrontmatter)
+                {
+                    EndFrontmatter = true;
+                }
+                else if(BeginFrontmatter && !EndFrontmatter)
+                {
+                    Frontmatter.AppendLine(CurrentLine);
+                }
+                else
+                {
+                    Contents.AppendLine(CurrentLine);
+                }
             }
-            else
-            {
-                var lines = Regex.Split(Split[1], "\r\n|\r|\n").Skip(1); // Remove initial blank line created by the split
-                return new string[] { Split[0], string.Join(Environment.NewLine, lines.ToArray()) };
-            }
+
+            return new string[] { Frontmatter.ToString(), Contents.ToString() };
         }
         
         /// <summary>
