@@ -33,7 +33,6 @@ namespace Pigmeat.Core
     /// </summary>
     class Snippet
     {
-        public string Input { get; set; }
         public static Dictionary<string, string> Variables { get; set; }
 
         /// <summary>
@@ -51,59 +50,47 @@ namespace Pigmeat.Core
             if(Contents.Contains("{! snippet "))
             {
                 List<string> SnippetCalls = new List<string>();
-                StringBuilder Reader = new StringBuilder();
+                StringBuilder Parser = new StringBuilder();
                 int BraceCount = 0;
                 foreach(var character in Contents)
                 {
                     if(character.Equals('{') && BraceCount == 0)
                     {
                         BraceCount++;
-                        Reader.Append(character);
+                        Parser.Append(character);
                         continue;
                     }
                     if(character.Equals('}') && BraceCount == 1)
                     {
                         BraceCount = 0;
-                        Reader.Append(character);
-                        var ReaderString = Reader.ToString();
-                        if(ReaderString.Contains("{! snippet ") || ReaderString.Contains("{!snippet "))
+                        Parser.Append(character);
+                        var ParserString = Parser.ToString();
+                        if(ParserString.Contains("{! snippet ") || ParserString.Contains("{!snippet "))
                         {
-                            SnippetCalls.Add(WebUtility.HtmlDecode(ReaderString));
+                            SnippetCalls.Add(WebUtility.HtmlDecode(ParserString));
                         }
-                        Reader = new StringBuilder();
+                        Parser = new StringBuilder();
                         continue;
                     }
                     if(BraceCount == 1)
                     {
-                        Reader.Append(character);
+                        Parser.Append(character);
                         continue;
                     }
                 }
                 foreach(var snippetCall in SnippetCalls)
                 {
+                    string[] CallArguments = GetArguments(snippetCall);
                     Variables = new Dictionary<string, string>(); // Reset variable data for each new call
-                    Regex CallSplit = new Regex("=| (?=(\\w*)+=)"); // Regex to split based on space (not in quotes) and equals sign
-                    // Do the split, remove bits of call syntax, trim, remove empty values created by the split
-                    string[] CallArguments = CallSplit.Split(snippetCall.Replace("snippet ", "").Replace("{!", "").Replace("!}", "").Trim()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                    List<string> Keys = new List<string>();
-                    List<string> Values = new List<string>();
-                    for(int i = 0; i < CallArguments.Length - 1; i++) // Offset of one to ignore snippet filename
-                    {
-                        switch(i % 2)
-                        {
-                            case 0:
-                                Keys.Add(CallArguments[i + 1]);
-                                break;
-                            case 1:
-                                Values.Add(CallArguments[i + 1]);
-                                break;
-                        }
-                    }
+                    List<string> Keys = GetKeys(CallArguments);
+                    List<string> Values = GetValues(CallArguments, Keys.ToArray());
+
                     for(int i = 0; i < Keys.ToArray().Length; i++)
                     {
                         Variables.Add(Keys[i], Values[i]); // Merge `List`s into `Dictionary`
                     }
-                    string SnippetPath = "./snippets/" + CallArguments[0]; // Trimming required for this to work
+
+                    string SnippetPath = "./snippets/" + CallArguments[2]; // Trimming required for this to work
                     Contents = Contents.Replace(WebUtility.HtmlEncode(snippetCall), Snippet.Render(SnippetPath, PageObject));
                 }
             }
@@ -140,6 +127,116 @@ namespace Pigmeat.Core
             var SnippetContents = template.Render(new { snippet = IO.ConvertFromJson(SnippetObject), page = IO.ConvertFromJson(PageObject), collection = IO.ConvertFromJson(CollectionObject), global = IO.ConvertFromJson(Global), pigmeat = IO.ConvertFromJson(IO.GetPigmeat()) });
             SnippetContents = Snippet.Parse(SnippetContents, PageObject); // Parse for snippets
             return SnippetContents;
+        }
+
+        /// <summary>
+        /// Gets the arguments given in the <c>Snippet</c> call, to be parsed through later
+        /// </summary>
+        /// <returns>
+        /// Array of <c>string</c>s containing <c>Snippet</c> arguments
+        /// </returns>
+        static string[] GetArguments(string SnippetCall)
+        {
+            List<string> Arguments = new List<string>();
+            StringBuilder CurrentArgument = new StringBuilder();
+            foreach(var character in SnippetCall)
+            {
+                if(character.Equals(' '))
+                {
+                    Arguments.Add(CurrentArgument.ToString());
+                    CurrentArgument.Clear();
+                    continue;
+                }
+                else
+                {
+                    CurrentArgument.Append(character);
+                    continue;
+                }
+            }
+            return Arguments.ToArray();
+        }
+
+        /// <summary>
+        /// Gets the keys (names of variables) given when the Snippet was called
+        /// <para> See <see cref="Snippet.GetValues(string[], string[])"/> </para>
+        /// </summary>
+        /// <returns>
+        /// Array of <c>string</c>s containing names of given arguments
+        /// </returns>
+        static List<string> GetKeys(string[] CallArguments)
+        {
+            List<string> Keys = new List<string>();
+            StringBuilder CurrentKey = new StringBuilder();
+            for(int i = 3; i < CallArguments.Length; i++)
+            {
+                foreach(var character in CallArguments[i])
+                {
+                    if(character.Equals('='))
+                    {
+                        Keys.Add(CurrentKey.ToString());
+                        CurrentKey.Clear();
+                        break;
+                    }
+                    else
+                    {
+                        CurrentKey.Append(character);
+                        continue;
+                    }
+                }
+            }
+            return Keys;
+        }
+
+        /// <summary>
+        /// Gets values of given arguments/variables when the <c>Snippet</c> was called
+        /// <para> See <see cref="Snippet.GetKeys(string[])"/> </para>
+        /// </summary>
+        /// <returns>
+        /// Array of <c>string</c>s containing values of given arguments
+        /// </returns>
+        static List<string> GetValues(string[] CallArguments, string[] Keys)
+        {
+            List<string> Values = new List<string>();
+            StringBuilder CurrentValue = new StringBuilder();
+            List<int> Bits = new List<int>();
+            for(int i = 3; i < Keys.Length + 3; i++)
+            {
+                if(Bits.Contains(i))
+                {
+                    continue; // Skip if this bit of the arguments has been processed as a part of a quoted value
+                }
+
+                CurrentValue.Append(CallArguments[i]);
+                CurrentValue.Replace(Keys[i - 3] + "=", ""); // Get value by removing the key
+
+                // If value is in quotes, get all the pieces of the argument it's in
+                if(CurrentValue[0].Equals('"'))
+                {
+                    for(int j = i + 1; j < CallArguments.Length; j++)
+                    {
+                        // If this argument did have a key, stop appending
+                        if(CallArguments[j].Contains('='))
+                        {
+                            Bits.Add(j);
+                            break;
+                        }
+                        else
+                        {
+                            CurrentValue.Append(" " + CallArguments[j]);
+                            continue;
+                        }
+                    }
+                }
+                if(CurrentValue[0].Equals('"') && CurrentValue[CurrentValue.Length - 1].Equals('"'))
+                {
+                    CurrentValue.Remove(0, 1); // Remove the first quote mark
+                    CurrentValue.Length--; // Move the pointer back, removing the last quote mark
+                }
+
+                Values.Add(CurrentValue.ToString());
+                CurrentValue.Clear();
+            }
+            return Values;
         }
     }
 }
