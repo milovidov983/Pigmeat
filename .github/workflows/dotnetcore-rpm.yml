@@ -18,7 +18,7 @@ jobs:
         dotnet tool install --global dotnet-rpm
         dotnet rpm install
         dotnet restore
-        dotnet build pigmeat.csproj /t:CreateRpm --configuration Release
+        dotnet build pigmeat.csproj /t:CreateRpm -r linux-x64 -c Release
         mv ./bin/Release/netcoreapp3.1/pigmeat.*.rpm ./bin/Release/netcoreapp3.1/pigmeat.rpm
     - name: Upload artifact
       uses: actions/upload-artifact@v2

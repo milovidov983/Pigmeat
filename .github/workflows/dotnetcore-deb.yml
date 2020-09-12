@@ -18,7 +18,7 @@ jobs:
         dotnet tool install --global dotnet-deb
         dotnet deb install
         dotnet restore
-        dotnet build pigmeat.csproj /t:CreateDeb --configuration Release
+        dotnet build pigmeat.csproj /t:CreateDeb -r linux-x64 -c Release
         mv ./bin/Release/netcoreapp3.1/pigmeat.*.deb ./bin/Release/netcoreapp3.1/pigmeat.deb
     - name: Upload artifact
       uses: actions/upload-artifact@v2
