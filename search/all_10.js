@@ -12,5 +12,5 @@ var searchData=
   ['short_5fyear',['short_year',['../class_pigmeat_1_1_core_1_1_page.html#a658a0d7d31a94a68411897965bd1362c',1,'Pigmeat::Core::Page']]],
   ['snippet',['Snippet',['../class_pigmeat_1_1_core_1_1_snippet.html',1,'Pigmeat::Core']]],
   ['snippet_2ecs',['Snippet.cs',['../_snippet_8cs.html',1,'']]],
-  ['splitfrontmatter',['SplitFrontmatter',['../class_pigmeat_1_1_core_1_1_page.html#adeeba3432008a2b7718ad52c2e0ae058',1,'Pigmeat::Core::Page']]]
+  ['splitfrontmatter',['SplitFrontmatter',['../class_pigmeat_1_1_core_1_1_page.html#a207a9e1808ba2992377c1dfadf6ef84a',1,'Pigmeat::Core::Page']]]
 ];

@@ -5,7 +5,7 @@ digraph "Pigmeat.Core.IO.GetLayoutContents"
   rankdir="LR";
   Node54 [label="Pigmeat.Core.IO.GetLayout\lContents",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
   Node54 -> Node55 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node55 [label="Pigmeat.Core.Page.SplitFrontmatter",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_page.html#adeeba3432008a2b7718ad52c2e0ae058",tooltip="Gets the YAML of the frontmatter for a given page "];
+  Node55 [label="Pigmeat.Core.Page.SplitFrontmatter",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_page.html#a207a9e1808ba2992377c1dfadf6ef84a",tooltip="Gets the YAML of the frontmatter for a given page "];
   Node54 -> Node56 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node56 [label="Pigmeat.Core.IO.GetYamlObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pigmeat_1_1_core_1_1_i_o.html#a65785eb7263115da1c592b06597727f5",tooltip="Convert YAML data into JObject "];
 }
