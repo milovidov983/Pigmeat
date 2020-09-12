@@ -17,8 +17,6 @@ This file is part of Pigmeat.
 */
 using System;
 using System.IO;
-using System.Net;
-using LibGit2Sharp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pigmeat.Core;
@@ -47,27 +45,6 @@ namespace Pigmeat
                     case "help":
                     case "h":
                         break;
-                    // For `install`, switch directories with three arguments (command, path, and something else)
-                    case "install":
-                    case "i":
-                        switch(args.Length)
-                        {
-                            case var expression when (args.Length >= 3):
-                                try
-                                {
-                                    Directory.SetCurrentDirectory(args[1]);
-                                }
-                                catch (DirectoryNotFoundException e)
-                                {
-                                    Console.WriteLine("The specified directory does not exist: " + args[1] + "\n" + e);
-                                    Environment.Exit(128); // Invalid argument
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                    // Other commands will switch directories with two arguments (command & path)
                     default:
                         switch(args.Length)
                         {
@@ -88,10 +65,6 @@ namespace Pigmeat
                         break;
                 }
                 GetCommand(args);
-            }
-            catch(NotImplementedException)
-            {
-                
             }
             catch(IndexOutOfRangeException)
             {
@@ -129,10 +102,6 @@ namespace Pigmeat
                         case "serve":
                         case "s":
                             ServeWatch();
-                            break;
-                        case "install":
-                        case "i":
-                            Install(args);
                             break;
                         case "clean":
                         case "c":
@@ -481,71 +450,6 @@ namespace Pigmeat
         }
 
         /// <summary>
-        /// Install a Pigmeat theme
-        /// <para> See <see cref="GetCommand(string[])"/> </para>
-        /// </summary>
-        static void Install(string[] args)
-        {
-            var PresentPath = Path.GetFullPath(".");
-            var SplitRepositoryCall = args[args.Length - 1].Split(':', StringSplitOptions.RemoveEmptyEntries);
-            string OwnerName, RepositoryName;
-            switch(SplitRepositoryCall.Length)
-            {
-                case 2:
-                    OwnerName = SplitRepositoryCall[0];
-                    RepositoryName = SplitRepositoryCall[1];
-                    break;
-                default:
-                    OwnerName = "MadeByEmil";
-                    RepositoryName = SplitRepositoryCall[0];
-                    break;
-            }
-
-            var GitUrl = "https://github.com/" + OwnerName + "/" + RepositoryName + ".git";
-
-            using(WebClient client = new WebClient())
-            {
-                try
-                {
-                    var PackageObject = IO.GetYamlObject(client.DownloadString("https://raw.githubusercontent.com/" + OwnerName + "/" + RepositoryName + "/master/.hampkg"));
-                    Console.WriteLine(PackageObject["name"].ToString() + "\n" + PackageObject["description"].ToString() + "\nAuthor(s): " + PackageObject["author"].ToString() + "\nLicense: " + PackageObject["license"].ToString());
-                    Console.WriteLine("\nInstall " + PackageObject["type"].ToString() + "?");
-                    var Answer = Console.ReadKey(true).Key;
-                    if(Answer != ConsoleKey.Y && Answer != ConsoleKey.Enter)
-                    {
-                        Environment.Exit(77); // Permission denied
-                    }
-                }
-                catch(Exception)
-                {
-                    Console.WriteLine("Could not retrieve package at " + GitUrl + ". Ensure the package has a '.hampkg' file with required values.");
-                    Environment.Exit(66); // Cannot open input
-                }
-            }
-            
-            try
-            {
-                Repository.Clone(GitUrl, "./");
-                Console.WriteLine("Installed " + RepositoryName + " to " + PresentPath);
-            }
-            catch(NameConflictException)
-            {
-                Console.WriteLine("Everything in " + PresentPath + " will be overwritten. Continue? ");
-                var Answer = Console.ReadKey(true).Key;
-                
-                if(Answer == ConsoleKey.Y || Answer == ConsoleKey.Enter)
-                {
-                    Directory.Delete("./", true);
-                    Directory.CreateDirectory(PresentPath);
-                    Repository.Clone(GitUrl, PresentPath);
-                    Console.WriteLine("Installed " + RepositoryName + " to " + PresentPath);
-                }
-            }
-            
-            File.Delete(PresentPath + "/.hampkg"); // Remove '.hampkg' file from the downloaded package
-        }
-
-        /// <summary>
         /// Show how to use the Pigmeat tool
         /// <para> See <see cref="GetCommand(string[])"/> </para>
         /// </summary>
@@ -558,7 +462,6 @@ namespace Pigmeat
                     "    pigmeat new <path:optional> - Creates an empty Pigmeat project.\n" +
                     "    pigmeat build <path:optional> - Outputs a publishable Pigmeat project.\n" +
                     "    pigmeat serve <path:optional> - Continuously rebuilds a Pigmeat project when file changes are made.\n" +
-                    "    pigmeat install <path:optional> <owner:optional>:<repo:required> - Installs a Pigmeat package from GitHub.\n" +
                     "    pigmeat clean <path:optional> - Deletes all generated data that results from the build process.\n" +
                     "    pigmeat help <command:optional> - Displays an informational message regarding the usage of Pigmeat."
                     );
@@ -576,10 +479,6 @@ namespace Pigmeat
                 case "serve":
                 case "s":
                     Console.WriteLine("Continuously rebuilds a Pigmeat project when file changes are made. Intended for previewing changes during development.");
-                    break;
-                case "install":
-                case "i":
-                    Console.WriteLine("Installs a Pigmeat package from GitHub. This command takes the name of the package's repository, along with the account that owns it (e.g. 'pigmeat install MadeByEmil:pigmeat-basic').");
                     break;
                 case "clean":
                 case "c":

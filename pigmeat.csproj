@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="./Core/pigmeat.core.csproj" />
-    <PackageReference Include="LibGit2Sharp" Version="0.26.2" />
     <PackageReference Include="Packaging.Targets" Version="0.1.175" />
     <PackageReference Include="SharpScss" Version="2.0.0" />
     <None Include="./branding/Yellow/128x128.png" Pack="true" PackagePath="" />
