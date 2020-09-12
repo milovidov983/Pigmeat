@@ -18,9 +18,7 @@ This file is part of Pigmeat.
 using System;
 using System.IO;
 using System.Net;
-using CSScriptLib;
 using LibGit2Sharp;
-using McMaster.NETCore.Plugins;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pigmeat.Core;
@@ -36,27 +34,9 @@ namespace Pigmeat
     static class Program
     {
         static DateTime LastFileWatcherEvent { get; set; }
-        static Pigmeat.Core.Plugins.Hooks Hooks = new Pigmeat.Core.Plugins.Hooks();
         /// <summary>
         /// Handle primary tool information, such as command inputs and current directory
         /// </summary>
-        static void GetPlugins()
-        {
-            try
-            {
-                foreach(var file in Directory.GetFiles("./plugins/", "*.ham"))
-                {
-                    PluginLoader.CreateFromAssemblyFile(
-                        assemblyFile: file,
-                        sharedTypes: new [] { typeof(Pigmeat.Core.Plugins.ICommand), typeof(Pigmeat.Core.Plugins.IGenerator), typeof(Pigmeat.Core.Plugins.Hooks) },
-                        isUnloadable: true);
-                }
-            }
-            catch(Exception)
-            {
-
-            }
-        }
 
         static void Main(string[] args)
         {
@@ -67,9 +47,7 @@ namespace Pigmeat
                     case "help":
                     case "h":
                         break;
-                    // For `run` and `install`, switch directories with three arguments (command, path, and something else)
-                    case "run":
-                    case "r":
+                    // For `install`, switch directories with three arguments (command, path, and something else)
                     case "install":
                     case "i":
                         switch(args.Length)
@@ -139,7 +117,6 @@ namespace Pigmeat
                     Help(args);
                     break;
                 default:
-                    GetPlugins(); // Load in plugins, so long as some input is given
                     switch (args[0]) {
                         case "new":
                         case "n":
@@ -152,10 +129,6 @@ namespace Pigmeat
                         case "serve":
                         case "s":
                             ServeWatch();
-                            break;
-                        case "run":
-                        case "r":
-                            Run(args);
                             break;
                         case "install":
                         case "i":
@@ -231,7 +204,6 @@ namespace Pigmeat
             {
                 IO.GetLayoutContents(layout, false);
             }
-            Hooks.GlobalPreRender();
             foreach(var directory in Directory.GetDirectories("./", "_*", SearchOption.TopDirectoryOnly))
             {
                 foreach(var file in Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly))
@@ -249,7 +221,6 @@ namespace Pigmeat
                             File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
                         }
                         //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
-                        Hooks.PagePostWrite();
                         i++;
                     }
                     else if(Path.GetExtension(file).Equals(".scss") || Path.GetExtension(file).Equals(".sass"))
@@ -307,7 +278,6 @@ namespace Pigmeat
                         File.WriteAllText("./output/" + PageObject["url"].ToString(), PageObject["content"].ToString());
                     }
                     //Console.WriteLine(file + " → " + "./output/" + PageObject["url"].ToString());
-                    Hooks.PagePostWrite();
                     i++;
                 }
             }
@@ -323,7 +293,6 @@ namespace Pigmeat
                 // Cannot make this check with IO.Serving as then we'd end up with wiped collections regardless (wipe happens before IO.Serving is set)
             }
             IO.Serving = true;
-            Hooks.GlobalPostWrite();
         }
 
         /// <summary>
@@ -368,7 +337,6 @@ namespace Pigmeat
                 // This is expected if there is no directory to clean.
                 Console.WriteLine("Nothing to clean … ");
             }
-            Hooks.CleanOnObsolete();
         }
 
         /// <summary>
@@ -513,30 +481,6 @@ namespace Pigmeat
         }
 
         /// <summary>
-        /// Run a plugin
-        /// <para> See <see cref="GetCommand(string[])"/> </para>
-        /// </summary>
-        static void Run(string[] args)
-        {
-            try
-            {
-                Console.WriteLine("Loading script: " + Path.GetFullPath("./scripts/" + args[args.Length - 1]));
-                dynamic script = CSScript.Evaluator.LoadCode(File.ReadAllText("./scripts/" + args[args.Length - 1]));
-                script.Main(args);
-            }
-            catch(FileNotFoundException)
-            {
-                Console.WriteLine(Path.GetFullPath("./scripts/" + args[args.Length - 1]) + " could not be found.");
-                Environment.Exit(128); // Invalid argument
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                Environment.Exit(1); // General error
-            }
-        }
-
-        /// <summary>
         /// Install a Pigmeat theme
         /// <para> See <see cref="GetCommand(string[])"/> </para>
         /// </summary>
@@ -614,7 +558,6 @@ namespace Pigmeat
                     "    pigmeat new <path:optional> - Creates an empty Pigmeat project.\n" +
                     "    pigmeat build <path:optional> - Outputs a publishable Pigmeat project.\n" +
                     "    pigmeat serve <path:optional> - Continuously rebuilds a Pigmeat project when file changes are made.\n" +
-                    "    pigmeat run <path:optional> <plugin:required> - Run a Pigmeat script from your project's 'scripts' directory.\n" +
                     "    pigmeat install <path:optional> <owner:optional>:<repo:required> - Installs a Pigmeat package from GitHub.\n" +
                     "    pigmeat clean <path:optional> - Deletes all generated data that results from the build process.\n" +
                     "    pigmeat help <command:optional> - Displays an informational message regarding the usage of Pigmeat."
@@ -633,10 +576,6 @@ namespace Pigmeat
                 case "serve":
                 case "s":
                     Console.WriteLine("Continuously rebuilds a Pigmeat project when file changes are made. Intended for previewing changes during development.");
-                    break;
-                case "run":
-                case "r":
-                    Console.WriteLine("Run a Pigmeat script from your project's 'scripts' directory (e.g. 'pigmeat run MyScript.cs').");
                     break;
                 case "install":
                 case "i":

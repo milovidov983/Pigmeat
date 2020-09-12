@@ -26,7 +26,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Scriban;
 using YamlDotNet.Serialization;
-using Pigmeat.Core.Plugins;
 using Scriban.Runtime;
 
 namespace Pigmeat.Core
@@ -41,8 +40,6 @@ namespace Pigmeat.Core
         static string Release = typeof(IO).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         /// <value>Cached layout data to be used during building</value>
         private static Dictionary<string, string> layouts = new Dictionary<string, string>();
-        /// <value>Hooks to be overridden in plugins</value>
-        static Pigmeat.Core.Plugins.Hooks Hooks = new Pigmeat.Core.Plugins.Hooks();
         /// <value>Cached layout data to be used during building</value>
         public static Dictionary<string, string> Layouts
         {
@@ -151,9 +148,7 @@ namespace Pigmeat.Core
         /// </returns>
         public static string GetGlobal()
         {
-            var Global = GetYamlObject(File.ReadAllText("./_global.yml")).ToString(Formatting.None);
-            Hooks.GlobalAfterInitialization();
-            return Global;
+            return GetYamlObject(File.ReadAllText("./_global.yml")).ToString(Formatting.None);
         }
 
         /// <summary>
@@ -255,7 +250,6 @@ namespace Pigmeat.Core
         /// <param name="PaginatorObject">The <c>JObject</c> representing the page's paginator</param>
         public static string RenderPage(JObject PageObject, string Collection, bool RenderWithLayout, bool isMarkdown, JObject PaginatorObject)
         {
-            Hooks.PagePreRender();
             string PageContents = PageObject["content"].ToString();
             if(isMarkdown)
             {
@@ -295,7 +289,6 @@ namespace Pigmeat.Core
                     IO.AppendEntry(Collection, PageObject); // When serving we don't want to duplicate entries
                 }
             }
-            Hooks.PagePostRender();
             return PageContents;
         }
 
