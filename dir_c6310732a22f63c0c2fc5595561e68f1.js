@@ -1,6 +1,5 @@
 var dir_c6310732a22f63c0c2fc5595561e68f1 =
 [
-    [ "Plugins", "dir_364894e5d93bffffc1006b71d92cbe0f.html", "dir_364894e5d93bffffc1006b71d92cbe0f" ],
     [ "IO.cs", "_i_o_8cs.html", [
       [ "IO", "class_pigmeat_1_1_core_1_1_i_o.html", "class_pigmeat_1_1_core_1_1_i_o" ]
     ] ],
