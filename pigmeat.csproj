@@ -19,9 +19,9 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);Core\**</DefaultItemExcludes>
     <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
     <IlcDisableUnhandledExceptionExperience>true</IlcDisableUnhandledExceptionExperience>
-    <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
     <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
     <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+    <IlcDisableReflection>true</IlcDisableReflection>
   </PropertyGroup>
 
   <ItemGroup>
